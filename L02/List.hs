@@ -1,3 +1,7 @@
+module L02.List where
+
+import Prelude hiding (sum, length, map, filter, maximum, reverse)
+
 -- * Complete the 10 exercises below by filling out the function bodies.
 --   The code currently compiles, but none of the tests pass (the test function).
 --   Replace the function bodies (error "todo") with an appropriate solution.
@@ -9,10 +13,6 @@
 -- * Approach with your best available intuition; just dive in and do what you can!
 
 -- TOTAL marks:    /66
-
-module L02.List where
-
-import Prelude hiding (sum, length, map, filter, maximum, reverse)
 
 -- BEGIN Helper functions and data types
 

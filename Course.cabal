@@ -14,6 +14,8 @@ Flag small_base
 Library
   Build-Depends:    base >= 4,
                     split,
+                    directory,
+                    filepath,
                     HUnit,
                     QuickCheck,
                     test-framework,

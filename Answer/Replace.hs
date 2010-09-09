@@ -9,10 +9,13 @@ import System.Directory
 import System.IO
 import System.Environment
 
+-- | A line of text usually in a list of lines.
 type Line = String
 
+-- | Replace the given line with a list of lines.
 type Replacer = Line -> [Line]
 
+-- | Runs the line replacer using the given input/output handles. Neither are closed.
 withLines ::
   Replacer
   -> Handle
