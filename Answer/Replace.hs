@@ -50,8 +50,7 @@ tripleDash line =
   case "---" `splitOn` line
     of [x]     -> [x]
        (_:z:t) -> let y = concat (z:t)
-                      v      = dropWhile isSpace y
-                  in if null v
+                  in if null (dropWhile isSpace y)
                        then []
                        else [y]
        []      -> error "invariant not met (splitOn returned [])"
