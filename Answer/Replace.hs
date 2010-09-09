@@ -56,7 +56,7 @@ tripleDash line =
                        else [y]
        []      -> error "invariant not met"
 
--- | Run the 'tripleDash' replacer on a file by first creating a temporary file
+-- | Runs the 'tripleDash' replacer on a file by first creating a temporary file
 -- then copying over the original.
 tripleDashInPlace ::
   FilePath -- ^ The file to run the replacement function on.
