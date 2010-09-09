@@ -17,18 +17,20 @@ type Replacer = Line -> [Line]
 
 -- | Runs the line replacer using the given input/output handles. Neither are closed.
 withLines ::
-  Replacer
-  -> Handle
-  -> Handle
+  Replacer -- ^ The replacement function to run on each line.
+  -> Handle -- ^ The input handle.
+  -> Handle -- ^ The output handle.
   -> IO ()
 withLines f i o =
   do j <- hGetContents i
      let z = unlines (f =<< lines j)
      hPutStr o z
 
+-- | Runs the line replacer on a file by first creating a temporary file
+-- then copying over the original.
 withLinesInPlace ::
-  Replacer
-  -> FilePath
+  Replacer -- ^ The replacement function to run on each line.
+  -> FilePath -- ^ The file to run the replacement function on.
   -> IO ()
 withLinesInPlace f z =
   do t <- getTemporaryDirectory
@@ -39,6 +41,9 @@ withLinesInPlace f z =
      hClose i
      renameFile p z
 
+-- | A line replacer that searches for a triple-dash (/---/) and replaces the line
+-- with everything following. If there is nothing (or only whitespace) following, then
+-- the line is deleted.
 tripleDash ::
   Replacer
 tripleDash line =
@@ -51,16 +56,18 @@ tripleDash line =
                        else [y]
        []      -> error "invariant not met"
 
+-- | Run the 'tripleDash' replacer on a file by first creating a temporary file
+-- then copying over the original.
 tripleDashInPlace ::
-  FilePath
+  FilePath -- ^ The file to run the replacement function on.
   -> IO ()
 tripleDashInPlace =
   withLinesInPlace tripleDash
 
+-- Reads one or more command-line arguments (filenames) and runs 'tripleDashInPlace' on those files.
 main :: IO ()
 main =
   do a <- getArgs
      case a
        of [] -> print "Enter 1 or more file names to replace answers"
           _  -> mapM_  (\p -> tripleDashInPlace p >> putStrLn p) a
-
