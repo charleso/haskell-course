@@ -63,7 +63,7 @@ tripleDashInPlace ::
 tripleDashInPlace =
   withLinesInPlace tripleDash
 
--- Reads one or more command-line arguments (filenames) and runs 'tripleDashInPlace' on those files.
+-- | Reads one or more command-line arguments (filenames) and runs 'tripleDashInPlace' on those files.
 main :: IO ()
 main =
   do a <- getArgs
