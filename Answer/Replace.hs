@@ -1,5 +1,7 @@
 #!/usr/bin/runhaskell
 
+-- | Replaces the answers throughout the haskell source files and is intended to replace those
+-- answers with a substitute expression that passes the compiler (e.g. /error "todo"/).
 module Answer.Replace where
 
 import Data.Char
