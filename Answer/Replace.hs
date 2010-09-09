@@ -54,7 +54,7 @@ tripleDash line =
                   in if null v
                        then []
                        else [y]
-       []      -> error "invariant not met"
+       []      -> error "invariant not met (splitOn returned [])"
 
 -- | Runs the 'tripleDash' replacer on a file by first creating a temporary file
 -- then copying over the original.
