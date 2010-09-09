@@ -1,0 +1,38 @@
+Name:               HaskellCourse
+Version:            0.0.2
+Author:             Tony Morris <code@tmorris.net>
+Maintainer:         Tony Morris
+Synopsis:           Source code for a Haskell course
+Category:           Education
+Description:        Source code for a Haskell course
+Cabal-version:      >= 1.2
+Build-Type:         Simple
+
+Flag small_base
+  Description:      Choose the new, split-up base package.
+
+Library
+  Build-Depends:    base >= 4,
+                    split,
+                    HUnit,
+                    QuickCheck,
+                    test-framework,
+                    test-framework-hunit,
+                    test-framework-quickcheck2
+
+  GHC-Options:      -Wall
+                    -fno-warn-orphans
+                    -fno-warn-type-defaults
+                    -fno-warn-name-shadowing
+
+  Exposed-Modules:  Answer.Replace
+                    L01.Optional
+                    L01.Validation
+                    L02.List
+                    L03.Person
+                    L03.Parser
+                    L04.Fluffy
+                    L04.Misty
+                    L04.Tests
+                    L05.Testing
+

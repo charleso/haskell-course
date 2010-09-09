@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE articleinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+    "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd">
+
+<articleinfo id="ArticleHeader">
+  <abstract id="Abstract">
+    <para>
+      Introspection on our work so far.
+      <itemizedlist>
+        <listitem>
+          <para>
+            <code>ListExercises.hs</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <code>PersonParser.hs</code>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    <para>
+      Questions and comments can be forwarded to <ulink url="mailto:tmorris@tmorris.net">Tony Morris</ulink>
+      <xref linkend="PGPKEY"/>.
+    </para>
+  </abstract>
+  <author id="Author">
+    <firstname>Tony</firstname>
+    <surname>Morris</surname>
+    <address>
+      <email>tmorris@tmorris.net</email>
+      <city>Brisbane</city>
+      <state>Queensland</state>
+      <country>Australia</country>
+    </address>
+  </author>
+  <title id="Title">Introspection (Part 1)</title>
+</articleinfo>

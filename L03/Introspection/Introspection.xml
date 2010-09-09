@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+    "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd">
+
+<sect1 id="Introspection" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Introspection</title>
+  <sect2>
+    <title>Syntax</title>
+    <para>
+      We have learned almost all haskell syntax
+      <itemizedlist>
+        <listitem>
+          <para>
+            Type signatures <code>::</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Local expression assignment <code>let</code>/<code>in</code> and <code>where</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Inline pattern-matching <code>case</code>/<code>of</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <code>@</code>s-patterns
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Cons lists <code>(:)</code> and <code>[]</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Modules <code>module</code>/<code>import</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <code>data</code> types
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <code>type</code> aliases
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Conditional <code>if</code>/<code>then</code>/<code>else</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Tuples <code>(a, b)</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Lambda expressions <code>\x -> use x</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Automatic <code>deriving</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Comments <code>{- block comments -}</code> and <code>-- line comments</code>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Bit more to go
+            <itemizedlist>
+              <listitem>
+                <para>
+                  <emphasis>Type-classes <code>class</code>/<code>instance</code>/<code>=></code></emphasis>
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <emphasis><code>do</code> notation</emphasis>
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  Miscellaneous
+                  <itemizedlist>
+                    <listitem>
+                      <para>
+                        <code>newtype</code>
+                      </para>
+                    </listitem>
+                    <listitem>
+                      <para>
+                        Pattern-matching guards
+                      </para>
+                    </listitem>
+                    <listitem>
+                      <para>
+                        Module export lists
+                      </para>
+                    </listitem>
+                    <listitem>
+                      <para>
+                        List comprehensions <code>[x*x | x &lt;- [0..9]]</code>
+                      </para>
+                    </listitem>
+                    <listitem>
+                      <para>
+                        dot-dot lists <code>[1..10]</code>
+                      </para>
+                    </listitem>
+                    <listitem>
+                      <para>
+                        GHC extensions
+                      </para>
+                    </listitem>
+                  </itemizedlist>
+                </para>
+              </listitem>
+            </itemizedlist>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </sect2>
+  <sect2>
+    <title>Tools</title>
+    <para>
+      We are yet to look at tools
+      <itemizedlist>
+        <listitem>
+          <para>
+            Haddock documenting code
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            CABAL for build and dependency management
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            leksah IDE
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            GHCi in detail
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Automated testing
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </sect2>
+  <sect2>
+    <title>Our code</title>
+    <para>
+      Let's look at our parser code <emphasis>See <code>PersonParser.hs</code></emphasis>
+      <itemizedlist>
+        <listitem>
+          <para>
+            Defects -- questions to ask
+            <itemizedlist>
+              <listitem>
+                <para>
+                  How many cases of a compiling program were incorrect programs?
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  Of those cases, how easy was it to determine that the program was incorrect, then correct it?
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  How confident are we that our solution is correct?<footnote>
+                    <para>
+                      Note that we haven't written tests yet
+                    </para>
+                  </footnote>
+                </para>
+              </listitem>
+            </itemizedlist>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Maintenance
+            <itemizedlist>
+              <listitem>
+                <para>
+                  Suppose a requirement came in to support an additional phone number format e.g. contains only 0, 1 and hyphens but does not start or end with a hyphen
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  How confident are we in achieving this objective
+                  <itemizedlist>
+                    <listitem>
+                      <para>
+                        in a reasonable time frame and proportional investment of effort i.e. the effort should be "not much bigger" than the size of implementing the change independently of the existing solution?
+                      </para>
+                    </listitem>
+                    <listitem>
+                      <para>
+                        without breaking the other parts of the program?
+                      </para>
+                    </listitem>
+                  </itemizedlist>
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  We did this by utilising a <emphasis>technique</emphasis>, not a language
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  Everything we have done so far is possible and tractible in a regular language and we would get similar benefits as those above.
+                </para>
+              </listitem>
+            </itemizedlist>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </sect2>
+  <sect2>
+    <title>Next</title>
+    <para>
+      Next we will start looking at concepts not available in everyday languages
+      <itemizedlist>
+        <listitem>
+          <para>
+            Type-classes
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Higher-order polymorphism -- avoiding repetition of effort and abstraction (a massive and fascinating area of pure mathematics)
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            do-notation -- monad comprehensions
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Controlling effects -- how do we print to the screen, read from the database?
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </sect2>
+</sect1>

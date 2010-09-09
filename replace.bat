@@ -1,0 +1,1 @@
+runhaskell Answer\Replace.hs %*
