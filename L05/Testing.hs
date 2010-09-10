@@ -36,6 +36,7 @@ tests =
       , testProperty "flatten"                  prop_flatten
       , testProperty "flatMap (associativity)"  prop_flatMap_associative
       , testProperty "maximum"                  prop_maximum
+      , testProperty "reverse"                  prop_reverse
       ]
   ]
 
@@ -131,7 +132,11 @@ prop_maximum x =
   (not . isEmpty $ x) ==>
   all (\a -> maximum x >= a) x
 
-
+prop_reverse ::
+  List Int
+  -> Bool
+prop_reverse x =
+  (reverse . reverse) x == x
 
 -- Utility
 
