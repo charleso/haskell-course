@@ -1,7 +1,10 @@
+{-# LANGUAGE TypeOperators #-}
+
 module L05.Testing where
 
 import Prelude hiding (sum, length, map, filter, maximum, reverse)
 import Test.QuickCheck
+import Test.QuickCheck.Function
 import Test.Framework
 import Test.Framework.Providers.QuickCheck2 (testProperty)
 import L02.List
@@ -19,10 +22,14 @@ tests =
   [
     testGroup "List"
       [
-        testProperty "map"            prop_map
-      , testProperty "append_reverse" prop_append_reverse
-      , testProperty "append"         prop_append
-      , testProperty "foldRight"      prop_foldRight
+        testProperty "map (identity)"     prop_map
+      , testProperty "append_reverse"     prop_append_reverse
+      , testProperty "append"             prop_append
+      , testProperty "foldRight"          prop_foldRight
+      , testProperty "sum"                prop_sum
+      , testProperty "length"             prop_length
+      , testProperty "filter"             prop_filter
+      , testProperty "map (composition)"  prop_map_composition
       ]
   ]
 
@@ -62,4 +69,35 @@ prop_foldRight ::
   -> Bool
 prop_foldRight x =
   foldRight (:|) Nil x == x --  error "todo"
+
+prop_sum ::
+  List Int
+  -> Bool
+prop_sum x =
+  foldLeft (-) (sum x) x == 0 --  error "todo"
+
+prop_length ::
+  List Int
+  -> Bool
+prop_length x =
+  sum (map (const 1) x) == length x --  error "todo"
+
+prop_filter ::
+  Fun Int Bool
+  -> List Int
+  -> Bool
+prop_filter f x =
+  let universal p = foldRight (&&) True . map p
+      f' = apply f
+  in universal f' (filter f' x)
+
+prop_map_composition ::
+  Fun Int String
+  -> Fun Char Int
+  -> List Char
+  -> Bool
+prop_map_composition f g x =
+  let f' = apply f
+      g' = apply g
+  in map f' (map g' x) == map (f' . g') x
 
