@@ -95,7 +95,7 @@ prop_filter ::
   -> Bool
 prop_filter f x =
   let f' = apply f
-  in all f' (filter f' x)              ---  in error "todo"
+  in all f' (filter f' x) ---  in error "todo"
 
 prop_map_composition ::
   Int `Fun` String
@@ -111,7 +111,7 @@ prop_flatten ::
   List (List Int)
   -> Bool
 prop_flatten x =
-  sum (map length x) == length (flatten x) --- error "todo"
+  sum (map length x) == length (flatten x) ---  error "todo"
 
 prop_flatMap_associative ::
   (Int -> List String)
@@ -121,22 +121,22 @@ prop_flatMap_associative ::
   -> Bool
 prop_flatMap_associative x y z a =
   let p >>>=> q = \k -> q `flatMap` p k
-      d = (x >>>=> y) >>>=> z
-      e = x >>>=> (y >>>=> z)
-  in d a == e a
+      d = (x >>>=> y) >>>=> z ---
+      e = x >>>=> (y >>>=> z) ---
+  in d a == e a                ---  in error "todo"
 
 prop_maximum ::
   List Int
   -> Property
 prop_maximum x =
-  (not . isEmpty $ x) ==>
-  all (\a -> maximum x >= a) x
+  (not . isEmpty $ x) ==>          ---
+  all (\a -> maximum x >= a) x ---  error "todo"
 
 prop_reverse ::
   List Int
   -> Bool
 prop_reverse x =
-  (reverse . reverse) x == x
+  (reverse . reverse) x == x ---  error "todo"
 
 -- Utility
 
