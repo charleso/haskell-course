@@ -2,7 +2,7 @@
 
 module L05.Testing where
 
-import Prelude hiding (sum, length, map, filter, maximum, reverse)
+import Prelude hiding (sum, length, map, all, filter, maximum, reverse)
 import Test.QuickCheck
 import Test.QuickCheck.Function
 import Test.Framework
@@ -68,32 +68,32 @@ prop_foldRight ::
   List Int
   -> Bool
 prop_foldRight x =
-  foldRight (:|) Nil x == x --  error "todo"
+  foldRight (:|) Nil x == x ---  error "todo"
 
 prop_sum ::
   List Int
   -> Bool
 prop_sum x =
-  foldLeft (-) (sum x) x == 0 --  error "todo"
+  foldLeft (-) (sum x) x == 0 ---  error "todo"
 
 prop_length ::
   List Int
   -> Bool
 prop_length x =
-  sum (map (const 1) x) == length x --  error "todo"
+  sum (map (const 1) x) == length x ---  error "todo"
 
 prop_filter ::
-  Fun Int Bool
+  Int `Fun` Bool
   -> List Int
   -> Bool
 prop_filter f x =
-  let universal p = foldRight (&&) True . map p
+  let all p = foldRight (&&) True . map p
       f' = apply f
-  in universal f' (filter f' x)
+  in all f' (filter f' x)              ---  in error "todo"
 
 prop_map_composition ::
-  Fun Int String
-  -> Fun Char Int
+  Int `Fun` String
+  -> Char `Fun` Int
   -> List Char
   -> Bool
 prop_map_composition f g x =
