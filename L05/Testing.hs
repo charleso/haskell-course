@@ -61,5 +61,5 @@ prop_foldRight ::
   List Int
   -> Bool
 prop_foldRight x =
-  foldRight (:|) Nil x == x
+  foldRight (:|) Nil x == x --  error "todo"
 
