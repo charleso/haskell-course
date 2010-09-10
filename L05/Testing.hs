@@ -21,12 +21,35 @@ tests =
       [
         testProperty "map"            prop_map
       , testProperty "append_reverse" prop_append_reverse
+      , testProperty "append"         prop_append
       ]
   ]
 
-prop_map :: List Int -> Bool
-prop_map x = map id x == x
+-- Mapping the identity function on any value (x) produces that value x.
+prop_map ::
+  List Int
+  -> Bool
+prop_map x =
+  map id x == x
 
-prop_append_reverse :: List Int -> List Int -> Bool
-prop_append_reverse x y = reverse (append x y) == append (reverse y) (reverse x)
+-- Appending x to y then reversing produces the same result as
+-- reversing y and appending to the result of reversing x.
+prop_append_reverse ::
+  List Int
+  -> List Int
+  -> Bool
+prop_append_reverse x y =
+  reverse (append x y) == append (reverse y) (reverse x)
 
+-- Exercise 1
+-- Appending (x to y) to z produces the same result as
+-- appending x to (y to z).
+-- The law of associativity.
+prop_append ::
+  List Int
+  -> List Int
+  -> List Int
+  -> Bool
+prop_append x y z =
+  (x `append` y) `append` z == ---
+  x `append` (y `append` z)   ---  error "todo"
