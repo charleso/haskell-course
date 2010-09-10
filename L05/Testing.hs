@@ -14,6 +14,9 @@ import L02.List
 instance Arbitrary a => Arbitrary (List a) where
   arbitrary = fmap (foldr (:|) Nil) arbitrary
 
+instance Show (a -> b) where
+  show _ = "<function>"
+
 main :: IO ()
 main = defaultMain tests
 
@@ -22,15 +25,16 @@ tests =
   [
     testGroup "List"
       [
-        testProperty "map (identity)"     prop_map
-      , testProperty "append_reverse"     prop_append_reverse
-      , testProperty "append"             prop_append
-      , testProperty "foldRight"          prop_foldRight
-      , testProperty "sum"                prop_sum
-      , testProperty "length"             prop_length
-      , testProperty "filter"             prop_filter
-      , testProperty "map (composition)"  prop_map_composition
-      , testProperty "flatten"            prop_flatten
+        testProperty "map (identity)"           prop_map
+      , testProperty "append_reverse"           prop_append_reverse
+      , testProperty "append"                   prop_append
+      , testProperty "foldRight"                prop_foldRight
+      , testProperty "sum"                      prop_sum
+      , testProperty "length"                   prop_length
+      , testProperty "filter"                   prop_filter
+      , testProperty "map (composition)"        prop_map_composition
+      , testProperty "flatten"                  prop_flatten
+      , testProperty "flatMap (associativity)"  prop_flatMap_associative
       ]
   ]
 
@@ -106,5 +110,32 @@ prop_flatten ::
   List (List Int)
   -> Bool
 prop_flatten x =
-  sum (map length x) == length (flatten x)
+  sum (map length x) == length (flatten x) --- error "todo"
+
+prop_flatMap_associative ::
+  (Int -> List String)
+  -> (String -> List Char)
+  -> (Char -> List Integer)
+  -> Int
+  -> Bool
+prop_flatMap_associative x y z a =
+  let p >>>=> q = \k -> q `flatMap` p k
+      d = (x >>>=> y) >>>=> z
+      e = x >>>=> (y >>>=> z)
+  in d a == e a
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
