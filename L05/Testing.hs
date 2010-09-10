@@ -153,13 +153,3 @@ isEmpty ::
 isEmpty Nil    = True
 isEmpty (_:|_) = False
 
-
-
-
-
-
-
-
-
-
-
