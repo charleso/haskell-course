@@ -35,6 +35,7 @@ tests =
       , testProperty "map (composition)"        prop_map_composition
       , testProperty "flatten"                  prop_flatten
       , testProperty "flatMap (associativity)"  prop_flatMap_associative
+      , testProperty "maximum"                  prop_maximum
       ]
   ]
 
@@ -92,8 +93,7 @@ prop_filter ::
   -> List Int
   -> Bool
 prop_filter f x =
-  let all p = foldRight (&&) True . map p
-      f' = apply f
+  let f' = apply f
   in all f' (filter f' x)              ---  in error "todo"
 
 prop_map_composition ::
@@ -124,10 +124,29 @@ prop_flatMap_associative x y z a =
       e = x >>>=> (y >>>=> z)
   in d a == e a
 
+prop_maximum ::
+  List Int
+  -> Property
+prop_maximum x =
+  (not . isEmpty $ x) ==>
+  all (\a -> maximum x >= a) x
 
 
 
+-- Utility
 
+all ::
+  (a -> Bool)
+  -> List a
+  -> Bool
+all p =
+  foldRight (&&) True . map p
+
+isEmpty ::
+  List a
+  -> Bool
+isEmpty Nil    = True
+isEmpty (_:|_) = False
 
 
 
