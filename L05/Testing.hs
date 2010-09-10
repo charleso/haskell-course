@@ -22,6 +22,7 @@ tests =
         testProperty "map"            prop_map
       , testProperty "append_reverse" prop_append_reverse
       , testProperty "append"         prop_append
+      , testProperty "foldRight"      prop_foldRight
       ]
   ]
 
@@ -53,3 +54,12 @@ prop_append ::
 prop_append x y z =
   (x `append` y) `append` z == ---
   x `append` (y `append` z)   ---  error "todo"
+
+-- Exercise 2
+-- Folding (right) with cons and nil on a list (x) produces that same list x.
+prop_foldRight ::
+  List Int
+  -> Bool
+prop_foldRight x =
+  foldRight (:|) Nil x == x
+
