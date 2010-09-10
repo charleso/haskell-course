@@ -30,6 +30,7 @@ tests =
       , testProperty "length"             prop_length
       , testProperty "filter"             prop_filter
       , testProperty "map (composition)"  prop_map_composition
+      , testProperty "flatten"            prop_flatten
       ]
   ]
 
@@ -100,4 +101,10 @@ prop_map_composition f g x =
   let f' = apply f
       g' = apply g
   in map f' (map g' x) == map (f' . g') x ---  in error "todo"
+
+prop_flatten ::
+  List (List Int)
+  -> Bool
+prop_flatten x =
+  sum (map length x) == length (flatten x)
 
