@@ -99,5 +99,5 @@ prop_map_composition ::
 prop_map_composition f g x =
   let f' = apply f
       g' = apply g
-  in map f' (map g' x) == map (f' . g') x
+  in map f' (map g' x) == map (f' . g') x ---  in error "todo"
 
