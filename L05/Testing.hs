@@ -4,7 +4,6 @@ module L05.Testing where
 
 import Prelude hiding (sum, length, map, all, filter, maximum, reverse)
 import Test.QuickCheck
-import Test.QuickCheck.Function
 import Test.Framework
 import Test.Framework.Providers.QuickCheck2 (testProperty)
 import L02.List
@@ -90,22 +89,19 @@ prop_length x =
   sum (map (const 1) x) == length x ---  error "todo"
 
 prop_filter ::
-  Int `Fun` Bool
+  (Int -> Bool)
   -> List Int
   -> Bool
 prop_filter f x =
-  let f' = apply f
-  in all f' (filter f' x) ---  in error "todo"
+  all f (filter f x) ---  in error "todo"
 
 prop_map_composition ::
-  Int `Fun` String
-  -> Char `Fun` Int
+  (Int -> String)
+  -> (Char -> Int)
   -> List Char
   -> Bool
 prop_map_composition f g x =
-  let f' = apply f
-      g' = apply g
-  in map f' (map g' x) == map (f' . g') x ---  in error "todo"
+  map f (map g x) == map (f . g) x ---  in error "todo"
 
 prop_flatten ::
   List (List Int)
