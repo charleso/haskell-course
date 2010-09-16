@@ -76,18 +76,25 @@ prop_foldRight ::
 prop_foldRight x =
   foldRight (:|) Nil x == x ---  error "todo"
 
+-- Exercise 3
+-- Folding on a list (x) with subtraction on the sum of x produces 0.
 prop_sum ::
   List Int
   -> Bool
 prop_sum x =
   foldLeft (-) (sum x) x == 0 ---  error "todo"
 
+-- Exercise 4
+-- Replace each element in a list (x) with 1, then sum that list and you will have the length.
 prop_length ::
   List Int
   -> Bool
 prop_length x =
   sum (map (const 1) x) == length x ---  error "todo"
 
+-- Exercise 5
+-- Filtering a list (x) with a predicate (f) produces a list of elements where
+-- all satisfy predicate f. /See all function below./
 prop_filter ::
   (Int -> Bool)
   -> List Int
@@ -95,6 +102,9 @@ prop_filter ::
 prop_filter f x =
   all f (filter f x) ---  in error "todo"
 
+-- Exercise 6
+-- Mapping a function (g) on a list (x), then mapping another function (f) on that result,
+-- produces the same outcome as mapping the composition of f and g on x.
 prop_map_composition ::
   (Int -> String)
   -> (Char -> Int)
@@ -103,12 +113,18 @@ prop_map_composition ::
 prop_map_composition f g x =
   map f (map g x) == map (f . g) x ---  in error "todo"
 
+-- Exercise 7
+-- Mapping length on a list (x) then taking the same produces the same result as
+-- flattening the list and taking the length.
 prop_flatten ::
   List (List Int)
   -> Bool
 prop_flatten x =
   sum (map length x) == length (flatten x) ---  error "todo"
 
+-- Exercise 8
+-- Using (>>>=>) expressed in terms of flatMap, show that
+-- (>>>=>) is an associative binary operation.
 prop_flatMap_associative ::
   (Int -> List String)
   -> (String -> List Char)
