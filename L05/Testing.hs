@@ -35,6 +35,7 @@ tests =
       , testProperty "flatten"                  prop_flatten
       , testProperty "flatMap (associativity)"  prop_flatMap_associative
       , testProperty "maximum"                  prop_maximum
+      , testProperty "maximum (contains)"       prop_maximum_contains
       , testProperty "reverse"                  prop_reverse
       ]
   ]
@@ -137,31 +138,28 @@ prop_flatMap_associative x y z a =
       e = x >>>=> (y >>>=> z) ---
   in d a == e a               ---  in error "todo"
 
+-- Exercise 9
+-- All elements in maximum of a list (x) are less then or equal to x.
 prop_maximum ::
   List Int
-  -> Property
+  -> Bool
 prop_maximum x =
-  (not . isEmpty $ x) ==>      ---
   all (\a -> maximum x >= a) x ---  error "todo"
 
+-- Exercise 10
+-- The maximum of a list (x) contains x.
+-- Ensure safety with regard to the empty list.
+prop_maximum_contains ::
+  List Int
+  -> Property
+prop_maximum_contains x =
+  (not . isEmpty $ x) ==>
+  x `contains` maximum x
+
+-- Exercise 11
+-- Reversing a list (x) then reversing again results in x.
 prop_reverse ::
   List Int
   -> Bool
 prop_reverse x =
   (reverse . reverse) x == x ---  error "todo"
-
--- Utility
-
-all ::
-  (a -> Bool)
-  -> List a
-  -> Bool
-all p =
-  foldRight (&&) True . map p
-
-isEmpty ::
-  List a
-  -> Bool
-isEmpty Nil    = True
-isEmpty (_:|_) = False
-
