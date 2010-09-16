@@ -66,7 +66,7 @@ prop_append ::
   -> List Int
   -> Bool
 prop_append x y z =
-  error "todo"
+  (append (append x y) z) == (append x (append y z))
 
 -- Exercise 2
 -- Folding (right) with cons and nil on a list (x) produces that same list x.
@@ -74,7 +74,7 @@ prop_foldRight ::
   List Int
   -> Bool
 prop_foldRight x =
-  error "todo"
+  foldRight (:|) Nil x == x
 
 prop_sum ::
   List Int
