@@ -89,7 +89,7 @@ prop_length x =
   error "todo"
 
 prop_filter ::
-  Int `Fun` Bool
+  (Int -> Bool)
   -> List Int
   -> Bool
 prop_filter f x =
@@ -97,8 +97,8 @@ prop_filter f x =
   in error "todo"
 
 prop_map_composition ::
-  Int `Fun` String
-  -> Char `Fun` Int
+  (Int -> String)
+  -> (Char -> Int)
   -> List Char
   -> Bool
 prop_map_composition f g x =
