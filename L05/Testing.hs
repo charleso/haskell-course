@@ -66,7 +66,7 @@ prop_append ::
   -> Bool
 prop_append x y z =
   (x `append` y) `append` z == ---
-  x `append` (y `append` z)   ---  error "todo"
+  x `append` (y `append` z)    ---  error "todo"
 
 -- Exercise 2
 -- Folding (right) with cons and nil on a list (x) produces that same list x.
@@ -119,13 +119,13 @@ prop_flatMap_associative x y z a =
   let p >>>=> q = \k -> q `flatMap` p k
       d = (x >>>=> y) >>>=> z ---
       e = x >>>=> (y >>>=> z) ---
-  in d a == e a                ---  in error "todo"
+  in d a == e a               ---  in error "todo"
 
 prop_maximum ::
   List Int
   -> Property
 prop_maximum x =
-  (not . isEmpty $ x) ==>          ---
+  (not . isEmpty $ x) ==>      ---
   all (\a -> maximum x >= a) x ---  error "todo"
 
 prop_reverse ::

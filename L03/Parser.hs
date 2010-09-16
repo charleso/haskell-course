@@ -191,7 +191,7 @@ surnameParser :: Parser String
 surnameParser = bindParser upper (\c ->               ---
                 bindParser (thisMany 5 lower) (\cs -> ---
                 bindParser (list lower) (\t ->        ---
-                valueParser (c : cs ++ t))))           ---surnameParser = error "todo"
+                valueParser (c : cs ++ t))))          ---surnameParser = error "todo"
 
 -- Exercise 16
 -- Write a parser for Person.gender.
