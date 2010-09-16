@@ -8,7 +8,7 @@ import Test.QuickCheck.Function
 import Test.Framework
 import Test.Framework.Providers.QuickCheck2 (testProperty)
 import L02.List
-
+import Debug.Trace
 
 -- How to produce arbitrary instances of List
 instance Arbitrary a => Arbitrary (List a) where
@@ -66,8 +66,7 @@ prop_append ::
   -> List Int
   -> Bool
 prop_append x y z =
-  (x `append` y) `append` z == ---
-  x `append` (y `append` z)   ---  error "todo"
+  (append (append x y) z) == (append x (append y z))  
 
 -- Exercise 2
 -- Folding (right) with cons and nil on a list (x) produces that same list x.
@@ -75,43 +74,40 @@ prop_foldRight ::
   List Int
   -> Bool
 prop_foldRight x =
-  foldRight (:|) Nil x == x ---  error "todo"
+  foldRight (:|) Nil x == x
 
 prop_sum ::
   List Int
   -> Bool
 prop_sum x =
-  foldLeft (-) (sum x) x == 0 ---  error "todo"
+  foldRight (+) 0 x == sum x
 
 prop_length ::
   List Int
   -> Bool
 prop_length x =
-  sum (map (const 1) x) == length x ---  error "todo"
+  foldRight (\_ y -> 1 + y) 0 x == length x
 
 prop_filter ::
-  Int `Fun` Bool
+  (Int -> Bool)
   -> List Int
   -> Bool
 prop_filter f x =
-  let f' = apply f
-  in all f' (filter f' x) ---  in error "todo"
+  all f (filter f x)
 
 prop_map_composition ::
-  Int `Fun` String
-  -> Char `Fun` Int
+  (Int -> String)
+  -> (Char -> Int)
   -> List Char
   -> Bool
 prop_map_composition f g x =
-  let f' = apply f
-      g' = apply g
-  in map f' (map g' x) == map (f' . g') x ---  in error "todo"
+  map f (map g x) == map (f . g) x
 
 prop_flatten ::
   List (List Int)
   -> Bool
 prop_flatten x =
-  sum (map length x) == length (flatten x) ---  error "todo"
+  length (flatten x) == sum (map length x)
 
 prop_flatMap_associative ::
   (Int -> List String)
@@ -121,22 +117,22 @@ prop_flatMap_associative ::
   -> Bool
 prop_flatMap_associative x y z a =
   let p >>>=> q = \k -> q `flatMap` p k
-      d = (x >>>=> y) >>>=> z ---
-      e = x >>>=> (y >>>=> z) ---
-  in d a == e a                ---  in error "todo"
+   in ((x >>>=> y)  >>>=> z) a == (x >>>=> (y >>>=> z)) a 
+  
+
 
 prop_maximum ::
   List Int
   -> Property
 prop_maximum x =
-  (not . isEmpty $ x) ==>          ---
-  all (\a -> maximum x >= a) x ---  error "todo"
+  (not (isEmpty x)) ==>
+  (all (\y -> y <= maximum x) x)
 
 prop_reverse ::
   List Int
   -> Bool
 prop_reverse x =
-  (reverse . reverse) x == x ---  error "todo"
+  reverse (reverse x) == x
 
 -- Utility
 
