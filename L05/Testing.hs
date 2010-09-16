@@ -130,7 +130,7 @@ prop_reverse ::
   List Int
   -> Bool
 prop_reverse x =
-  error "todo"
+  reverse (reverse x) == x
 
 -- Utility
 
