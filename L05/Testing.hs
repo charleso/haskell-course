@@ -93,8 +93,7 @@ prop_filter ::
   -> List Int
   -> Bool
 prop_filter f x =
-  let f' = apply f
-  in error "todo"
+  error "todo"
 
 prop_map_composition ::
   (Int -> String)
@@ -102,9 +101,7 @@ prop_map_composition ::
   -> List Char
   -> Bool
 prop_map_composition f g x =
-  let f' = apply f
-      g' = apply g
-  in error "todo"
+  error "todo"
 
 prop_flatten ::
   List (List Int)
