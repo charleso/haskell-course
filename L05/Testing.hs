@@ -80,20 +80,20 @@ prop_sum ::
   List Int
   -> Bool
 prop_sum x =
-  error "todo"
+  foldLeft (-) (sum x) x == 0
 
 prop_length ::
   List Int
   -> Bool
 prop_length x =
-  error "todo"
+  sum (map (const 1) x) == length x
 
 prop_filter ::
   (Int -> Bool)
   -> List Int
   -> Bool
 prop_filter f x =
-  error "todo"
+  all f (filter f x) == True
 
 prop_map_composition ::
   (Int -> String)
@@ -101,13 +101,13 @@ prop_map_composition ::
   -> List Char
   -> Bool
 prop_map_composition f g x =
-  error "todo"
+  map f (map g x) == map (f . g) x
 
 prop_flatten ::
   List (List Int)
   -> Bool
 prop_flatten x =
-  error "todo"
+  sum (map length x) == length (flatten x)
 
 prop_flatMap_associative ::
   (Int -> List String)
@@ -117,7 +117,7 @@ prop_flatMap_associative ::
   -> Bool
 prop_flatMap_associative x y z a =
   let p >>>=> q = \k -> q `flatMap` p k
-  in error "todo"
+  in ((x >>>=> y) >>>=> z) a == (x >>>=> (y >>>=> z)) a
 
 prop_maximum ::
   List Int
