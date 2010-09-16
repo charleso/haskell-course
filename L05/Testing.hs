@@ -66,8 +66,7 @@ prop_append ::
   -> List Int
   -> Bool
 prop_append x y z =
-  (x `append` y) `append` z == ---
-  x `append` (y `append` z)   ---  error "todo"
+  error "todo"
 
 -- Exercise 2
 -- Folding (right) with cons and nil on a list (x) produces that same list x.
@@ -75,19 +74,19 @@ prop_foldRight ::
   List Int
   -> Bool
 prop_foldRight x =
-  foldRight (:|) Nil x == x ---  error "todo"
+  error "todo"
 
 prop_sum ::
   List Int
   -> Bool
 prop_sum x =
-  foldLeft (-) (sum x) x == 0 ---  error "todo"
+  error "todo"
 
 prop_length ::
   List Int
   -> Bool
 prop_length x =
-  sum (map (const 1) x) == length x ---  error "todo"
+  error "todo"
 
 prop_filter ::
   Int `Fun` Bool
@@ -95,7 +94,7 @@ prop_filter ::
   -> Bool
 prop_filter f x =
   let f' = apply f
-  in all f' (filter f' x) ---  in error "todo"
+  in error "todo"
 
 prop_map_composition ::
   Int `Fun` String
@@ -105,13 +104,13 @@ prop_map_composition ::
 prop_map_composition f g x =
   let f' = apply f
       g' = apply g
-  in map f' (map g' x) == map (f' . g') x ---  in error "todo"
+  in error "todo"
 
 prop_flatten ::
   List (List Int)
   -> Bool
 prop_flatten x =
-  sum (map length x) == length (flatten x) ---  error "todo"
+  error "todo"
 
 prop_flatMap_associative ::
   (Int -> List String)
@@ -121,22 +120,19 @@ prop_flatMap_associative ::
   -> Bool
 prop_flatMap_associative x y z a =
   let p >>>=> q = \k -> q `flatMap` p k
-      d = (x >>>=> y) >>>=> z ---
-      e = x >>>=> (y >>>=> z) ---
-  in d a == e a                ---  in error "todo"
+  in error "todo"
 
 prop_maximum ::
   List Int
   -> Property
 prop_maximum x =
-  (not . isEmpty $ x) ==>          ---
-  all (\a -> maximum x >= a) x ---  error "todo"
+  error "todo"
 
 prop_reverse ::
   List Int
   -> Bool
 prop_reverse x =
-  (reverse . reverse) x == x ---  error "todo"
+  error "todo"
 
 -- Utility
 
