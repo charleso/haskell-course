@@ -4,7 +4,7 @@ module L05.Testing where
 
 import Prelude hiding (sum, length, map, all, filter, maximum, reverse)
 import Test.QuickCheck
-import Test.QuickCheck.Function
+import Test.QuickCheck.Property
 import Test.Framework
 import Test.Framework.Providers.QuickCheck2 (testProperty)
 import L02.List
@@ -93,7 +93,7 @@ prop_filter ::
   -> List Int
   -> Bool
 prop_filter f x =
-  all f (filter f x) == True
+  all f (filter f x)
 
 prop_map_composition ::
   (Int -> String)
@@ -123,7 +123,8 @@ prop_maximum ::
   List Int
   -> Property
 prop_maximum x =
-  error "todo"
+  let m = maximum x
+  in liftBool (all (\a -> a <= m) x)
 
 prop_reverse ::
   List Int
