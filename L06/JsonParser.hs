@@ -3,6 +3,7 @@ module L06.JsonParser where
 import Prelude hiding (exponent)
 import Data.Char
 import Data.Map
+import L01.Validation
 import L03.Parser
 import L06.JsonValue
 import L06.MoreParser
@@ -122,3 +123,11 @@ jsonFile =
   do c <- jsonObject ||| jsonArray
      eof
      return c
+
+readJsonFile ::
+  FilePath -> IO JsonValue
+readJsonFile p =
+  do c <- readFile p
+     case parse jsonFile c of Error m -> error m
+                              Value (_, a) -> return a
+
