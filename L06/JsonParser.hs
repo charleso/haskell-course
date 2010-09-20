@@ -1,6 +1,7 @@
 module L06.JsonParser where
 
 import Prelude hiding (exponent)
+import Data.Char
 import L03.Parser
 import L06.JsonValue
 import L06.MoreParser
@@ -53,3 +54,21 @@ number =
      e <- option [] exponent
      return . JsonNumber . read . concat $ [i,f,e]
 
+isJsonChar :: Char -> Bool
+isJsonChar =
+  and . sequence [isAscii, isPrint, (/= '\\'), (/= '"')]
+
+jsonChar ::
+  Parser Char
+jsonChar =
+  satisfy isJsonChar
+  ||| do is '\\'  -- escaping backslash
+         is '\\'  -- escaped character
+           ||| is '"'
+           ||| is '/'
+           ||| (is 'b' >> return '\b')
+           ||| (is 'f' >> return '\f')
+           ||| (is 'n' >> return '\n')
+           ||| (is 'r' >> return '\r')
+           ||| (is 't' >> return '\t')
+           ||| hex

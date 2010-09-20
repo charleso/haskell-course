@@ -1,7 +1,10 @@
 module L06.MoreParser where
 
 import L03.Parser
+import Data.Char
+import Numeric
 import Control.Applicative
+import Control.Monad
 
 instance Functor Parser where
   fmap f p = bindParser p (valueParser . f)
@@ -64,3 +67,14 @@ noneof ::
   -> Parser Char
 noneof s =
   satisfy (flip notElem s)
+
+hex ::
+  Parser Char
+hex =
+  let hInt s = case readHex s
+               of [] -> 0
+                  ((n, _):_) -> n
+  in do is 'u'
+        h <- replicateM 4 (satisfy isHexDigit)
+        return . chr . hInt $ h
+
