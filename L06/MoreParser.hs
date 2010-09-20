@@ -40,3 +40,11 @@ stringThenSpaces ::
   -> Parser String
 stringThenSpaces =
   thenSpaces . string
+
+option ::
+  a
+  -> Parser a
+  -> Parser a
+option a p =
+  p ||| return a
+
