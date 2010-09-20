@@ -24,3 +24,7 @@ thenSpaces p =
      spaces
      return v
 
+commaThenSpaces ::
+  Parser Char
+commaThenSpaces =
+  thenSpaces (pure ',')
