@@ -34,3 +34,9 @@ string ::
   -> Parser String
 string =
   mapM is
+
+stringThenSpaces ::
+  String
+  -> Parser String
+stringThenSpaces =
+  thenSpaces . string
