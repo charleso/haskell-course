@@ -113,8 +113,7 @@ jsonValue =
            ||| jsonArray
            ||| jsonTrue
            ||| jsonFalse
-           ||| jsonNull
-           )
+           ||| jsonNull)
      return obj
 
 jsonFile ::
