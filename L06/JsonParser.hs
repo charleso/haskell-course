@@ -73,3 +73,9 @@ jsonChar =
            ||| (is 't' >> return '\t')
            ||| hex
 
+jsonString ::
+  Parser JsonValue
+jsonString =
+  do s <- between quote quote (list jsonChar)
+     return (JsonString s)
+

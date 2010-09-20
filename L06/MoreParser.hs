@@ -32,6 +32,11 @@ commaThenSpaces ::
 commaThenSpaces =
   thenSpaces (pure ',')
 
+quote ::
+  Parser Char
+quote =
+  is '"'
+
 string ::
   String
   -> Parser String
