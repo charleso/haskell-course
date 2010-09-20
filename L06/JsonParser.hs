@@ -117,3 +117,9 @@ jsonValue =
            )
      return obj
 
+jsonFile ::
+  Parser JsonValue
+jsonFile =
+  do c <- jsonObject ||| jsonArray
+     eof
+     return c
