@@ -48,3 +48,19 @@ option ::
 option a p =
   p ||| return a
 
+digits ::
+  Parser String
+digits =
+  many1 digit
+
+oneof ::
+  String
+  -> Parser Char
+oneof s =
+  satisfy (flip elem s)
+
+noneof ::
+  String
+  -> Parser Char
+noneof s =
+  satisfy (flip notElem s)
