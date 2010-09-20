@@ -28,3 +28,9 @@ commaThenSpaces ::
   Parser Char
 commaThenSpaces =
   thenSpaces (pure ',')
+
+string ::
+  String
+  -> Parser String
+string =
+  mapM is
