@@ -68,6 +68,17 @@ noneof ::
 noneof s =
   satisfy (flip notElem s)
 
+between ::
+  Parser o
+  -> Parser c
+  -> Parser a
+  -> Parser a
+between o c a =
+  do o
+     v <- a
+     c
+     return v
+
 hex ::
   Parser Char
 hex =

@@ -72,3 +72,4 @@ jsonChar =
            ||| (is 'r' >> return '\r')
            ||| (is 't' >> return '\t')
            ||| hex
+
