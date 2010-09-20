@@ -1,5 +1,6 @@
 module L06.MoreParser where
 
+import L01.Validation
 import L03.Parser
 import Data.Char
 import Numeric
@@ -105,7 +106,7 @@ sepby ::
   -> Parser s
   -> Parser [a]
 sepby p s =
-  undefined
+  sepby1 p s ||| return []
 
 sepby1 ::
   Parser a
@@ -115,4 +116,10 @@ sepby1 p s =
   do v <- p
      w <- list (s >> p)
      return (v:w)
+
+eof ::
+  Parser ()
+eof = P (\s -> case s of [] -> Value ([], ())
+                         x -> Error ("Expected EOF but got " ++ x))
+
 
