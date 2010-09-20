@@ -27,10 +27,16 @@ thenSpaces p =
      spaces
      return v
 
+charThenSpaces ::
+  Char
+  -> Parser Char
+charThenSpaces =
+  thenSpaces . is
+
 commaThenSpaces ::
   Parser Char
 commaThenSpaces =
-  thenSpaces (pure ',')
+  charThenSpaces ','
 
 quote ::
   Parser Char
@@ -93,4 +99,20 @@ hex =
   in do is 'u'
         h <- replicateM 4 (satisfy isHexDigit)
         return . chr . hInt $ h
+
+sepby ::
+  Parser a
+  -> Parser s
+  -> Parser [a]
+sepby p s =
+  undefined
+
+sepby1 ::
+  Parser a
+  -> Parser s
+  -> Parser [a]
+sepby1 p s =
+  do v <- p
+     w <- list (s >> p)
+     return (v:w)
 

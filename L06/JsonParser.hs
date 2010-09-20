@@ -2,6 +2,7 @@ module L06.JsonParser where
 
 import Prelude hiding (exponent)
 import Data.Char
+import Data.Map
 import L03.Parser
 import L06.JsonValue
 import L06.MoreParser
@@ -46,9 +47,9 @@ int =
      v <- string "0" ||| digits
      return (s ++ v)
 
-number ::
+jsonNumber ::
   Parser JsonValue
-number =
+jsonNumber =
   do i <- int
      f <- option [] fractional
      e <- option [] exponent
@@ -78,4 +79,41 @@ jsonString ::
 jsonString =
   do s <- between quote quote (list jsonChar)
      return (JsonString s)
+
+jsonPair ::
+  Parser (String, JsonValue)
+jsonPair =
+  let z (JsonString s) = s
+      z _              = []
+  in do k   <- thenSpaces jsonString
+        thenSpaces (is ':')
+        v <- thenSpaces jsonValue
+        return (z k, v)
+
+jsonObject ::
+  Parser JsonValue
+jsonObject =
+  do p <- between (charThenSpaces '{') (charThenSpaces '}') (sepby jsonPair commaThenSpaces)
+     return . JsonObject $ fromList p
+
+jsonArray ::
+  Parser JsonValue
+jsonArray =
+  do v <- between (charThenSpaces '[') (charThenSpaces ']') (sepby (thenSpaces jsonValue) commaThenSpaces)
+     return . JsonArray $ v
+
+jsonValue ::
+  Parser JsonValue
+jsonValue =
+  do spaces
+     obj <- thenSpaces
+              (jsonString
+           ||| jsonNumber
+           ||| jsonObject
+           ||| jsonArray
+           ||| jsonTrue
+           ||| jsonFalse
+           ||| jsonNull
+           )
+     return obj
 
