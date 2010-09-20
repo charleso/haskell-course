@@ -39,4 +39,5 @@ Library
                     L05.Testing
                     L06.JsonValue
                     L06.MoreParser
+                    L06.JsonParser
 
