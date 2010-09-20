@@ -38,3 +38,5 @@ Library
                     L04.Tests
                     L05.Testing
                     L06.JsonValue
+                    L06.MoreParser
+
