@@ -12,18 +12,21 @@ class Fluffy f where
 -- Exercise 1
 -- Relative Difficulty: 1
 instance Fluffy List where
-  furry = error "todo"
+  furry = map
 
 -- Exercise 2
 -- Relative Difficulty: 1
 instance Fluffy Optional where
-  furry = error "todo"
+  furry = mapOptional
 
 
 -- Exercise 3
 -- Relative Difficulty: 2
 instance Fluffy Parser where
-  furry = error "todo"
+--  furry x fa = bindParser fa (\a -> (valueParser (x a)))
+--  furry x fa = bindParser fa (valueParser . x)
+--  furry x = flip bindParser (valueParser . x)
+  furry = flip bindParser . (valueParser .)
 
 
 --
