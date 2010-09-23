@@ -36,12 +36,13 @@ instance Misty Parser where
 -- Exercise 8
 -- Relative Difficulty: 2
 jellybean :: Misty m => m (m a) -> m a
-jellybean = error "todo"
+jellybean = banana id
 
 -- Exercise 9
 -- Relative Difficulty: 3
 sausage :: Misty m => [m a] -> m [a]
-sausage = error "todo"
+sausage [] = unicorn []
+sausage (h:t) = banana (\a -> banana (\as -> unicorn (a : as)) (sausage t)) h
 
 -- Exercise 10
 -- Relative Difficulty: 3
