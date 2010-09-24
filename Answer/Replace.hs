@@ -35,9 +35,9 @@ withLinesInPlace ::
   -> FilePath -- ^ The file to run the replacement function on.
   -> IO ()
 withLinesInPlace f z =
-  do t <- getTemporaryDirectory
-     i <- openFile z ReadMode
-     (p, o) <- openTempFile t (takeFileName z)
+  do i <- openFile z ReadMode
+     (p, o) <- openTempFile (dropFileName z) ('.' : takeFileName z)
+     print (p, o)
      withLines f i o
      hClose o
      hClose i
