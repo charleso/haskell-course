@@ -20,6 +20,11 @@ instance Monad Parser where
   return = pure
   (>>=) = bindParser
 
+spaces ::
+  Parser String
+spaces =
+  list space
+
 tok ::
   Parser a
   -> Parser a

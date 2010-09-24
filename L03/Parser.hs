@@ -123,8 +123,8 @@ space = satisfy isSpace ---space = error "todo"
 --   * The input is empty.
 --   * The first produced character is not a space.
 -- ~~~ Use the many1 and space functions. ~~~
-spaces :: Parser String
-spaces = many1 space ---spaces = error "todo"
+spaces1 :: Parser String
+spaces1 = many1 space ---spaces = error "todo"
 
 -- Exercise 10.6
 -- Return a parser that produces a lower-case character but fails if
@@ -232,13 +232,13 @@ phoneParser = bindParser digit (\d ->           ---
 --         phoneParser ~~~
 personParser :: Parser Person
 personParser = bindParser ageParser (\age ->                                ---
-               spaces >>>                                                   ---
+               spaces1 >>>                                                   ---
                bindParser firstNameParser (\firstName ->                    ---
-               spaces >>>                                                   ---
+               spaces1 >>>                                                   ---
                bindParser surnameParser (\surname ->                        ---
-               spaces >>>                                                   ---
+               spaces1 >>>                                                   ---
                bindParser genderParser (\gender ->                          ---
-               spaces >>>                                                   ---
+               spaces1 >>>                                                   ---
                bindParser phoneParser (\phone ->                            ---
                valueParser (Person age firstName surname gender phone)))))) ---personParser = error "todo"
 
