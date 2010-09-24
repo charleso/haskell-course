@@ -14,8 +14,8 @@ import L06.MoreParser
 jsonString ::
   Parser String
 jsonString =
-  let c   =     is '\\' >> e
-            ||| satisfyAny [(/= '"'), (/= '\\')]
+  let c =     is '\\' >> e
+          ||| satisfyAll [(/= '"'), (/= '\\')]
       e =     '"'  <$ is '"'
           ||| '\\' <$ is '\\'
           ||| '/'  <$ is '/'
@@ -26,11 +26,11 @@ jsonString =
           ||| '\t' <$ is 't'
           ||| is 'u' *> u
       u = do d <- replicateM 4 (satisfy isHexDigit)
-             let c = fst . head . readHex $ d
-             return (if c <= (fromEnum (maxBound :: Char))
-                        then pure (toEnum c)
-                        else undefined)
-  in error "todo"
+             let z = fst . head . readHex $ d
+             if z <= (fromEnum (maxBound :: Char))
+                then pure (toEnum z)
+                else failed ("Expected valid character. Found: " ++ [chr z])
+  in betweenCharTok '"' '"' (list c)
 
 jsonNumber ::
   Parser Rational
