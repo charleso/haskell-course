@@ -56,6 +56,8 @@ p >>> q = bindParser p (\_ -> q) ---(>>>) = error "todo"
 P p1 ||| P p2 = P (\s -> case p1 s of v@(Value _) -> v ---
                                       Error _ -> p2 s) ---(|||) = error "todo"
 
+infixl 3 |||
+
 -- Exercise 7
 -- Return a parser that continues producing a list of values from the given parser.
 -- ~~~ Use many1, valueParser and (|||). ~~~
