@@ -3,7 +3,6 @@ module L06.JsonParser where
 import Prelude hiding (exponent)
 import Numeric
 import Data.Char
-import Data.Map
 import Control.Applicative
 import Control.Monad
 import L01.Validation
@@ -35,36 +34,34 @@ jsonString =
 jsonNumber ::
   Parser Rational
 jsonNumber =
-  error "todo"
+  P (\i -> case readSigned readFloat i of [] -> Error "Expected Rational"
+                                          ((n, z):_) -> Value (z, n))
 
 jsonObject ::
   Parser Assoc
 jsonObject =
-  let field = undefined
-  in betweenCharTok '{' '}' (error "todo")
+  let field = (,) <$> (jsonString <* charTok ':') <*> jsonValue
+  in betweenCharTok '{' '}' $ field `sepby` charTok ','
 
 jsonArray ::
   Parser [JsonValue]
 jsonArray =
-  error "todo"
+  betweenCharTok '[' ']' $ jsonValue `sepby` charTok ','
 
 jsonTrue
-  :: Parser ()
+  :: Parser String
 jsonTrue =
-  do stringTok "true"
-     return ()
+  stringTok "true"
 
 jsonFalse
-  :: Parser ()
+  :: Parser String
 jsonFalse =
-  do stringTok "false"
-     return ()
+  stringTok "false"
 
 jsonNull
-  :: Parser ()
+  :: Parser String
 jsonNull =
-  do stringTok "null"
-     return ()
+  stringTok "null"
 
 jsonValue ::
   Parser JsonValue
@@ -77,130 +74,10 @@ jsonValue =
   ||| JsonFalse <$ jsonFalse
   ||| JsonNull <$ jsonNull
 
-
-
-{-
-jsonNull
-  :: Parser JsonValue
-jsonNull =
-  do stringThenSpaces "null"
-     return JsonNull
-
-jsonTrue
-  :: Parser JsonValue
-jsonTrue =
-  do stringThenSpaces "true"
-     return JsonNull
-
-jsonFalse
-  :: Parser JsonValue
-jsonFalse =
-  do stringThenSpaces "false"
-     return JsonNull
-
-fractional
-  :: Parser String
-fractional =
-  do is '.'
-     d <- digits
-     return ('.':d)
-
-exponent ::
-  Parser String
-exponent =
-  do e <- oneof "eE"
-     s <- option '+' (oneof "+-")
-     d <- digits
-     return (e:s:d)
-
-int ::
-  Parser String
-int =
-  do s <- option [] (string "-")
-     v <- string "0" ||| digits
-     return (s ++ v)
-
-jsonNumber ::
-  Parser JsonValue
-jsonNumber =
-  do i <- int
-     f <- option [] fractional
-     e <- option [] exponent
-     return . JsonNumber . read . concat $ [i,f,e]
-
-isJsonChar :: Char -> Bool
-isJsonChar =
-  and . sequence [isAscii, isPrint, (/= '\\'), (/= '"')]
-
-jsonChar ::
-  Parser Char
-jsonChar =
-  satisfy isJsonChar
-  ||| do is '\\'  -- escaping backslash
-         is '\\'  -- escaped character
-           ||| is '"'
-           ||| is '/'
-           ||| (is 'b' >> return '\b')
-           ||| (is 'f' >> return '\f')
-           ||| (is 'n' >> return '\n')
-           ||| (is 'r' >> return '\r')
-           ||| (is 't' >> return '\t')
-           ||| hex
-
-jsonString ::
-  Parser JsonValue
-jsonString =
-  do s <- between quote quote (list jsonChar)
-     return (JsonString s)
-
-jsonPair ::
-  Parser (String, JsonValue)
-jsonPair =
-  let z (JsonString s) = s
-      z _              = []
-  in do k   <- thenSpaces jsonString
-        thenSpaces (is ':')
-        v <- thenSpaces jsonValue
-        return (z k, v)
-
-jsonObject ::
-  Parser JsonValue
-jsonObject =
-  do p <- between (charThenSpaces '{') (charThenSpaces '}') (sepby jsonPair commaThenSpaces)
-     return . JsonObject $ fromList p
-
-jsonArray ::
-  Parser JsonValue
-jsonArray =
-  do v <- between (charThenSpaces '[') (charThenSpaces ']') (sepby (thenSpaces jsonValue) commaThenSpaces)
-     return . JsonArray $ v
-
-jsonValue ::
-  Parser JsonValue
-jsonValue =
-  do spaces
-     obj <- thenSpaces
-              (jsonString
-           ||| jsonNumber
-           ||| jsonObject
-           ||| jsonArray
-           ||| jsonTrue
-           ||| jsonFalse
-           ||| jsonNull)
-     return obj
-
-jsonFile ::
-  Parser JsonValue
-jsonFile =
-  do c <- jsonObject ||| jsonArray
-     eof
-     return c
-
-readJsonFile ::
+readJsonValue ::
   FilePath -> IO JsonValue
-readJsonFile p =
+readJsonValue p =
   do c <- readFile p
-     case parse jsonFile c of Error m -> error m
-                              Value (_, a) -> return a
-                              -}
+     case parse jsonValue c of Error m -> error m
+                               Value (_, a) -> return a
 

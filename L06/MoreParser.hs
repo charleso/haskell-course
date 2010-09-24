@@ -20,17 +20,15 @@ instance Monad Parser where
   return = pure
   (>>=) = bindParser
 
-spaces ::
-  Parser String
-spaces =
-  list space
+spaces :: Parser String
+spaces =list space
 
 tok ::
   Parser a
   -> Parser a
 tok p =
   do v <- p
-     spaces
+     spaces1
      return v
 
 charTok ::
