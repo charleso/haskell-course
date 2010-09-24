@@ -28,7 +28,7 @@ tok ::
   -> Parser a
 tok p =
   do v <- p
-     spaces1
+     spaces
      return v
 
 charTok ::
