@@ -66,13 +66,14 @@ jsonNull =
 jsonValue ::
   Parser JsonValue
 jsonValue =
-      JsonString <$> jsonString
-  ||| JsonRational False <$> jsonNumber
-  ||| JsonObject <$> jsonObject
-  ||| JsonArray <$> jsonArray
-  ||| JsonTrue <$ jsonTrue
-  ||| JsonFalse <$ jsonFalse
-  ||| JsonNull <$ jsonNull
+      spaces *>
+      (JsonString <$> jsonString
+   ||| JsonRational False <$> jsonNumber
+   ||| JsonObject <$> jsonObject
+   ||| JsonArray <$> jsonArray
+   ||| JsonTrue <$ jsonTrue
+   ||| JsonFalse <$ jsonFalse
+   ||| JsonNull <$ jsonNull)
 
 readJsonValue ::
   FilePath -> IO JsonValue
