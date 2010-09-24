@@ -1,13 +1,85 @@
 module L06.JsonParser where
 
 import Prelude hiding (exponent)
+import Numeric
 import Data.Char
 import Data.Map
+import Control.Applicative
+import Control.Monad
 import L01.Validation
 import L03.Parser
 import L06.JsonValue
 import L06.MoreParser
 
+jsonString ::
+  Parser String
+jsonString =
+  let c   =     is '\\' >> e
+            ||| satisfyAny [(/= '"'), (/= '\\')]
+      e =     '"'  <$ is '"'
+          ||| '\\' <$ is '\\'
+          ||| '/'  <$ is '/'
+          ||| '\b' <$ is 'b'
+          ||| '\f' <$ is 'f'
+          ||| '\n' <$ is 'n'
+          ||| '\r' <$ is 'r'
+          ||| '\t' <$ is 't'
+          ||| is 'u' *> u
+      u = do d <- replicateM 4 (satisfy isHexDigit)
+             let c = fst . head . readHex $ d
+             return (if c <= (fromEnum (maxBound :: Char))
+                        then pure (toEnum c)
+                        else undefined)
+  in error "todo"
+
+jsonNumber ::
+  Parser Rational
+jsonNumber =
+  error "todo"
+
+jsonObject ::
+  Parser Assoc
+jsonObject =
+  let field = undefined
+  in betweenCharTok '{' '}' (error "todo")
+
+jsonArray ::
+  Parser [JsonValue]
+jsonArray =
+  error "todo"
+
+jsonTrue
+  :: Parser ()
+jsonTrue =
+  do stringTok "true"
+     return ()
+
+jsonFalse
+  :: Parser ()
+jsonFalse =
+  do stringTok "false"
+     return ()
+
+jsonNull
+  :: Parser ()
+jsonNull =
+  do stringTok "null"
+     return ()
+
+jsonValue ::
+  Parser JsonValue
+jsonValue =
+      JsonString <$> jsonString
+  ||| JsonRational False <$> jsonNumber
+  ||| JsonObject <$> jsonObject
+  ||| JsonArray <$> jsonArray
+  ||| JsonTrue <$ jsonTrue
+  ||| JsonFalse <$ jsonFalse
+  ||| JsonNull <$ jsonNull
+
+
+
+{-
 jsonNull
   :: Parser JsonValue
 jsonNull =
@@ -130,4 +202,5 @@ readJsonFile p =
   do c <- readFile p
      case parse jsonFile c of Error m -> error m
                               Value (_, a) -> return a
+                              -}
 

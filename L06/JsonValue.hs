@@ -2,10 +2,12 @@ module L06.JsonValue where
 
 import Data.Map hiding (map)
 
+type Assoc = [(String, JsonValue)]
+
 data JsonValue =
      JsonString String
-   | JsonNumber Double
-   | JsonObject (Map String JsonValue)
+   | JsonRational  Bool !Rational
+   | JsonObject Assoc
    | JsonArray  [JsonValue]
    | JsonTrue
    | JsonFalse

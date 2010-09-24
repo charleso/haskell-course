@@ -20,29 +20,37 @@ instance Monad Parser where
   return = pure
   (>>=) = bindParser
 
-thenSpaces ::
+tok ::
   Parser a
   -> Parser a
-thenSpaces p =
+tok p =
   do v <- p
      spaces
      return v
 
-charThenSpaces ::
+charTok ::
   Char
   -> Parser Char
-charThenSpaces =
-  thenSpaces . is
+charTok =
+  tok . is
 
-commaThenSpaces ::
+betweenCharTok ::
+  Char
+  -> Char
+  -> Parser a
+  -> Parser a
+betweenCharTok a b =
+  between (charTok a) (charTok b)
+
+commaTok ::
   Parser Char
-commaThenSpaces =
-  charThenSpaces ','
+commaTok =
+  charTok ','
 
 quote ::
   Parser Char
 quote =
-  is '"'
+  is '"' ||| is '\"'
 
 string ::
   String
@@ -50,11 +58,11 @@ string ::
 string =
   mapM is
 
-stringThenSpaces ::
+stringTok ::
   String
   -> Parser String
-stringThenSpaces =
-  thenSpaces . string
+stringTok =
+  tok . string
 
 option ::
   a
@@ -122,4 +130,15 @@ eof ::
 eof = P (\s -> case s of [] -> Value ([], ())
                          x -> Error ("Expected EOF but got " ++ x))
 
+satisfyAll ::
+  [Char -> Bool]
+  -> Parser Char
+satisfyAll ps =
+  satisfy (and  . sequence ps)
+
+satisfyAny ::
+  [Char -> Bool]
+  -> Parser Char
+satisfyAny ps =
+  satisfy (or  . sequence ps)
 
