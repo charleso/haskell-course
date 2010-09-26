@@ -11,20 +11,26 @@ import Control.Monad
   Parser a
   -> Input
   -> Validation a
-(<.>) i = mapValidation snd . parse i
+(<.>) i =
+  mapValidation snd . parse i
 
 instance Functor Parser where
-  fmap f p = bindParser p (valueParser . f)
+  fmap f p =
+    bindParser p (valueParser . f)
 
 instance Applicative Parser where
-  pure = valueParser
-  f <*> a = bindParser f (\f' ->
-            bindParser a (\a' ->
-            valueParser (f' a')))
+  pure =
+    valueParser
+  f <*> a =
+    bindParser f (\f' ->
+    bindParser a (\a' ->
+    valueParser (f' a')))
 
 instance Monad Parser where
-  return = pure
-  (>>=) = bindParser
+  return =
+    pure
+  (>>=) =
+    bindParser
 
 spaces :: Parser String
 spaces = list space
