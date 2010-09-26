@@ -79,6 +79,7 @@ readJsonValue ::
   FilePath -> IO JsonValue
 readJsonValue p =
   do c <- readFile p
-     case parse jsonValue c of Error m -> error m
-                               Value (_, a) -> return a
+     case jsonValue <.> c of
+       Error m -> error m
+       Value a -> return a
 
