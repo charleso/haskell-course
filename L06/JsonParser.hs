@@ -13,7 +13,7 @@ import L06.MoreParser
 jsonString ::
   Parser String
 jsonString =
-  let c =     is '\\' >> e
+  let c =     (is '\\' >> e)
           ||| satisfyAll [(/= '"'), (/= '\\')]
       e =     '"'  <$ is '"'
           ||| '\\' <$ is '\\'
@@ -67,13 +67,13 @@ jsonValue ::
   Parser JsonValue
 jsonValue =
       spaces *>
-      (JsonString <$> jsonString
-   ||| JsonRational False <$> jsonNumber
-   ||| JsonObject <$> jsonObject
-   ||| JsonArray <$> jsonArray
+      (JsonNull <$ jsonNull
    ||| JsonTrue <$ jsonTrue
    ||| JsonFalse <$ jsonFalse
-   ||| JsonNull <$ jsonNull)
+   ||| JsonArray <$> jsonArray
+   ||| JsonString <$> jsonString
+   ||| JsonObject <$> jsonObject
+   ||| JsonRational False <$> jsonNumber)
 
 readJsonValue ::
   FilePath -> IO JsonValue

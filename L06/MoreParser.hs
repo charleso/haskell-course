@@ -21,7 +21,7 @@ instance Monad Parser where
   (>>=) = bindParser
 
 spaces :: Parser String
-spaces =list space
+spaces = list space
 
 tok ::
   Parser a
