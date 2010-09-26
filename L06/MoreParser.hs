@@ -7,6 +7,13 @@ import Numeric
 import Control.Applicative
 import Control.Monad
 
+(<.>) ::
+  Parser a
+  -> Input
+  -> Validation a
+
+(<.>) i = mapValidation snd . parse i
+
 instance Functor Parser where
   fmap f p = bindParser p (valueParser . f)
 
