@@ -1,7 +1,5 @@
 module L06.JsonValue where
 
-import Data.Map hiding (map)
-
 type Assoc = [(String, JsonValue)]
 
 data JsonValue =
