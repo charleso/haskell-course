@@ -76,7 +76,8 @@ jsonValue =
    ||| JsonRational False <$> jsonNumber)
 
 readJsonValue ::
-  FilePath -> IO JsonValue
+  FilePath
+  -> IO JsonValue
 readJsonValue p =
   do c <- readFile p
      case jsonValue <.> c of
