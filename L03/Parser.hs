@@ -124,7 +124,7 @@ space = satisfy isSpace ---space = error "todo"
 --   * The first produced character is not a space.
 -- ~~~ Use the many1 and space functions. ~~~
 spaces1 :: Parser String
-spaces1 = many1 space ---spaces = error "todo"
+spaces1 = many1 space ---spaces1 = error "todo"
 
 -- Exercise 10.6
 -- Return a parser that produces a lower-case character but fails if
