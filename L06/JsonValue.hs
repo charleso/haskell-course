@@ -11,4 +11,3 @@ data JsonValue =
    | JsonFalse
    | JsonNull
   deriving (Show, Eq)
-

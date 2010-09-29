@@ -117,9 +117,9 @@ between o c a =
 hex ::
   Parser Char
 hex =
-  let hInt s = case readHex s
-               of [] -> 0
-                  ((n, _):_) -> n
+  let hInt s = case readHex s of
+                 [] -> 0
+                 ((n, _):_) -> n
   in do is 'u'
         h <- replicateM 4 (satisfy isHexDigit)
         return . chr . hInt $ h
@@ -142,8 +142,9 @@ sepby1 p s =
 
 eof ::
   Parser ()
-eof = P (\s -> case s of [] -> Value ([], ())
-                         x -> Error ("Expected EOF but got " ++ x))
+eof = P (\s -> case s of
+                 [] -> Value ([], ())
+                 x -> Error ("Expected EOF but got " ++ x))
 
 satisfyAll ::
   [Char -> Bool]

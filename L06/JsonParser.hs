@@ -34,8 +34,9 @@ jsonString =
 jsonNumber ::
   Parser Rational
 jsonNumber =
-  P (\i -> case readSigned readFloat i of [] -> Error ("Expected Rational but got " ++ show i)
-                                          ((n, z):_) -> Value (z, n))
+  P (\i -> case readSigned readFloat i of
+             [] -> Error ("Expected Rational but got " ++ show i)
+             ((n, z):_) -> Value (z, n))
 
 jsonObject ::
   Parser Assoc
