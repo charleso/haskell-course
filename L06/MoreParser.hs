@@ -28,7 +28,7 @@ instance Functor Parser where
 -- ~~~ Use bindParser and valueParser ~~~
 instance Applicative Parser where
   pure =
-    valueParser --- error "todo"
+    valueParser ---    error "todo"
   f <*> a =
     bindParser f (\f' ->  ---
     bindParser a (\a' ->  ---
