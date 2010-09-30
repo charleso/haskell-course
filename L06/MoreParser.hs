@@ -224,9 +224,10 @@ sepby p s =
 -- Write a parser that asserts that there is no remaining input.
 eof ::
   Parser ()
-eof = P (\s -> case s of                                    ---
-                 [] -> Value ([], ())                       ---
-                 x -> Error ("Expected EOF but got " ++ x)) ---  error "todo"
+eof =
+  P (\s -> case s of                                    ---
+             [] -> Value ([], ())                       ---
+             x -> Error ("Expected EOF but got " ++ x)) ---  error "todo"
 
 -- Exercise 22
 -- Write a parser that produces a characer that satisfies all of the given predicates.
