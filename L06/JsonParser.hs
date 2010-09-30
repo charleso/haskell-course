@@ -34,18 +34,18 @@ jsonArray ::
 jsonArray =
   betweenCharTok '[' ']' $ jsonValue `sepby` charTok ','
 
-jsonTrue
-  :: Parser String
+jsonTrue ::
+  Parser String
 jsonTrue =
   stringTok "true"
 
-jsonFalse
-  :: Parser String
+jsonFalse ::
+  Parser String
 jsonFalse =
   stringTok "false"
 
-jsonNull
-  :: Parser String
+jsonNull ::
+  Parser String
 jsonNull =
   stringTok "null"
 
