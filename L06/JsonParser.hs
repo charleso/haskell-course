@@ -27,12 +27,12 @@ jsonObject ::
   Parser Assoc
 jsonObject =
   let field = (,) <$> (jsonString <* charTok ':') <*> jsonValue
-  in betweenCharTok '{' '}' $ field `sepby` charTok ','
+  in betweenSepbyComma '{' '}' field
 
 jsonArray ::
   Parser [JsonValue]
 jsonArray =
-  betweenCharTok '[' ']' $ jsonValue `sepby` charTok ','
+  betweenSepbyComma '[' ']' jsonValue
 
 jsonTrue ::
   Parser String

@@ -246,3 +246,14 @@ satisfyAny ::
   -> Parser Char
 satisfyAny ps =
   satisfy (or  . sequence ps) ---  error "todo"
+
+-- Exercise 24
+-- Write a parser that parses between the two given characters, separated by a comma character ','.
+-- ~~~ Use betweenCharTok, sepby and charTok ~~~
+betweenSepbyComma ::
+  Char
+  -> Char
+  -> Parser a
+  -> Parser [a]
+betweenSepbyComma a b g =
+  betweenCharTok a b $ g `sepby` charTok ','
