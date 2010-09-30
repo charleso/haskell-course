@@ -1,6 +1,5 @@
 module L06.JsonParser where
 
-import Prelude hiding (exponent)
 import Numeric
 import Control.Applicative
 import L01.Validation
