@@ -30,6 +30,8 @@ foldRight :: (a -> b -> b) -> b -> List a -> b
 foldRight _ b Nil      = b
 foldRight f b (h :| t) = f h (foldRight f b t)
 
+--
+
 foldLeft :: (b -> a -> b) -> b -> List a -> b
 foldLeft _ b Nil      = b
 foldLeft f b (h :| t) = let b' = f b h in b' `seq` foldLeft f b' t
@@ -53,7 +55,8 @@ reduceLeft f (h :| t) = foldLeft f h t
 -- Elegance: 0.5 marks
 -- Total: 3
 headOr :: List a -> a -> a
-headOr = error "todo"
+headOr Nil y = y
+headOr (h :| _) _ = h
 
 -- Exercise 2
 -- Relative Difficulty: 2
@@ -62,7 +65,10 @@ headOr = error "todo"
 -- Elegance: 0.5 marks
 -- Total: 4
 sum :: List Int -> Int
-sum = error "todo"
+-- sum Nil = 0
+-- sum (h :| t) = h + sum t
+sum = foldLeft (+) 0
+
 
 -- Exercise 3
 -- Relative Difficulty: 2
