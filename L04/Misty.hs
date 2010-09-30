@@ -13,7 +13,9 @@ class Misty m where
   -- Relative Difficulty: 3
   -- (use banana and unicorn)
   furry' :: (a -> b) -> m a -> m b
-  furry' = banana . (unicorn .)
+  --furry' f ma = banana (\a -> unicorn (f a)) ma
+  furry' f = banana (unicorn . f)
+  --furry' = banana . (unicorn .)
 
 -- Exercise 5
 -- Relative Difficulty: 2
@@ -41,18 +43,26 @@ jellybean = banana id
 -- Exercise 9
 -- Relative Difficulty: 3
 sausage :: Misty m => [m a] -> m [a]
-sausage [] = unicorn []
-sausage (h:t) = banana (\a -> banana (\as -> unicorn (a : as)) (sausage t)) h
+--sausage [] = unicorn []
+--sausage (h:t) = banana (\a -> banana (\as -> unicorn (a : as)) (sausage t)) h
+--sausage = foldr (\ma mla -> banana (\a -> banana (\as -> unicorn (a : as)) mla) ma) (unicorn [])
+--sausage = foldr (\ma mla -> banana (\a -> furry' (\as -> a : as) mla  ) ma) (unicorn [])
+--sausage = foldr (\ma mla -> banana (\a -> furry' (a :) mla  ) ma) (unicorn [])
+--sausage = foldr (\ma mla -> lemon2 (:) ma mla) (unicorn [])
+sausage = foldr (lemon2 (:)) (unicorn [])
 
 -- Exercise 10
 -- Relative Difficulty: 3
 moppy :: Misty m => (a -> m b) -> [a] -> m [b]
-moppy = error "todo"
+moppy f aa = sausage (furry' f aa)
+
+sausage2 :: Misty m => [m a] -> m [a]
+sausage2 = moppy id
 
 -- Exercise 11
 -- Relative Difficulty: 4
 rockstar :: Misty m => Int -> m a -> m [a]
-rockstar = error "todo"
+rockstar n ma = sausage (replicate n ma)
 
 -- Exercise 12
 -- Relative Difficulty: 9
@@ -60,15 +70,21 @@ filtering  :: Misty m => (a -> m Bool) -> [a] -> m [a]
 filtering = error "todo"
 
 -- Exercise 13
--- Relative Difficulty: 10
-apple :: Misty m => m (a -> b) -> m a -> m b
-apple = error "todo"
+-- Relative Difficulty: 8
+apple :: Misty m => m (t -> u) -> m t -> m u
+--apple mftu mt = banana (\f -> furry' f mt) mftu
+--apple mftu mt = lemon2 (\ftu t -> ftu t) mftu mt -- (t -> u) -> t -> u
+--apple mftu mt = lemon2 id mftu mt -- (t -> u) -> t -> u
+apple = lemon2 id
 
 -- Exercise 14
 -- Relative Difficulty: 6
 -- (bonus: use apple + furry')
 lemon2 :: Misty m => (a -> b -> c) -> m a -> m b -> m c
-lemon2 = error "todo"
+--lemon2 f ma mb = banana (\x ->
+--		 banana (\y ->
+--		 unicorn (f x y)) mb) ma
+lemon2 f ma mb = banana (\x -> furry' (f x) mb) ma
 
 -- Exercise 15
 -- Relative Difficulty: 6
