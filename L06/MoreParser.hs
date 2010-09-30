@@ -30,9 +30,9 @@ instance Applicative Parser where
   pure =
     valueParser ---    error "todo"
   f <*> a =
-    bindParser f (\f' ->  ---
-    bindParser a (\a' ->  ---
-    valueParser (f' a'))) ---    error "todo"
+    bindParser f (\f' -> ---
+    bindParser a (       ---
+    valueParser . f'))   ---    error "todo"
 
 -- Exercise 3
 -- Write a Monad instance for a Parser.
@@ -146,7 +146,7 @@ oneof ::
   String
   -> Parser Char
 oneof s =
-  satisfy (flip elem s) ---  error "todo"
+  satisfy (`elem` s) ---  error "todo"
 
 -- Exercise 15
 -- Write a function that parses any character, but fails if it is in the given string.
@@ -155,7 +155,7 @@ noneof ::
   String
   -> Parser Char
 noneof s =
-  satisfy (flip notElem s) ---  error "todo"
+  satisfy (`notElem` s) ---  error "todo"
 
 -- Exercise 16
 -- Write a function that applies the first parser, runs the second parser keeping the result,
