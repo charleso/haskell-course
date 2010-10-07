@@ -111,7 +111,8 @@ filter f (h :| t)
 -- Elegance: 1 mark
 -- Total: 7
 append :: List a -> List a -> List a
-append = error "todo"
+append Nil l      = l
+append (h :| t) l = h :| (append t l)
 
 -- Exercise 7
 -- Relative Difficulty: 5
@@ -120,7 +121,8 @@ append = error "todo"
 -- Elegance: 1 mark
 -- Total: 7
 flatten :: List (List a) -> List a
-flatten = error "todo"
+flatten Nil      = Nil
+flatten (h :| t) = append h (flatten t)
 
 -- Exercise 8
 -- Relative Difficulty: 7
