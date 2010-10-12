@@ -73,7 +73,8 @@ sum = foldLeft (+) 0
 -- Elegance: 0.5 marks
 -- Total: 4
 length :: List a -> Int
-length = foldLeft (\n _ -> n + 1) 0
+length = foldLeft (const . succ) 0
+--length = foldLeft (\n _ -> n + 1) 0
 --length = foldRight (\_ n -> n + 1) 0
 --length Nil = 0
 --length (_ :| xs) = 1 + length xs
@@ -109,7 +110,8 @@ filter f = foldRight (\x xs -> if f x then x :| xs else xs) Nil
 -- Elegance: 1 mark
 -- Total: 7
 append :: List a -> List a -> List a
-append = flip(foldRight (\a b -> a :| b))
+append = flip(foldRight (:|))
+--append = flip(foldRight (\a b -> a :| b))
 --append Nil ys = ys
 --append (x :| xs) ys = x :| append xs ys
 
@@ -120,7 +122,7 @@ append = flip(foldRight (\a b -> a :| b))
 -- Elegance: 1 mark
 -- Total: 7
 flatten :: List (List a) -> List a
-flatten = foldRight (append) Nil
+flatten = foldRight append Nil
 --flatten = flatMap id 
 --flatten Nil = Nil
 --flatten (x :| xs) = append x (flatten xs)
@@ -144,7 +146,7 @@ flatMap f xs = flatten(map f xs)
 -- Elegance: 2.5 marks
 -- Total: 9
 maximum :: List Int -> Int
-maximum = reduceLeft (max)
+maximum = reduceLeft max
 --maximum Nil = 0
 --maximum (x :| xs) = if x > maximum xs then x else maximum xs
 
