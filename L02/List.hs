@@ -63,7 +63,7 @@ headOr (h :| _) _ = h
 -- Elegance: 0.5 marks
 -- Total: 4
 sum :: List Int -> Int
-sum l = reduceRight (+) l
+sum l = foldRight (+) 0 l
 
 -- Exercise 3
 -- Relative Difficulty: 2
@@ -72,15 +72,14 @@ sum l = reduceRight (+) l
 -- Elegance: 0.5 marks
 -- Total: 4
 length :: List a -> Int
--- brent - my boring conservative answer
--- length Nil      = 0
--- length (_ :| t) = 1 + (length t)
+length Nil      = 0
+length (_ :| t) = 1 + (length t)
 
--- brent -my crazy answer
-length l = foldRight plusOne 0 l
+-- better or worse?
+-- length l = foldRight plusOne 0 l
+-- plusOne :: a -> Int -> Int
+-- plusOne _ a = a + 1
 
-plusOne :: a -> Int -> Int
-plusOne _ a = a + 1
 
 -- Exercise 4
 -- Relative Difficulty: 5
@@ -131,7 +130,8 @@ flatten (h :| t) = append h (flatten t)
 -- Elegance: 1.5 mark
 -- Total: 8
 flatMap :: (a -> List b) -> List a -> List b
-flatMap = error "todo"
+flatMap _ Nil      = Nil
+flatMap f (h :| t) = append (f h) (flatMap f t)
 
 -- Exercise 9
 -- Relative Difficulty: 8
@@ -140,7 +140,8 @@ flatMap = error "todo"
 -- Elegance: 2.5 marks
 -- Total: 9
 maximum :: List Int -> Int
-maximum = error "todo"
+maximum Nil        = 0
+maximum (h :| t) = max h (maximum t)
 
 -- Exercise 10
 -- Relative Difficulty: 10
@@ -149,7 +150,8 @@ maximum = error "todo"
 -- Elegance: 2.5 marks
 -- Total: 10
 reverse :: List a -> List a
-reverse = error "todo"
+reverse Nil = Nil
+reverse (h :| t) = append (reverse t) (h :| Nil)
 
 -- END Exercises
 
