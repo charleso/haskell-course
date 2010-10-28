@@ -72,7 +72,7 @@ sum = foldLeft (+) 0
 -- Elegance: 0.5 marks
 -- Total: 4
 length :: List a -> Int
-length = foldRight (\_ a -> a + 1) 0
+length = foldLeft (const . succ) 0
 
 -- Exercise 4
 -- Relative Difficulty: 5
@@ -90,9 +90,7 @@ map f = foldRight ((:|) . f) Nil
 -- Elegance: 1 mark
 -- Total: 7
 filter :: (a -> Bool) -> List a -> List a
-filter _ Nil = Nil
-filter f (l :| ls) | f l       = l :| filter f ls
-                   | otherwise = filter f ls
+filter f = foldRight (\x -> (if f x then (x :|) else id)) Nil
 
 -- Exercise 6
 -- Relative Difficulty: 5
@@ -119,9 +117,7 @@ flatten = foldRight append Nil
 -- Elegance: 1.5 mark
 -- Total: 8
 flatMap :: (a -> List b) -> List a -> List b
-flatMap f l = flatten $ map f l
--- not sure why I couldn't just do flatMap = flatten . map
--- Tony, mabye you can clarify?
+flatMap f = flatten . map f
 
 -- Exercise 9
 -- Relative Difficulty: 8
@@ -130,8 +126,7 @@ flatMap f l = flatten $ map f l
 -- Elegance: 2.5 marks
 -- Total: 9
 maximum :: List Int -> Int
-maximum Nil = error "Get lost"
-maximum (h :| t) = foldRight max h t
+maximum = reduceRight max
 
 -- Exercise 10
 -- Relative Difficulty: 10

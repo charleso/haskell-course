@@ -2,4 +2,4 @@ syntax: glob
 *.swp
 *.*~
 *.o
-
+*.orig
