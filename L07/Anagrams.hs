@@ -6,7 +6,7 @@ import Data.Function
 {-
 
 Functions you will need
------------------------
+--
 * fmap :: (a -> b) -> IO a -> IO b
 * readFile :: FilePath -> IO String
 * lines :: String -> [String]
@@ -15,7 +15,7 @@ Functions you will need
 * toLower :: Char -> Char
 
 Functions that might help
--------------------------
+-
 * on :: (b -> b -> c) -> (a -> b) -> a -> a -> c
 
 -}
@@ -28,7 +28,7 @@ anagrams ::
   -> FilePath
   -> IO [String]
 anagrams name =
-  fmap (intersectBy equalIgnoringCase (permutations name) . lines) . readFile --  error "todo"
+  fmap (intersectBy equalIgnoringCase (permutations name) . lines) . readFile ---  error "todo"
 
 -- Compare two strings for equality, ignoring case
 equalIgnoringCase ::
@@ -36,5 +36,5 @@ equalIgnoringCase ::
   -> String
   -> Bool
 equalIgnoringCase =
-  (==) `on` map toLower --  error "todo"
+  (==) `on` map toLower ---  error "todo"
 
