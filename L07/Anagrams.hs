@@ -27,14 +27,31 @@ anagrams ::
   String
   -> FilePath
   -> IO [String]
-anagrams name =
-  error "todo"
+{-
+anagrams name file = let contents = (readFile file)
+                         rows = (fmap lines contents)
+			 perms = (permutations name)
+			 foo = fmap (intersectBy equalIgnoringCase perms) rows
+                     in foo
+-}
+{-
+anagrams name file = let contents = (readFile file)
+			 perms = (permutations name)
+                     in fmap (intersectBy equalIgnoringCase perms) (fmap lines contents)
+-}
+{-
+anagrams name file = let contents = (readFile file)
+			 perms = (permutations name)
+                     in fmap ((intersectBy equalIgnoringCase perms) . lines) contents
+-}
+anagrams name = let perms = permutations name
+                in fmap (intersectBy equalIgnoringCase perms . lines) . readFile
 
 -- Compare two strings for equality, ignoring case
 equalIgnoringCase ::
   String
   -> String
   -> Bool
-equalIgnoringCase =
-  error "todo"
-
+-- equalIgnoringCase s1 s2 = (fmap toLower s1) == (fmap toLower s2)
+-- equalIgnoringCase = on (==) (fmap toLower)
+equalIgnoringCase = (==) `on` fmap toLower
