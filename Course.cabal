@@ -14,6 +14,7 @@ Flag small_base
 Library
   Build-Depends:    base >= 4,
                     split,
+                    containers,
                     directory,
                     filepath,
                     HUnit,
@@ -37,4 +38,7 @@ Library
                     L04.Misty
                     L04.Tests
                     L05.Testing
+                    L06.JsonValue
+                    L06.MoreParser
+                    L06.JsonParser
 

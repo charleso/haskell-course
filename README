@@ -6,9 +6,10 @@ Written by Tony Morris 2010
 
 The course is structured according to a linear progression and uses
 the Haskell programming language to learn advanced programming concepts.
-Module L01 must be completed before module L02.
+Module L[N] must be completed before module L[N+1].
 The existing code compiles and exercises have been completed.
-However, a script is used to wipe the answers to the exercises.
+However, a script is used to wipe the answers to the exercises,
+leaving a compilable source file.
 This script is available in the Answers.Replace module and accepts one
 or mor file names.
 

@@ -56,6 +56,8 @@ p >>> q = bindParser p (\_ -> q) ---(>>>) = error "todo"
 P p1 ||| P p2 = P (\s -> case p1 s of v@(Value _) -> v ---
                                       Error _ -> p2 s) ---(|||) = error "todo"
 
+infixl 3 |||
+
 -- Exercise 7
 -- Return a parser that continues producing a list of values from the given parser.
 -- ~~~ Use many1, valueParser and (|||). ~~~
@@ -121,8 +123,8 @@ space = satisfy isSpace ---space = error "todo"
 --   * The input is empty.
 --   * The first produced character is not a space.
 -- ~~~ Use the many1 and space functions. ~~~
-spaces :: Parser String
-spaces = many1 space ---spaces = error "todo"
+spaces1 :: Parser String
+spaces1 = many1 space ---spaces1 = error "todo"
 
 -- Exercise 10.6
 -- Return a parser that produces a lower-case character but fails if
@@ -191,7 +193,7 @@ surnameParser :: Parser String
 surnameParser = bindParser upper (\c ->               ---
                 bindParser (thisMany 5 lower) (\cs -> ---
                 bindParser (list lower) (\t ->        ---
-                valueParser (c : cs ++ t))))           ---surnameParser = error "todo"
+                valueParser (c : cs ++ t))))          ---surnameParser = error "todo"
 
 -- Exercise 16
 -- Write a parser for Person.gender.
@@ -230,13 +232,13 @@ phoneParser = bindParser digit (\d ->           ---
 --         phoneParser ~~~
 personParser :: Parser Person
 personParser = bindParser ageParser (\age ->                                ---
-               spaces >>>                                                   ---
+               spaces1 >>>                                                   ---
                bindParser firstNameParser (\firstName ->                    ---
-               spaces >>>                                                   ---
+               spaces1 >>>                                                   ---
                bindParser surnameParser (\surname ->                        ---
-               spaces >>>                                                   ---
+               spaces1 >>>                                                   ---
                bindParser genderParser (\gender ->                          ---
-               spaces >>>                                                   ---
+               spaces1 >>>                                                   ---
                bindParser phoneParser (\phone ->                            ---
                valueParser (Person age firstName surname gender phone)))))) ---personParser = error "todo"
 
