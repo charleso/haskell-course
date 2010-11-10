@@ -4,7 +4,6 @@ import Data.Char
 import L01.Validation
 import L03.Person
 
-
 type Input = String
 
 data Parser a = P {
@@ -106,7 +105,9 @@ digit = satisfy isDigit
 --   * The input does not produce a value series of digits
 -- ~~~ Use the bindParser, valueParser, list and digit functions. ~~~
 natural :: Parser Int
-natural = bindParser (list digit) (\d -> valueParser (read d :: Int))
+natural = bindParser (list digit) (\d -> case reads d of
+                                          []        -> failed "Natural parse failed"
+                                          ((n,_):_) -> valueParser n)
 
 -- Exercise 10.4
 -- Return a parser that produces a space character but fails if
