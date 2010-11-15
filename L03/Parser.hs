@@ -28,8 +28,8 @@ failed err = P (\_ -> Error err)
 -- off the input or fails with an error if the input is empty.
 character :: Parser Char
 character = P (\x -> case x of
-						[]    -> Error "End of input"
-						(h:t) -> Value (t, h))
+                        []    -> Error "End of input"
+                        (h:t) -> Value (t, h))
 
 -- Exercise 4
 -- Return a parser that puts its input into the given parser and
@@ -41,6 +41,14 @@ bindParser p f = P (\x -> case parse p x of
                             Error msg    -> Error msg
                             Value (r, v) -> parse (f v) r
                    )
+
+myLiftM2 :: (a -> b -> c) -> Parser a -> Parser b -> Parser c
+myLiftM2 f p1 p2 = bindParser p1 (\v1 -> bindParser p2 (\v2 -> valueParser (f v1 v2)))
+
+myLiftM3 :: (a -> b -> c -> d) -> Parser a -> Parser b -> Parser c -> Parser d
+myLiftM3 f p1 p2 p3 = bindParser p1 (\v1 -> 
+                        bindParser p2 (\v2 ->
+                          bindParser p3 (\v3 -> valueParser (f v1 v2 v3))))
 
 -- Exercise 5
 -- Return a parser that puts its input into the given parser and
@@ -75,11 +83,7 @@ list p = many1 p ||| valueParser []
 --   * The input is empty
 -- ~~~ Use bindParser, list and value. ~~~
 many1 :: Parser a -> Parser [a]
-many1 p = bindParser p (\v -> bindParser (list p) (\vs -> valueParser (v:vs)))
-
-myLiftM2 :: (a -> b -> c) -> Parser a -> Parser b -> Parser c
-myLiftM2 f p1 p2 = bindParser p1 (\v1 -> bindParser p2 (\v2 -> valueParser (f v1 v2)))
-
+many1 p = myLiftM2 (:) p (list p)
 
 -- Exercise 9
 -- Return a parser that produces a character but fails if
@@ -163,17 +167,8 @@ alpha = satisfy Data.Char.isAlpha
 -- ~~~ Use bindParser and value. ~~~
 -- ~~~ Optionally use Prelude.foldr. If not, an explicit recursive call. ~~~
 sequenceParser :: [Parser a] -> Parser [a] 
---sequenceParser = foldr (\p vs -> bindParser p (\v -> valueParser (v:vs))) (valueParser [])
 sequenceParser = foldr (myLiftM2 (:)) (valueParser [])
-{-
-sequenceParser ps = case ps of 
-                      []    -> valueParser []
-                      (h:t) -> bindParser h (\v ->
-                                 bindParser (sequenceParser t) (\vs ->
-                                   valueParser (v:vs)
-                                 )
-                               )
--}
+
 -- Exercise 12
 -- Return a parser that produces the given number of values off the given parser.
 -- This parser fails if
@@ -194,18 +189,14 @@ ageParser = natural
 -- * First Name: non-empty string that starts with a capital letter
 -- ~~~ Use bindParser, value, upper, list and lower. ~~~
 firstNameParser :: Parser String
-firstNameParser = bindParser upper (\u -> bindParser (list lower) (\ls -> valueParser (u:ls)))
+firstNameParser = myLiftM2 (:) upper (list lower)
 
 -- Exercise 15
 -- Write a parser for Person.surname.
 -- * Surname: string that starts with a capital letter and is followed by 5 or more lower-case letters
 -- ~~~ Use bindParser, value, upper, thisMany, lower and list. ~~~
 surnameParser :: Parser String
-surnameParser = bindParser upper (\u -> 
-                  bindParser (thisMany 5 lower) (\l -> 
-                    bindParser (list lower) (\l' -> valueParser ([u] ++ l ++ l'))
-                  )
-                )
+surnameParser = myLiftM3 (\u l l' -> [u] ++ l ++ l') upper (thisMany 5 lower) (list lower)
 
 -- Exercise 16
 -- Write a parser for Person.gender.
@@ -229,10 +220,7 @@ phoneBodyParser = list (digit ||| is '.' ||| is '-')
 -- * Phone: ... but must start with a digit and end with a hash (#)
 -- ~~~ Use bindParser, value, digit, phoneBodyParser and is. ~~~
 phoneParser :: Parser String
-phoneParser = bindParser digit (\d -> 
-                bindParser phoneBodyParser (\body ->
-                  bindParser (is '#') (\_ ->
-                    valueParser (d:body))))
+phoneParser = myLiftM3 (\v1 v2 _ -> (v1:v2)) digit phoneBodyParser (is '#')
 
 -- Exercise 19
 -- Write a parser for Person.
