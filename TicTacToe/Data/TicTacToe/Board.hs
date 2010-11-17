@@ -169,6 +169,10 @@ class BoardLike b where
   isNotOccupied b p =
     not (isOccupied b p)
 
+  isFull ::
+    b
+    -> Bool
+
   printBoard ::
     b
     -> IO ()
@@ -193,6 +197,9 @@ instance BoardLike Board where
 
   playerAt (Board _ m) p =
     p `M.lookup` m
+
+  isFull (Board z _) =
+    length z == 9
 
   printBoard (Board _ m) =
     let z = ".===.===.===."
@@ -228,6 +235,9 @@ instance BoardLike FinishedBoard where
 
   playerAt (FinishedBoard b _) p =
     b `playerAt` p
+
+  isFull (FinishedBoard b _) =
+    isFull b
 
   printBoard (FinishedBoard b _) =
     print b
