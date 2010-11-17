@@ -28,7 +28,8 @@ Library
                     -fno-warn-name-shadowing
 
   Exposed-Modules:
-                    Data.TicTacToe.Board
+                    Data.TicTacToe
+                    , Data.TicTacToe.Board
                     , Data.TicTacToe.Position
                     , Data.TicTacToe.Player
                     , Data.TicTacToe.GameResult
