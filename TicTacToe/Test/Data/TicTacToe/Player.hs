@@ -1,4 +1,8 @@
-module Test.Data.TicTacToe.Player where
+module Test.Data.TicTacToe.Player
+(
+  main
+, playerTests
+) where
 
 import Data.TicTacToe.Player
 import Test.QuickCheck

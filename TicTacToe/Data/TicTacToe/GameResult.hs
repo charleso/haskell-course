@@ -1,7 +1,7 @@
 module Data.TicTacToe.GameResult
 (
   GameResult
-, foldGameResult
+, gameResult
 , playerGameResult
 , win
 , player1Wins
@@ -17,15 +17,17 @@ import Data.TicTacToe.Player
 data GameResult =
   Win Player
   | Draw
-  deriving Eq
+  deriving (Eq, Show)
 
-foldGameResult ::
+gameResult ::
   (Player -> x)
   -> x
   -> GameResult
   -> x
-foldGameResult win _    (Win p) = win p
-foldGameResult _   draw Draw    = draw
+gameResult win _    (Win p) =
+  win p
+gameResult _   draw Draw    =
+  draw
 
 playerGameResult ::
   x
@@ -34,7 +36,7 @@ playerGameResult ::
   -> GameResult
   -> x
 playerGameResult p1 p2 =
-  foldGameResult (player p1 p2)
+  gameResult (player p1 p2)
 
 win ::
   Player
@@ -74,3 +76,4 @@ isDraw ::
   -> Bool
 isDraw =
   playerGameResult False False True
+

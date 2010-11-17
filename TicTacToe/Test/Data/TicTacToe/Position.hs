@@ -1,4 +1,8 @@
-module Test.Data.TicTacToe.Position where
+module Test.Data.TicTacToe.Position
+(
+  main
+, positionTests
+) where
 
 import Data.TicTacToe.Position
 import Test.QuickCheck
