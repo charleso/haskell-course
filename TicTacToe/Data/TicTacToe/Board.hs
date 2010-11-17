@@ -8,12 +8,12 @@ module Data.TicTacToe.Board
 , whoseNotTurn
 , MoveResult(..)
 , (-->)
-, (--->)
 , MovesAttempt
 , attemptResult
 , attemptPositions
 , noRemainAttempt
 , movesAttempt
+, (--->)
 , (===>)
 , play
 , play'
@@ -116,13 +116,6 @@ p --> b@(Board q m) =
               else
                 KeepPlaying b') (const PositionAlreadyOccupied) j
 
-(===>) ::
-  [Position]
-  -> Board
-  -> MoveResult
-p ===> b =
-  attemptResult (p ---> b)
-
 data MovesAttempt =
   MovesAttempt [Position] MoveResult
   deriving Eq
@@ -163,6 +156,13 @@ movesAttempt =
   of PositionAlreadyOccupied -> movesAttempt (h:t) PositionAlreadyOccupied
      KeepPlaying b'          -> t ---> b'
      GameFinished b'         -> movesAttempt t (GameFinished b')
+
+(===>) ::
+  [Position]
+  -> Board
+  -> MoveResult
+p ===> b =
+  attemptResult (p ---> b)
 
 play ::
   [Position]
