@@ -4,7 +4,7 @@ module Data.TicTacToe.Board
 , empty
 , whoseTurn
 , whoseNotTurn
-, MoveResult(..) -- todo abstract ADT
+, MoveResult(..)
 , (-->)
 , (--->)
 , (===>)
