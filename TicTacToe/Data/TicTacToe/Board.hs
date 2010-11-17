@@ -4,7 +4,8 @@ module Data.TicTacToe.Board
 , empty
 , whoseTurn
 , MoveResult(..) -- todo abstract ADT
-, move
+, (-->)
+, (--->)
 ) where
 
 import Prelude hiding (any, all, concat)
@@ -17,8 +18,13 @@ import Data.List(intercalate)
 
 data MoveResult =
   PositionAlreadyOccupied
-  | GameFinished FinishedBoard
   | KeepPlaying Board
+  | GameFinished FinishedBoard
+
+instance Show MoveResult where
+  show PositionAlreadyOccupied = "*Position already occupied*"
+  show (KeepPlaying b)         = concat ["{", show b, "}"]
+  show (GameFinished b)        = concat ["{{", show b, "}}"]
 
 data Board =
   Board (M.Map Position Player) !Player
@@ -35,7 +41,7 @@ data FinishedBoard =
 instance Show FinishedBoard where
   show (FinishedBoard m r) =
     let summary = foldGameResult (\p -> show p ++ " wins") "draw"
-    in intercalate " " [showPositionMap m, summary r, "{", "}"]
+    in intercalate " " [showPositionMap m, summary r, "[[", "]]"]
 
 -- Board only (not FinishedBoard)
 empty ::
@@ -49,11 +55,11 @@ whoseTurn ::
 whoseTurn (Board _ p) =
   p
 
-move ::
+(-->) ::
   Position
   -> Board
   -> MoveResult
-move p (Board m w) =
+p --> (Board m w) =
   let (j, m') = M.insertLookupWithKey (\_ x _ -> x) p w m
       wins =
         [
@@ -80,12 +86,26 @@ move p (Board m w) =
               else
                 KeepPlaying (Board m' (alternate w))) (const PositionAlreadyOccupied) j
 
+(--->) ::
+  [Position]
+  -> Board
+  -> ([Position], MoveResult)
+[]    ---> b =
+  ([], KeepPlaying b)
+(h:t) ---> b =
+  case h --> b
+  of PositionAlreadyOccupied -> (h:t, PositionAlreadyOccupied)
+     KeepPlaying b'          -> t ---> b'
+     GameFinished b'         -> (t, GameFinished b')
+
+
+
 -- not exported
 showPositionMap ::
   M.Map Position Player
   -> String
 showPositionMap m =
-  let pos p = maybe " " (player "X" "O") (p `M.lookup` m)
+  let pos p = maybe "?" (player "X" "O") (p `M.lookup` m)
   in concat [ ".=",  pos NW, "=.=", pos N , "=.=", pos NE
             , "=.=", pos W , "=.=", pos C , "=.=", pos E
             , "=.=", pos SW, "=.=", pos S , "=.=", pos SE, "=."
