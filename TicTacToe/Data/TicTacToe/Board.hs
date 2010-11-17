@@ -1,6 +1,7 @@
 module Data.TicTacToe.Board
 (
   Board
+, FinishedBoard
 , empty
 , whoseTurn
 , whoseNotTurn
