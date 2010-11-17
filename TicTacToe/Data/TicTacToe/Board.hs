@@ -41,7 +41,7 @@ data FinishedBoard =
 instance Show FinishedBoard where
   show (FinishedBoard m r) =
     let summary = foldGameResult (\p -> show p ++ " wins") "draw"
-    in intercalate " " [showPositionMap m, summary r, "[[", "]]"]
+    in intercalate " " [showPositionMap m, "[[", summary r, "]]"]
 
 -- Board only (not FinishedBoard)
 empty ::
