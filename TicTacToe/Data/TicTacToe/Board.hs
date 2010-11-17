@@ -3,35 +3,39 @@ module Data.TicTacToe.Board
   Board
 , empty
 , whoseTurn
-, GameResult(..) -- todo abstract ADT
 , MoveResult(..) -- todo abstract ADT
 , move
 ) where
 
-import Prelude hiding (any, all)
+import Prelude hiding (any, all, concat)
 import Data.TicTacToe.Position
 import Data.TicTacToe.Player
+import Data.TicTacToe.GameResult
 import qualified Data.Map as M
 import Data.Foldable
-
-data GameResult =
-  Win Player
-  | Draw
-  | NoResult
-  deriving Eq
+import Data.List(intercalate)
 
 data MoveResult =
   PositionAlreadyOccupied
-  | GameFinished FinishedBoard -- todo do not use a Board, but instead a Board for which there is no move
+  | GameFinished FinishedBoard
   | KeepPlaying Board
 
 data Board =
   Board (M.Map Position Player) !Player
   deriving Eq
 
+instance Show Board where
+  show (Board m p) =
+    intercalate " " [showPositionMap m, "[", show p, "to move ]"]
+
 data FinishedBoard =
   FinishedBoard (M.Map Position Player) GameResult
   deriving Eq
+
+instance Show FinishedBoard where
+  show (FinishedBoard m r) =
+    let summary = foldGameResult (\p -> show p ++ " wins") "draw"
+    in intercalate " " [showPositionMap m, summary r, "{", "}"]
 
 -- Board only (not FinishedBoard)
 empty ::
@@ -68,12 +72,21 @@ move p (Board m w) =
       isDraw        = all (`M.member` m') [minBound ..]
   in maybe (if isWin
             then
-              GameFinished (FinishedBoard m' (Win w))
+              GameFinished (FinishedBoard m' (win w))
             else
               if isDraw
               then
-                GameFinished (FinishedBoard m' Draw)
+                GameFinished (FinishedBoard m' draw)
               else
-                KeepPlaying (Board m' (alternate p))) (const PositionAlreadyOccupied) j
+                KeepPlaying (Board m' (alternate w))) (const PositionAlreadyOccupied) j
 
 -- not exported
+showPositionMap ::
+  M.Map Position Player
+  -> String
+showPositionMap m =
+  let pos p = maybe " " (player "X" "O") (p `M.lookup` m)
+  in concat [ ".=",  pos NW, "=.=", pos N , "=.=", pos NE
+            , "=.=", pos W , "=.=", pos C , "=.=", pos E
+            , "=.=", pos SW, "=.=", pos S , "=.=", pos SE, "=."
+            ]

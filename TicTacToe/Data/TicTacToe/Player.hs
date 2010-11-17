@@ -12,7 +12,11 @@ Player
 data Player =
   Player1
   | Player2
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord)
+
+instance Show Player where
+  show Player1 = "Player 1"
+  show Player2 = "Player 2"
 
 isPlayer1 ::
   Player ->
