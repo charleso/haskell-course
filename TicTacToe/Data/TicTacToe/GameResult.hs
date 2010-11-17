@@ -33,8 +33,8 @@ playerGameResult ::
   -> x
   -> GameResult
   -> x
-playerGameResult p1 p2 d =
-  foldGameResult (player p1 p2)  d
+playerGameResult p1 p2 =
+  foldGameResult (player p1 p2)
 
 win ::
   Player
