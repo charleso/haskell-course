@@ -27,6 +27,7 @@ data MoveResult =
   PositionAlreadyOccupied
   | KeepPlaying Board
   | GameFinished FinishedBoard
+  deriving Eq
 
 instance Show MoveResult where
   show PositionAlreadyOccupied = "*Position already occupied*"
