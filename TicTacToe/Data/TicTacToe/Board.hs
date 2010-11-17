@@ -74,7 +74,7 @@ p --> (Board m w) =
         ]
       allEq (d:e:t) = d == e && allEq (e:t)
       allEq _       = True
-      isWin         = any (\(a, b, c) -> any allEq $ mapM (`M.lookup` m) [a, b, c]) wins
+      isWin         = any (\(a, b, c) -> any allEq $ mapM (`M.lookup` m') [a, b, c]) wins
       isDraw        = all (`M.member` m') [minBound ..]
   in maybe (if isWin
             then
@@ -97,8 +97,6 @@ p --> (Board m w) =
   of PositionAlreadyOccupied -> (h:t, PositionAlreadyOccupied)
      KeepPlaying b'          -> t ---> b'
      GameFinished b'         -> (t, GameFinished b')
-
-
 
 -- not exported
 showPositionMap ::
