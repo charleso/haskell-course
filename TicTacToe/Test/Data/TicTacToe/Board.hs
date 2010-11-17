@@ -10,7 +10,8 @@ import Test.Framework
 import Test.Framework.Providers.QuickCheck2 (testProperty)
 
 instance Arbitrary Board where
-  arbitrary = undefined
+  arbitrary =
+    undefined
 
 main ::
   IO ()

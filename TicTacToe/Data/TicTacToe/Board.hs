@@ -9,9 +9,8 @@ module Data.TicTacToe.Board
 , MovesAttempt
 , attemptResult
 , attemptPositions
-, attemptBoard
 , noRemainAttempt
-, remainAttempt
+, movesAttempt
 , (--->)
 , (===>)
 , play
@@ -110,8 +109,8 @@ p --> b@(Board q m) =
                 KeepPlaying b') (const PositionAlreadyOccupied) j
 
 
-data MovesAttempt = -- todo abstract ADT
-  MovesAttempt (Maybe ([Position], Board)) MoveResult
+data MovesAttempt =
+  MovesAttempt [Position] MoveResult
   deriving Eq
 
 attemptResult ::
@@ -122,41 +121,34 @@ attemptResult (MovesAttempt _ r) =
 
 attemptPositions ::
   MovesAttempt
-  -> Maybe [Position]
+  -> [Position]
 attemptPositions (MovesAttempt k _) =
-  fmap fst k
-
-attemptBoard ::
-  MovesAttempt
-  -> Maybe Board
-attemptBoard (MovesAttempt k _) =
-  fmap snd k
+  k
 
 noRemainAttempt ::
   MoveResult
   -> MovesAttempt
 noRemainAttempt =
-  MovesAttempt Nothing
+  movesAttempt []
 
-remainAttempt ::
+movesAttempt ::
   [Position]
-  -> Board
   -> MoveResult
   -> MovesAttempt
-remainAttempt p b =
-  MovesAttempt (Just (p, b))
+movesAttempt =
+  MovesAttempt
 
 (--->) ::
   [Position]
   -> Board
   -> MovesAttempt
 []    ---> b =
-  MovesAttempt Nothing (KeepPlaying b)
+  noRemainAttempt (KeepPlaying b)
 (h:t) ---> b =
   case h --> b
-  of PositionAlreadyOccupied -> MovesAttempt (Just (h:t, b)) PositionAlreadyOccupied
+  of PositionAlreadyOccupied -> movesAttempt (h:t) PositionAlreadyOccupied
      KeepPlaying b'          -> t ---> b'
-     GameFinished b'         -> MovesAttempt (Just (t, b)) (GameFinished b')
+     GameFinished b'         -> movesAttempt t (GameFinished b')
 
 (===>) ::
   [Position]
