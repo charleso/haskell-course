@@ -46,5 +46,5 @@ prop_is ::
   GameResult
   -> Bool
 prop_is p =
-  playerGameResult isPlayer1Wins isPlayer2Wins isDraw p $ p
+  playerGameResult isPlayer1Wins isPlayer2Wins isDraw p p
 
