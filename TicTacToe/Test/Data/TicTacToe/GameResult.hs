@@ -24,7 +24,8 @@ gameResultTests =
   [
     testGroup "GameResult"
       [
-        testProperty "cata_ctor" prop_cata_ctor
+        testProperty "cata_ctor"  prop_cata_ctor
+      , testProperty "cata_ctor2" prop_cata_ctor2
       ]
   ]
 
@@ -33,3 +34,9 @@ prop_cata_ctor ::
   -> Bool
 prop_cata_ctor r =
   gameResult win draw r == r
+
+prop_cata_ctor2 ::
+  GameResult
+  -> Bool
+prop_cata_ctor2 r =
+  playerGameResult player1Wins player2Wins draw r == r

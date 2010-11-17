@@ -52,7 +52,7 @@ player1Wins =
 player2Wins ::
   GameResult
 player2Wins =
-  Win player1
+  Win player2
 
 draw ::
   GameResult
