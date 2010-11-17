@@ -21,6 +21,8 @@ playerTests =
     testGroup "Player"
       [
         testProperty "is_exclusive" prop_is_exclusive
+      , testProperty "cata_ctor"    prop_cata_ctor
+      , testProperty "alternate"    prop_alternate
       ]
   ]
 
@@ -29,3 +31,16 @@ prop_is_exclusive ::
   -> Bool
 prop_is_exclusive p =
   isPlayer1 p /= isPlayer2 p
+
+prop_cata_ctor ::
+  Player
+  -> Bool
+prop_cata_ctor p =
+  player player1 player2 p == p
+
+prop_alternate ::
+  Player
+  -> Bool
+prop_alternate p =
+  (alternate p /= p) && (alternate (alternate p) == p)
+
