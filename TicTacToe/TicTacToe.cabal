@@ -33,3 +33,4 @@ Library
                     , Data.TicTacToe.Position
                     , Data.TicTacToe.Player
                     , Data.TicTacToe.GameResult
+                    , Test.Data.TicTacToe.Position
