@@ -26,6 +26,7 @@ gameResultTests =
       [
         testProperty "cata_ctor"  prop_cata_ctor
       , testProperty "cata_ctor2" prop_cata_ctor2
+      , testProperty "is"         prop_is
       ]
   ]
 
@@ -40,3 +41,10 @@ prop_cata_ctor2 ::
   -> Bool
 prop_cata_ctor2 r =
   playerGameResult player1Wins player2Wins draw r == r
+
+prop_is ::
+  GameResult
+  -> Bool
+prop_is p =
+  playerGameResult isPlayer1Wins isPlayer2Wins isDraw p $ p
+
