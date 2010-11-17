@@ -12,16 +12,19 @@ Flag small_base
   Description:      Choose the new, split-up base package.
 
 Library
-  Build-Depends:    base >= 4,
-                    HUnit,
-                    QuickCheck,
-                    test-framework,
-                    test-framework-hunit,
-                    test-framework-quickcheck2
+  Build-Depends:
+                    base >= 4
+                    , HUnit
+                    , QuickCheck
+                    , test-framework
+                    , test-framework-hunit
+                    , test-framework-quickcheck2
 
   GHC-Options:      -Wall
                     -fno-warn-orphans
                     -fno-warn-type-defaults
                     -fno-warn-name-shadowing
 
-  Exposed-Modules:  Data.TicTacToe.Board
+  Exposed-Modules:
+                    Data.TicTacToe.Board
+                    , Data.TicTacToe.Position
