@@ -3,9 +3,11 @@ module Data.TicTacToe.Board
   Board
 , empty
 , whoseTurn
+, whoseNotTurn
 , MoveResult(..) -- todo abstract ADT
 , (-->)
 , (--->)
+, BoardLike(..)
 ) where
 
 import Prelude hiding (any, all, concat)
@@ -13,8 +15,10 @@ import Data.TicTacToe.Position
 import Data.TicTacToe.Player
 import Data.TicTacToe.GameResult
 import qualified Data.Map as M
+import qualified Data.Set as S
 import Data.Foldable
 import Data.List(intercalate)
+import Data.Maybe
 
 data MoveResult =
   PositionAlreadyOccupied
@@ -27,40 +31,48 @@ instance Show MoveResult where
   show (GameFinished b)        = concat ["{{", show b, "}}"]
 
 data Board =
-  Board (M.Map Position Player) !Player
+  Board [(Position, Player)] !(M.Map Position Player)
   deriving Eq
 
 instance Show Board where
-  show (Board m p) =
-    intercalate " " [showPositionMap m, "[", show p, "to move ]"]
+  show b@(Board _ m) =
+    intercalate " " [showPositionMap m, "[", show (whoseTurn b), "to move ]"]
 
 data FinishedBoard =
-  FinishedBoard (M.Map Position Player) GameResult
+  FinishedBoard Board GameResult
   deriving Eq
 
 instance Show FinishedBoard where
-  show (FinishedBoard m r) =
-    let summary = foldGameResult (\p -> show p ++ " wins") "draw"
-    in intercalate " " [showPositionMap m, "[[", summary r, "]]"]
+  show (FinishedBoard (Board _ m) r) =
+    let summary = foldGameResult (\p -> show p ++ " wins") "draw" r
+    in intercalate " " [showPositionMap m, "[[", summary, "]]"]
 
--- Board only (not FinishedBoard)
 empty ::
   Board
 empty =
-  Board M.empty player1
+  Board [] M.empty
 
 whoseTurn ::
   Board
   -> Player
-whoseTurn (Board _ p) =
-  p
+whoseTurn (Board [] _) =
+  player1
+whoseTurn (Board ((_, q):_) _) =
+  alternate q
+
+whoseNotTurn ::
+  Board
+  -> Player
+whoseNotTurn =
+  alternate . whoseTurn
 
 (-->) ::
   Position
   -> Board
   -> MoveResult
-p --> (Board m w) =
-  let (j, m') = M.insertLookupWithKey (\_ x _ -> x) p w m
+p --> b@(Board q m) =
+  let w       = whoseTurn b
+      (j, m') = M.insertLookupWithKey (\_ x _ -> x) p w m
       wins =
         [
           (NW, W , SW)
@@ -76,15 +88,17 @@ p --> (Board m w) =
       allEq _       = True
       isWin         = any (\(a, b, c) -> any allEq $ mapM (`M.lookup` m') [a, b, c]) wins
       isDraw        = all (`M.member` m') [minBound ..]
+      b'            = Board ((p, w):q) m'
   in maybe (if isWin
             then
-              GameFinished (FinishedBoard m' (win w))
+              GameFinished (b' `FinishedBoard` win w)
             else
               if isDraw
               then
-                GameFinished (FinishedBoard m' draw)
+                GameFinished (b' `FinishedBoard` draw)
               else
-                KeepPlaying (Board m' (alternate w))) (const PositionAlreadyOccupied) j
+                KeepPlaying b') (const PositionAlreadyOccupied) j
+
 
 (--->) ::
   [Position]
@@ -97,6 +111,98 @@ p --> (Board m w) =
   of PositionAlreadyOccupied -> (h:t, PositionAlreadyOccupied)
      KeepPlaying b'          -> t ---> b'
      GameFinished b'         -> (t, GameFinished b')
+
+class BoardLike b where
+  moveBack ::
+    b
+    -> Maybe Board
+
+  isEmpty ::
+    b
+    -> Bool
+
+  occupiedPositions ::
+    b
+    -> S.Set Position
+
+  isSubboardOf ::
+    b
+    -> b
+    -> Bool
+
+  isProperSubboardOf ::
+    b
+    -> b
+    -> Bool
+
+  playerAt ::
+    b
+    -> Position
+    -> Maybe Player
+
+  playerAtOr ::
+    b
+    -> Position
+    -> Player
+    -> Player
+  playerAtOr b p q =
+    q `fromMaybe` playerAt b p
+
+  isOccupied ::
+    b
+    -> Position
+    -> Bool
+  isOccupied b p =
+    isJust $ playerAt b p
+
+  isNotOccupied ::
+    b
+    -> Position
+    -> Bool
+  isNotOccupied b p =
+    not (isOccupied b p)
+
+instance BoardLike Board where
+  moveBack (Board [] _) =
+    Nothing
+  moveBack (Board ((p, _):t) m) =
+    Just (Board t (p `M.delete` m))
+
+  isEmpty (Board _ m) =
+    M.null m
+
+  occupiedPositions (Board _ m) =
+    M.keysSet m
+
+  isSubboardOf (Board _ m) (Board _ m') =
+    m `M.isSubmapOf` m'
+
+  isProperSubboardOf (Board _ m) (Board _ m') =
+    m `M.isProperSubmapOf` m'
+
+  playerAt (Board _ m) p =
+    p `M.lookup` m
+
+instance BoardLike FinishedBoard where
+  moveBack (FinishedBoard (Board [] _) _) =
+    Nothing
+  moveBack (FinishedBoard (Board ((p, _):t) m) _) =
+    Just (Board t (p `M.delete` m))
+
+  isEmpty (FinishedBoard b _) =
+    isEmpty b
+
+  occupiedPositions (FinishedBoard b _) =
+    occupiedPositions b
+
+  isSubboardOf (FinishedBoard b _) (FinishedBoard b' _) =
+    b `isSubboardOf` b'
+
+  isProperSubboardOf (FinishedBoard b _) (FinishedBoard b' _) =
+    b `isProperSubboardOf` b'
+
+  playerAt (FinishedBoard b _) p =
+    b `playerAt` p
 
 -- not exported
 showPositionMap ::
