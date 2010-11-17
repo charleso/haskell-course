@@ -10,4 +10,4 @@ data Position =
   | SW
   | W
   | C
-  deriving Eq
+  deriving (Eq, Ord, Enum, Bounded)

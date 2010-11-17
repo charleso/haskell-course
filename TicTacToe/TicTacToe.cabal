@@ -14,13 +14,15 @@ Flag small_base
 Library
   Build-Depends:
                     base >= 4
+                    , containers
                     , HUnit
                     , QuickCheck
                     , test-framework
                     , test-framework-hunit
                     , test-framework-quickcheck2
 
-  GHC-Options:      -Wall
+  GHC-Options:
+                    -Wall
                     -fno-warn-orphans
                     -fno-warn-type-defaults
                     -fno-warn-name-shadowing
@@ -28,3 +30,4 @@ Library
   Exposed-Modules:
                     Data.TicTacToe.Board
                     , Data.TicTacToe.Position
+                    , Data.TicTacToe.Player
