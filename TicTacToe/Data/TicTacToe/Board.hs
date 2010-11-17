@@ -7,6 +7,7 @@ module Data.TicTacToe.Board
 , MoveResult(..) -- todo abstract ADT
 , (-->)
 , (--->)
+, play
 , BoardLike(..)
 ) where
 
@@ -112,6 +113,12 @@ p --> b@(Board q m) =
      KeepPlaying b'          -> t ---> b'
      GameFinished b'         -> (t, GameFinished b')
 
+play ::
+  [Position]
+  -> ([Position], MoveResult)
+play p =
+  p ---> empty
+
 class BoardLike b where
   moveBack ::
     b
@@ -162,6 +169,10 @@ class BoardLike b where
   isNotOccupied b p =
     not (isOccupied b p)
 
+  printBoard ::
+    b
+    -> IO ()
+
 instance BoardLike Board where
   moveBack (Board [] _) =
     Nothing
@@ -182,6 +193,20 @@ instance BoardLike Board where
 
   playerAt (Board _ m) p =
     p `M.lookup` m
+
+  printBoard (Board _ m) =
+    let z = ".===.===.===."
+        pos' = pos m " "
+        lines = [
+                  z
+                , concat ["| ", pos' NW, " | ", pos' N , " | ", pos' NE, " |"]
+                , z
+                , concat ["| ", pos' W , " | ", pos' C , " | ", pos' E , " |"]
+                , z
+                , concat ["| ", pos' SW, " | ", pos' S , " | ", pos' SE, " |"]
+                , z
+                ]
+    in forM_ lines print
 
 instance BoardLike FinishedBoard where
   moveBack (FinishedBoard (Board [] _) _) =
@@ -204,13 +229,26 @@ instance BoardLike FinishedBoard where
   playerAt (FinishedBoard b _) p =
     b `playerAt` p
 
+  printBoard (FinishedBoard b _) =
+    print b
+
 -- not exported
+
+pos ::
+  Ord k =>
+  M.Map k Player
+  -> String
+  -> k
+  -> String
+pos m empty p =
+  maybe empty (player "X" "O") (p `M.lookup` m)
+
 showPositionMap ::
   M.Map Position Player
   -> String
 showPositionMap m =
-  let pos p = maybe "?" (player "X" "O") (p `M.lookup` m)
-  in concat [ ".=",  pos NW, "=.=", pos N , "=.=", pos NE
-            , "=.=", pos W , "=.=", pos C , "=.=", pos E
-            , "=.=", pos SW, "=.=", pos S , "=.=", pos SE, "=."
+  let pos' = pos m "?"
+  in concat [ ".=",  pos' NW, "=.=", pos' N , "=.=", pos' NE
+            , "=.=", pos' W , "=.=", pos' C , "=.=", pos' E
+            , "=.=", pos' SW, "=.=", pos' S , "=.=", pos' SE, "=."
             ]
