@@ -1,4 +1,7 @@
-module Data.TicTacToe.Position where
+module Data.TicTacToe.Position
+(
+  Position(..)
+) where
 
 data Position =
   NW
