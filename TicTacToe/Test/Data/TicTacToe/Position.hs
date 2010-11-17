@@ -19,7 +19,7 @@ positionTests =
   [
     testGroup "Position"
       [
-        testProperty "show is 2" prop_show_is_two
+        testProperty "show is length 2" prop_show_is_two
       ]
   ]
 
