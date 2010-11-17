@@ -1,0 +1,28 @@
+Name:               TicTacToe
+Version:            0.0.1
+Author:             Tony Morris <tmorris@tmorris.net>
+Maintainer:         Tony Morris
+Synopsis:           A sub-project (exercise) for a functional programming course
+Category:           Education
+Description:        A sub-project (exercise) for a functional programming course
+Cabal-version:      >= 1.2
+Build-Type:         Simple
+
+Flag small_base
+  Description:      Choose the new, split-up base package.
+
+Library
+  Build-Depends:    base >= 4,
+                    HUnit,
+                    QuickCheck,
+                    test-framework,
+                    test-framework-hunit,
+                    test-framework-quickcheck2
+
+  GHC-Options:      -Wall
+                    -fno-warn-orphans
+                    -fno-warn-type-defaults
+                    -fno-warn-name-shadowing
+
+  Exposed-Modules:  TODO
+
