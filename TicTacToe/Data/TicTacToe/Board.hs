@@ -9,6 +9,7 @@ module Data.TicTacToe.Board
 , (--->)
 , (===>)
 , play
+, play'
 , BoardLike(..)
 ) where
 
@@ -126,6 +127,12 @@ play ::
   -> ([Position], MoveResult)
 play p =
   p ---> empty
+
+play' ::
+  [Position]
+  -> MoveResult
+play' p =
+  p ===> empty
 
 class BoardLike b where
   moveBack ::
