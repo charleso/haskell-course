@@ -7,6 +7,7 @@ module Data.TicTacToe.Board
 , MoveResult(..) -- todo abstract ADT
 , (-->)
 , (--->)
+, (===>)
 , play
 , BoardLike(..)
 ) where
@@ -112,6 +113,13 @@ p --> b@(Board q m) =
   of PositionAlreadyOccupied -> (h:t, PositionAlreadyOccupied)
      KeepPlaying b'          -> t ---> b'
      GameFinished b'         -> (t, GameFinished b')
+
+(===>) ::
+  [Position]
+  -> Board
+  -> MoveResult
+p ===> b =
+  snd (p ---> b)
 
 play ::
   [Position]
