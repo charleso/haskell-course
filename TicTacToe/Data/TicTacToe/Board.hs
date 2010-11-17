@@ -2,6 +2,7 @@ module Data.TicTacToe.Board
 (
   Board
 , FinishedBoard
+, getResult
 , empty
 , whoseTurn
 , whoseNotTurn
@@ -51,6 +52,12 @@ instance Show Board where
 data FinishedBoard =
   FinishedBoard Board GameResult
   deriving Eq
+
+getResult ::
+  FinishedBoard
+  -> GameResult
+getResult (FinishedBoard _ r) =
+  r
 
 instance Show FinishedBoard where
   show (FinishedBoard (Board _ m) r) =
