@@ -248,8 +248,9 @@ playAny ::
 playAny =
   (-?->) empty
 
+-- | Prints out a board using ASCII notation and substituting the returned string for each position.
 printEachPosition ::
-  (Position -> String)
+  (Position -> String) -- ^ The function returning the string to substitute each position.
   -> IO ()
 printEachPosition k =
   let z = ".===.===.===."
@@ -265,37 +266,45 @@ printEachPosition k =
   in forM_ lines putStrLn
 
 class BoardLike b where
+  -- | Takes a move back, unless the board is empty.
   moveBack ::
     b
     -> Maybe Board
 
+  -- | Returns whether or not the board is empty.
   isEmpty ::
     b
     -> Bool
 
+  -- | Returns positions that are occupied.
   occupiedPositions ::
     b
     -> S.Set Position
 
+  -- | Returns the number of moves that have been played.
   moves ::
     b
     -> Int
 
+  -- | Returns whether or not the first given board can transition to the second given board.
   isSubboardOf ::
     b
     -> b
     -> Bool
 
+  -- | Returns whether or not the first given board can transition to the second given board and they are inequal.
   isProperSubboardOf ::
     b
     -> b
     -> Bool
 
+  -- | Returns the player at the given position.
   playerAt ::
     b
     -> Position
     -> Maybe Player
 
+  -- | Returns the player at the given position or the given default.
   playerAtOr ::
     b
     -> Position
