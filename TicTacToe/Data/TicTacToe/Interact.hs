@@ -1,3 +1,4 @@
+-- | Play tic-tac-toe interactively.
 module Data.TicTacToe.Interact
 (
   tictactoe
@@ -10,6 +11,7 @@ import Data.TicTacToe.GameResult
 import Data.Char
 import Control.Monad
 
+-- | Play tic-tac-toe interactively.
 tictactoe ::
   IO ()
 tictactoe =
