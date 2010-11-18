@@ -54,4 +54,3 @@ prop_move_moveBack ::
 prop_move_moveBack b p =
   (\b' -> (== b) `all` (moveBack b')) `all` boardResult (p --> b)
 
-
