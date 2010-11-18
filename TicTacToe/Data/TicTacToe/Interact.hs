@@ -1,4 +1,7 @@
-module Data.TicTacToe.Interact where
+module Data.TicTacToe.Interact
+(
+  tictactoe
+) where
 
 import Data.TicTacToe.Board
 import Data.TicTacToe.Position
