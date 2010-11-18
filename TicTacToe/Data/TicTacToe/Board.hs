@@ -1,3 +1,6 @@
+-- | A tic-tac-toe board is one of nine positions, each position occupied by either player 1, player 2 or neither and with invariants specific to the rules of tic-tac-toe.
+--
+-- For example, the number of positions occupied by player 1 is equal to, or one more, than the positions occupied by player 2.
 module Data.TicTacToe.Board
 (
   Board
