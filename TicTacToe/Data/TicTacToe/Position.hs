@@ -7,12 +7,12 @@ data Position =
   NW
   | N
   | NE
-  | E
-  | SE
-  | S
-  | SW
   | W
   | C
+  | E
+  | SW
+  | S
+  | SE
   deriving (Eq, Ord, Enum, Bounded)
 
 instance Show Position where

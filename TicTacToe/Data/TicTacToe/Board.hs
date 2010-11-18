@@ -20,6 +20,7 @@ module Data.TicTacToe.Board
 , play
 , play'
 , filterEndMoves
+, printEachPosition
 , BoardLike(..)
 ) where
 
@@ -203,6 +204,21 @@ filterEndMoves =
                  of KeepPlaying b' -> b'
                     _              -> b)
 
+printEachPosition ::
+  (Position -> String)
+  -> IO ()
+printEachPosition k =
+  let z = ".===.===.===."
+      lines = [
+                z
+              , concat ["| ", k NW, " | ", k N , " | ", k NE, " |"]
+              , z
+              , concat ["| ", k W , " | ", k C , " | ", k E , " |"]
+              , z
+              , concat ["| ", k SW, " | ", k S , " | ", k SE, " |"]
+              , z
+              ]
+  in forM_ lines putStrLn
 
 class BoardLike b where
   moveBack ::
@@ -294,18 +310,7 @@ instance BoardLike Board where
     length z == 9
 
   printBoard (Board _ m) =
-    let z = ".===.===.===."
-        pos' = pos m " "
-        lines = [
-                  z
-                , concat ["| ", pos' NW, " | ", pos' N , " | ", pos' NE, " |"]
-                , z
-                , concat ["| ", pos' W , " | ", pos' C , " | ", pos' E , " |"]
-                , z
-                , concat ["| ", pos' SW, " | ", pos' S , " | ", pos' SE, " |"]
-                , z
-                ]
-    in forM_ lines print
+    printEachPosition (pos m " ")
 
 instance BoardLike FinishedBoard where
   moveBack (FinishedBoard (Board [] _) _) =
@@ -335,7 +340,7 @@ instance BoardLike FinishedBoard where
     isFull b
 
   printBoard (FinishedBoard b _) =
-    print b
+    printBoard b
 
 -- not exported
 
@@ -346,7 +351,7 @@ pos ::
   -> k
   -> String
 pos m empty p =
-  maybe empty (player "X" "O") (p `M.lookup` m)
+  maybe empty (return . toSymbol) (p `M.lookup` m)
 
 showPositionMap ::
   M.Map Position Player

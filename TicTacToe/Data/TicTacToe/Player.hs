@@ -7,6 +7,7 @@ Player
 , player2
 , player
 , alternate
+, toSymbol
 ) where
 
 data Player =
@@ -60,3 +61,8 @@ alternate Player1 =
 alternate Player2 =
   Player1
 
+toSymbol ::
+  Player
+  -> Char
+toSymbol =
+  player 'X' 'O'
