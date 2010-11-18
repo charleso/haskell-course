@@ -25,8 +25,8 @@ tictactoe' b =
           , "  [1-9] to Move"
           , "  q to Quit"
           , "  v to view board positions"
-          , "  > "
           ]
+        putStr "  > "
         c <- getChar
         if c `elem` "vV"
           then
