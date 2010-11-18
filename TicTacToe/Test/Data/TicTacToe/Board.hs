@@ -4,6 +4,7 @@ module Test.Data.TicTacToe.Board
 , boardTests
 ) where
 
+
 import Prelude hiding (all, any)
 import Data.TicTacToe.Board
 import Data.TicTacToe.Position
