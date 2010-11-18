@@ -15,7 +15,7 @@ import Test.Framework.Providers.QuickCheck2 (testProperty)
 
 instance Arbitrary Board where
   arbitrary =
-    filterEndMoves empty `fmap` resize 12 arbitrary
+    playAny `fmap` resize 12 arbitrary
 
 main ::
   IO ()
@@ -52,5 +52,5 @@ prop_move_moveBack ::
   -> Position
   -> Bool
 prop_move_moveBack b p =
-  (\b' -> (== b) `all` (moveBack b')) `all` boardResult (p --> b)
+  (\b' -> (== b) `all` moveBack b') `all` boardResult (p --> b)
 

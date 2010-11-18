@@ -22,7 +22,8 @@ module Data.TicTacToe.Board
 , (===>)
 , play
 , play'
-, filterEndMoves
+, (-?->)
+, playAny
 , printEachPosition
 , BoardLike(..)
 ) where
@@ -37,12 +38,14 @@ import Data.Foldable
 import Data.List(intercalate)
 import Data.Maybe
 
+-- | The result of making a move on a tic-tac-toe board.
 data MoveResult =
-  PositionAlreadyOccupied
-  | KeepPlaying Board
-  | GameFinished FinishedBoard
+  PositionAlreadyOccupied -- ^ The move was to a position that is already occupied by a player.
+  | KeepPlaying Board -- ^ The move was valid and the board is in a new state.
+  | GameFinished FinishedBoard -- ^ The move was valid and the game is complete.
   deriving Eq
 
+-- | Return the possible board from a move result.
 boardResult ::
   MoveResult
   -> Maybe Board
@@ -51,9 +54,10 @@ boardResult (KeepPlaying b) =
 boardResult _               =
   Nothing
 
+-- | Return the board from a move result or if the default if there isn't one.
 boardResultOr ::
-  Board
-  -> MoveResult
+  Board -- ^ The default.
+  -> MoveResult -- ^ The move result to get the board from.
   -> Board
 boardResultOr b =
   fromMaybe b . boardResult
@@ -71,10 +75,12 @@ instance Show Board where
   show b@(Board _ m) =
     intercalate " " [showPositionMap m, "[", show (whoseTurn b), "to move ]"]
 
+-- | A finished board is a completed tic-tac-toe game and does not accept any more moves.
 data FinishedBoard =
   FinishedBoard Board GameResult
   deriving Eq
 
+-- | Return the result of a completed tic-tac-toe game.
 getResult ::
   FinishedBoard
   -> GameResult
@@ -86,11 +92,13 @@ instance Show FinishedBoard where
     let summary = gameResult (\p -> show p ++ " wins") "draw" r
     in intercalate " " [showPositionMap m, "[[", summary, "]]"]
 
+-- | Start an empty tic-tac-toe board.
 empty ::
   Board
 empty =
   Board [] M.empty
 
+-- | Returns whose turn it is on a tic-tac-toe board.
 whoseTurn ::
   Board
   -> Player
@@ -99,15 +107,17 @@ whoseTurn (Board [] _) =
 whoseTurn (Board ((_, q):_) _) =
   alternate q
 
+-- | Returns whose turn it is not on a tic-tac-toe board.
 whoseNotTurn ::
   Board
   -> Player
 whoseNotTurn =
   alternate . whoseTurn
 
+-- | Make a move at the given position on the given board.
 (-->) ::
-  Position
-  -> Board
+  Position -- ^ The position to move to.
+  -> Board -- ^ The board to make the move on.
   -> MoveResult
 p --> b@(Board q m) =
   let w       = whoseTurn b
@@ -138,28 +148,35 @@ p --> b@(Board q m) =
               else
                 KeepPlaying b') (const PositionAlreadyOccupied) j
 
+-- | The result of attempting to make several moves on a board.
+--
+-- Encapsulates the last successful move result and any remaining positions that could not be attempted.
 data MovesAttempt =
   MovesAttempt [Position] MoveResult
   deriving Eq
 
+-- | Get the move result from the move attempts.
 attemptResult ::
   MovesAttempt
   -> MoveResult
 attemptResult (MovesAttempt _ r) =
   r
 
+-- | Get the remaining positions from the move attempts.
 attemptPositions ::
   MovesAttempt
   -> [Position]
 attemptPositions (MovesAttempt k _) =
   k
 
+-- | Construct a moves attempt with no remaining positions and the given move result.
 noRemainAttempt ::
   MoveResult
   -> MovesAttempt
 noRemainAttempt =
   movesAttempt []
 
+-- | Construct a moves attempt with the given remaining positions and move result.
 movesAttempt ::
   [Position]
   -> MoveResult
@@ -167,8 +184,12 @@ movesAttempt ::
 movesAttempt =
   MovesAttempt
 
+-- | Attempt to make several moves on a board.
+--
+-- If a move is encountered that does not transition to a new board state (e.g. game is finished, or the position is occupied),
+-- then that result is returned along with the remaining moves.
 (--->) ::
-  [Position]
+  [Position] -- ^ The moves to make.
   -> Board
   -> MovesAttempt
 []    ---> b =
@@ -179,33 +200,53 @@ movesAttempt =
      KeepPlaying b'          -> t ---> b'
      GameFinished b'         -> movesAttempt t (GameFinished b')
 
+-- | Attempt to make several moves on a board.
+--
+-- If a move is encountered that does not transition to a new board state (e.g. game is finished, or the position is occupied),
+-- then that result is returned.
 (===>) ::
-  [Position]
+  [Position] -- ^ The moves to make.
   -> Board
   -> MoveResult
 p ===> b =
   attemptResult (p ---> b)
 
+-- | Attempt to make several moves on an empty board.
+--
+-- If a move is encountered that does not transition to a new board state (e.g. game is finished, or the position is occupied),
+-- then that result is returned along with the remaining moves.
 play ::
   [Position]
   -> MovesAttempt
 play p =
   p ---> empty
 
+-- | Attempt to make several moves on an empty board.
+--
+-- If a move is encountered that does not transition to a new board state (e.g. game is finished, or the position is occupied),
+-- then that result is returned.
 play' ::
-  [Position]
+  [Position] -- ^ The moves to make.
   -> MoveResult
 play' p =
   p ===> empty
 
-filterEndMoves ::
+-- | Make several moves on a board, discarding those that do not result in a new board state (e.g. game is finished, or the position is occupied)
+(-?->) ::
   Board
-  -> [Position]
+  -> [Position] -- ^ The moves to make.
   -> Board
-filterEndMoves =
+(-?->) =
   foldr (\p b -> case p --> b
                  of KeepPlaying b' -> b'
                     _              -> b)
+
+-- | Make several moves on a new board, discarding those that do not result in a new board state (e.g. game is finished, or the position is occupied)
+playAny ::
+  [Position] -- ^ The moves to make.
+  -> Board
+playAny =
+  (-?->) empty
 
 printEachPosition ::
   (Position -> String)
