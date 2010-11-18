@@ -48,11 +48,11 @@ boardResult _               =
   Nothing
 
 boardResultOr ::
-  MoveResult
+  Board
+  -> MoveResult
   -> Board
-  -> Board
-boardResultOr r b =
-  fromMaybe b (boardResult r)
+boardResultOr b =
+  fromMaybe b . boardResult
 
 instance Show MoveResult where
   show PositionAlreadyOccupied = "*Position already occupied*"
