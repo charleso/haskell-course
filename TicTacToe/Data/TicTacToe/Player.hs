@@ -2,11 +2,15 @@
 module Data.TicTacToe.Player
 (
 Player
-, isPlayer1
-, isPlayer2
+-- * Reduction
+, player
+-- * Construction
 , player1
 , player2
-, player
+-- * Decisions
+, isPlayer1
+, isPlayer2
+-- * Combinator
 , alternate
 , toSymbol
 ) where

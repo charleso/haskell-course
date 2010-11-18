@@ -8,12 +8,15 @@
 module Data.TicTacToe.GameResult
 (
   GameResult
+-- * Reduction (fold)
 , gameResult
 , playerGameResult
+-- * Construction
 , win
 , player1Wins
 , player2Wins
 , draw
+-- * Decisions
 , isPlayer1Wins
 , isPlayer2Wins
 , isDraw
