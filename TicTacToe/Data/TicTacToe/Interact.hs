@@ -5,66 +5,97 @@ import Data.TicTacToe.Position
 import Data.TicTacToe.Player
 import Data.TicTacToe.GameResult
 import Data.Char
+import Control.Monad
 
+tictactoe ::
+  IO ()
 tictactoe =
   tictactoe' empty
 
+tictactoe' ::
+  Board
+  -> IO ()
 tictactoe' b =
   let p = whoseTurn b
-  in do putStrLn $ (show p) ++ " to move [" ++ [toSymbol p] ++ "]"
-        putStrLn "  [1-9] to Move"
-        putStrLn "  q to Quit"
-        putStrLn "  v to view board positions"
-        putStr "  > "
+  in do putStrLns
+          [ show p ++ " to move [" ++ [toSymbol p] ++ "]"
+          , "  [1-9] to Move"
+          , "  q to Quit"
+          , "  v to view board positions"
+          , "  > "
+          ]
         c <- getChar
         if c `elem` "vV"
           then
-            do putStrLn []
-               putStrLn []
-               printWithPositions b
-               putStrLn []
-               tictactoe' b
+            surround $ printWithPositions b
           else
             if c `elem` ['1'..'9']
               then
                 case toPosition (digitToInt c) --> b
-                of PositionAlreadyOccupied -> do putStrLn []
-                                                 putStrLn []
-                                                 putStrLn "That position is already taken. Try again."
-                                                 putStrLn []
+                of PositionAlreadyOccupied -> do surround $ putStrLn "That position is already taken. Try again."
                                                  printWithoutPositions b
-                                                 putStrLn []
+                                                 line
                                                  tictactoe' b
-                   KeepPlaying b'          -> do putStrLn []
-                                                 putStrLn []
-                                                 printWithoutPositions b'
-                                                 putStrLn []
+                   KeepPlaying b'          -> do surround $ printWithoutPositions b'
                                                  tictactoe' b'
-                   GameFinished b'         -> do putStrLn []
-                                                 putStrLn []
-                                                 printWithoutPositions b'
-                                                 putStrLn []
+                   GameFinished b'         -> do surround $ printWithoutPositions b'
                                                  putStrLn (playerGameResult "Player 1 Wins!" "Player 2 Wins!" "Draw" (getResult b'))
 
               else
                 if c `elem` "qQ"
                   then
-                    do putStrLn []
+                    do line
                        putStrLn "Bye!"
                   else
-                    do putStrLn []
-                       putStrLn []
-                       putStrLn "Invalid selection. Please try again."
-                       putStrLn []
+                    do surround $ putStrLn "Invalid selection. Please try again."
                        tictactoe' b
 
-printWithPositions b =
-  printEachPosition (\p -> maybe (show . fromPosition $ p) (return . toSymbol) (b `playerAt` p))
+surround ::
+  IO ()
+  -> IO ()
+surround a =
+  do nlines 2
+     a
+     line
 
-printWithoutPositions b =
-  printEachPosition (\p -> maybe " " (return . toSymbol) (b `playerAt` p))
+putStrLns ::
+  [String]
+  -> IO ()
+putStrLns =
+  mapM_ putStrLn
 
--- not exported
+line ::
+  IO ()
+line =
+  nlines 1
+
+nlines ::
+  Int
+  -> IO ()
+nlines n =
+  replicateM_ n (putStrLn [])
+
+printWithPositions ::
+  BoardLike b =>
+  b
+  -> IO ()
+printWithPositions =
+  printPositions (show . fromPosition)
+
+printWithoutPositions ::
+  BoardLike b =>
+  b
+  -> IO ()
+printWithoutPositions =
+  printPositions (const " ")
+
+printPositions ::
+  BoardLike b =>
+  (Position -> String)
+  -> b
+  -> IO ()
+printPositions k b =
+  printEachPosition (\p -> maybe (k p) (return . toSymbol) (b `playerAt` p))
 
 fromPosition ::
   Position
