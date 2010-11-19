@@ -1,18 +1,20 @@
+-- | A position is one of the nine places on a tic-tac-toe grid.
 module Data.TicTacToe.Position
 (
   Position(..)
 ) where
 
+-- A tic-tac-toe position.
 data Position =
-  NW
-  | N
-  | NE
-  | E
-  | SE
-  | S
-  | SW
-  | W
-  | C
+  NW -- ^ North-west (top left).
+  | N -- ^ North (top centre).
+  | NE -- ^ North-east (top right).
+  | W -- ^ West (middle left).
+  | C -- ^ Centre.
+  | E -- ^ East (middle right)
+  | SW -- ^ South-west (bottom left).
+  | S -- ^ South (bottom centre).
+  | SE -- ^ South-east (bottom right).
   deriving (Eq, Ord, Enum, Bounded)
 
 instance Show Position where
