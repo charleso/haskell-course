@@ -21,6 +21,10 @@ TicTacToe
 * API documented using Haddock
   * http://www.haskell.org/haddock/doc/html/index.html
 
+* Code style examined using hlint
+  * cabal install hlint
+  * Produce a report (--report)
+
 * Interactive play using API
   * Two player game at the console
 
