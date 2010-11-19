@@ -3,16 +3,22 @@
 -- For example, the number of positions occupied by player 1 is equal to, or one more, than the positions occupied by player 2.
 module Data.TicTacToe.Board
 (
+-- * Board data types
   Board
 , FinishedBoard
-, getResult
+-- * Start new game
 , empty
+-- * Game completed
+, getResult
+-- * Which player to move
 , whoseTurn
 , whoseNotTurn
+-- * Make a move on a board
 , MoveResult(..)
 , boardResult
 , boardResultOr
 , (-->)
+-- * Make many moves on a board
 , MovesAttempt
 , attemptResult
 , attemptPositions
@@ -24,8 +30,10 @@ module Data.TicTacToe.Board
 , play'
 , (-?->)
 , playAny
-, printEachPosition
+-- * Operations common to boards in-play and completed
 , BoardLike(..)
+-- * Debugging
+, printEachPosition
 ) where
 
 import Prelude hiding (any, all, concat, foldr)
