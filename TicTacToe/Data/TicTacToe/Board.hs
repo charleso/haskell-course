@@ -45,7 +45,7 @@ data MoveResult =
   | GameFinished FinishedBoard -- ^ The move was valid and the game is complete.
   deriving Eq
 
--- | Return the possible board from a move result.
+-- | Return the possible board from a move result. A board is returned if the result is to continue play.
 boardResult ::
   MoveResult
   -> Maybe Board
@@ -67,6 +67,7 @@ instance Show MoveResult where
   show (KeepPlaying b)         = concat ["{", show b, "}"]
   show (GameFinished b)        = concat ["{{", show b, "}}"]
 
+-- | A tic-tac-toe board.
 data Board =
   Board [(Position, Player)] !(M.Map Position Player)
   deriving Eq
@@ -265,6 +266,9 @@ printEachPosition k =
               ]
   in forM_ lines putStrLn
 
+-- | Functions that work on boards that are in play or have completed.
+--
+-- This class specifically does not specify moving on a board, since this is illegal on a completed board.
 class BoardLike b where
   -- | Takes a move back, unless the board is empty.
   moveBack ::
@@ -313,6 +317,7 @@ class BoardLike b where
   playerAtOr b p q =
     q `fromMaybe` playerAt b p
 
+  -- | Returns whether or not the given position is occupied on the board. @true@ if occupied.
   isOccupied ::
     b
     -> Position
@@ -320,6 +325,7 @@ class BoardLike b where
   isOccupied b p =
     isJust $ playerAt b p
 
+  -- | Returns whether or not the given position is occupied on the board. @false@ if occupied.
   isNotOccupied ::
     b
     -> Position
@@ -327,10 +333,7 @@ class BoardLike b where
   isNotOccupied b p =
     not (isOccupied b p)
 
-  isFull ::
-    b
-    -> Bool
-
+  -- | Prints the board to standard output using an ASCII grid representation.
   printBoard ::
     b
     -> IO ()
@@ -359,9 +362,6 @@ instance BoardLike Board where
   playerAt (Board _ m) p =
     p `M.lookup` m
 
-  isFull (Board z _) =
-    length z == 9
-
   printBoard (Board _ m) =
     printEachPosition (pos m " ")
 
@@ -388,9 +388,6 @@ instance BoardLike FinishedBoard where
 
   playerAt (FinishedBoard b _) p =
     b `playerAt` p
-
-  isFull (FinishedBoard b _) =
-    isFull b
 
   printBoard (FinishedBoard b _) =
     printBoard b
