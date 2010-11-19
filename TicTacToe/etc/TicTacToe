@@ -24,6 +24,7 @@ TicTacToe
 * Code style examined using hlint
   * cabal install hlint
   * Produce a report (--report)
+  * http://community.haskell.org/~ndm/darcs/hlint/hlint.htm
 
 * Interactive play using API
   * Two player game at the console
