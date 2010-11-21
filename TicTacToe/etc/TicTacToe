@@ -1,21 +1,41 @@
 TicTacToe
+=========
 
 * Build with CABAL
   * TicTacToe.cabal
   * Setup.hs
+
 * Should be thoroughly tested
   * Consider using:
     * QuickCheck
     * HUnit
     * test-framework
-* Should be documented using Haddock
-  * http://www.haskell.org/haddock/doc/html/index.html
-* Expose appropriate API e.g. (approximate)
+
+* Expose appropriate API e.g. (type signatures are approximate)
   * isWin :: Board -> Bool
   * move :: Position -> Board -> Board
-  * disallow invalid board state /using the type system/ e.g. cannot move to a board that already has a winning position
+  * disallow invalid board state /using the type system/
+    * cannot move on a board that has completed (type error)
+    * attempting an invalid move (e.g. position occupied) does not produce a board with which to continue
+
+* API documented using Haddock
+  * http://www.haskell.org/haddock/doc/html/index.html
+
+* Code style examined using hlint
+  * cabal install hlint
+  * Produce a report (--report)
+  * http://community.haskell.org/~ndm/darcs/hlint/hlint.htm
+
+* Use hoogle and hayoo to find library functions
+  * http://haskell.org/hoogle/
+  * http://holumbus.fh-wedel.de/hayoo/hayoo.html
+
+* Interactive play using API
+  * Two player game at the console
+
+
 * Extra-curricular
   * Write an opponent that never loses
 * Extra-Extra-curricular
   * Write an opponent with easy, medium, hard difficulty levels
-  
+
