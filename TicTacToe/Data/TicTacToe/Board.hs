@@ -225,7 +225,7 @@ p ===> b =
 -- If a move is encountered that does not transition to a new board state (e.g. game is finished, or the position is occupied),
 -- then that result is returned along with the remaining moves.
 play ::
-  [Position]
+  [Position] -- ^ The moves to make.
   -> MovesAttempt
 play p =
   p ---> empty
