@@ -11,6 +11,9 @@ TicTacToe
     * HUnit
     * test-framework
 
+* Include a .ghci for convenience when developing
+  * http://haskell.org/ghc/docs/6.12.2/html/users_guide/ghci-dot-files.html
+
 * Expose appropriate API e.g. (type signatures are approximate)
   * isWin :: Board -> Bool
   * move :: Position -> Board -> Board
