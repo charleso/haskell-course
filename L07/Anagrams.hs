@@ -1,3 +1,5 @@
+module L07.Anagrams where
+
 import Data.Char
 import Data.List
 import Data.Function

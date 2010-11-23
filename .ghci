@@ -1,0 +1,21 @@
+:m + Test.QuickCheck
+:l L01.Optional
+:l L01.Validation
+:l L02.List
+:l L03.Person
+:l L03.Parser
+:l L04.Fluffy
+:l L04.Misty
+:l L04.Tests
+:l L05.Testing
+:l L06.JsonValue
+:l L06.MoreParser
+:l L06.JsonParser
+:l L07.Anagrams
+:l L08.ParAnagrams
+:set prompt ">> "
+:set -W
+:set -fwarn-incomplete-record-updates
+:set -fwarn-missing-signatures
+:set -fwarn-tabs
+
