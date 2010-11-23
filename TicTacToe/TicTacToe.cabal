@@ -13,7 +13,7 @@ Flag small_base
 
 Library
   Build-Depends:
-                    base >= 4
+                    base < 5 && >= 4
                     , containers
                     , HUnit
                     , QuickCheck
