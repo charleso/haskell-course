@@ -14,8 +14,7 @@ parAnagrams ::
   -> FilePath
   -> IO [String]
 parAnagrams s name f =
-  let j d = parFilter s (flip S.member d) (permutations name)
-  in (j . S.fromList . lines) `fmap` readFile f
+  (flip (parFilter s . flip S.member) (permutations name) . S.fromList . lines) `fmap` readFile f
 
 
 parFilter ::
