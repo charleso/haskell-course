@@ -17,6 +17,7 @@ Library
                     containers,
                     directory,
                     filepath,
+                    parallel,
                     HUnit,
                     QuickCheck,
                     test-framework,
@@ -41,4 +42,6 @@ Library
                     L06.JsonValue
                     L06.MoreParser
                     L06.JsonParser
+                    L07.Anagrams
+                    L08.ParAnagrams
 
