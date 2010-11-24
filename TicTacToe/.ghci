@@ -1,6 +1,5 @@
 :m + Test.QuickCheck
-:l Data/TicTacToe.hs
-:l Test/Data/TicTacToe.hs
+:l Data/TicTacToe.hs Test/Data/TicTacToe.hs
 :set prompt ">> "
 :set -XMonomorphismRestriction
 :set -W
