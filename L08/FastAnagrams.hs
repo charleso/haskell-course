@@ -1,4 +1,4 @@
-module L08.ParAnagrams where
+module L08.FastAnagrams where
 
 import Data.Char
 import Data.List
@@ -7,11 +7,11 @@ import qualified Data.Set as S
 
 -- Return all anagrams of the given string
 -- that appear in the given dictionary file.
-parAnagrams ::
+fastAnagrams ::
   String
   -> FilePath
   -> IO [String]
-parAnagrams name f =
+fastAnagrams name f =
   (flip (filter . flip S.member) (permutations name) . S.fromList . lines) `fmap` readFile f
 
 newtype NoCaseString =
@@ -24,4 +24,3 @@ instance Eq NoCaseString where
 
 instance Show NoCaseString where
   show = show . ncString
-

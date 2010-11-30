@@ -1,5 +1,6 @@
 :m + Test.QuickCheck
-:l L01.Optional L01.Validation L02.List L03.Person L03.Parser L04.Fluffy L04.Misty L04.Tests L05.Testing L06.JsonValue L06.MoreParser L06.JsonParser L07.Anagrams L08.ParAnagrams
+:l Course.hs
+:m + Course
 :set prompt ">> "
 :set -W
 :set -fwarn-incomplete-record-updates

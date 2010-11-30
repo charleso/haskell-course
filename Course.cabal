@@ -17,7 +17,6 @@ Library
                     containers,
                     directory,
                     filepath,
-                    parallel,
                     HUnit,
                     QuickCheck,
                     test-framework,
@@ -30,6 +29,7 @@ Library
                     -fno-warn-name-shadowing
 
   Exposed-Modules:  Answer.Replace
+                    Course
                     L01.Optional
                     L01.Validation
                     L02.List
@@ -43,5 +43,4 @@ Library
                     L06.MoreParser
                     L06.JsonParser
                     L07.Anagrams
-                    L08.ParAnagrams
-
+                    L08.FastAnagrams
