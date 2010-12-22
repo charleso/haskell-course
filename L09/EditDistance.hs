@@ -2,10 +2,6 @@ module L09.EditDistance where
 
 import Data.Array
 
-class Compression c d where
-  encode :: c -> c -> d
-  decode :: c -> d -> c
-
 (<-->) ::
   Eq a =>
   [a]
