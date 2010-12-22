@@ -14,6 +14,7 @@ module Course
 , module L06.JsonParser
 , module L07.Anagrams
 , module L08.FastAnagrams
+, module L09.EditDistance
 ) where
 
 import L01.Optional
@@ -30,3 +31,4 @@ import L06.MoreParser
 import L06.JsonParser
 import L07.Anagrams
 import L08.FastAnagrams
+import L09.EditDistance

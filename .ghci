@@ -2,8 +2,9 @@
 :l Course.hs
 :m + Course
 :set prompt ">> "
-:set -W
-:set -fwarn-incomplete-record-updates
-:set -fwarn-missing-signatures
-:set -fwarn-tabs
+:set -Wall
+:set -fno-warn-orphans
+:set -fno-warn-type-defaults
+:set -fno-warn-name-shadowing
+:set -fno-warn-unused-do-bind
 

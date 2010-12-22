@@ -15,6 +15,7 @@ Library
   Build-Depends:    base >= 4,
                     split,
                     containers,
+                    array,
                     directory,
                     filepath,
                     HUnit,
@@ -27,6 +28,7 @@ Library
                     -fno-warn-orphans
                     -fno-warn-type-defaults
                     -fno-warn-name-shadowing
+                    -fno-warn-unused-do-bind
 
   Exposed-Modules:  Answer.Replace
                     Course
@@ -44,3 +46,4 @@ Library
                     L06.JsonParser
                     L07.Anagrams
                     L08.FastAnagrams
+                    L09.EditDistance
