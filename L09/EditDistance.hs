@@ -1,6 +1,6 @@
 module L09.EditDistance
 (
-  editDistance
+  editDistance, table
 ) where
 
 import Data.Array
@@ -13,8 +13,31 @@ editDistance ::
   -> [a]
   -> Int
 editDistance x y =
-  let (t, i, j) = table x y
-  in t ! (i, j)
+  let t                    = table x y
+      ((x0, y0), (x1, y1)) = bounds t
+  in t ! (x1 - x0, y1 - y0)
+
+data Lcs a =
+  Delete
+  | Insert a
+  | Subst a
+  | Copy
+  deriving Eq
+
+diff ::
+  [a]
+  -> [a]
+  -> [Lcs a]
+diff =
+  undefined
+
+applyDiff ::
+  [a]
+  -> [Lcs a]
+  -> [a]
+applyDiff =
+  undefined
+
 
 -- do not export
 
@@ -22,7 +45,7 @@ table ::
   Eq a =>
   [a]
   -> [a]
-  -> (Array (Int, Int) Int, Int, Int)
+  -> Array (Int, Int) Int
 table xs ys  =
   let m      = length xs
       n      = length ys
@@ -38,5 +61,4 @@ table xs ys  =
       distance (i,j) =
         let track = [(1,0,1),(0,1,1),(1,1, if x ! i == y ! j then 0 else 1)]
         in minimum . fmap (\(p, q, n) -> t ! (i-p,j-q) + n) $ track
-  in (t, m, n)
-
+  in t

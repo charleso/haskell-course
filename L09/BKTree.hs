@@ -9,7 +9,7 @@ module L09.BKTree
 , member
 , withinDistance
 , fromWords
-, fromDictionary
+, fromDictionaryFile
 ) where
 
 import L09.MetricSpace
@@ -111,10 +111,10 @@ fromWords ::
 fromWords =
   bktree . words
 
-fromDictionary ::
+fromDictionaryFile ::
   FilePath
   -> IO (BKTree String)
-fromDictionary p =
+fromDictionaryFile p =
   fmap fromWords $ readFile p
 
 -- not exported
