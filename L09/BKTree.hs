@@ -1,9 +1,21 @@
-module L09.BKTree where
+module L09.BKTree
+(
+  BKTree
+, empty
+, bktree
+, null
+, size
+, (.:.)
+, member
+, withinDistance
+, fromWords
+, fromDictionary
+) where
 
 import L09.MetricSpace
 import Data.Map (Map)
 import qualified Data.Map as M
-import Prelude hiding (any, foldr)
+import Prelude hiding (any, foldr, null)
 import Data.Foldable
 import Data.Monoid
 
@@ -91,7 +103,19 @@ withinDistance _ _ Leaf =
 withinDistance n a t@(Node z _ _) =
   let d = z <--> a
       k = M.toList (usingMap (breakMap d n) M.empty t) >>= \(_, u) -> withinDistance n a u
-  in if d <= n then (d, z) : k else k
+  in (if d <= n then ((d, z) :) else id) k
+
+fromWords ::
+  String
+  -> BKTree String
+fromWords =
+  bktree . words
+
+fromDictionary ::
+  FilePath
+  -> IO (BKTree String)
+fromDictionary p =
+  fmap fromWords $ readFile p
 
 -- not exported
 
