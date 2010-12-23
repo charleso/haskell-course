@@ -2,7 +2,7 @@ module L09.MetricSpace where
 
 import L09.EditDistance
 
-class MetricSpace a where
+class Eq a => MetricSpace a where
   (<-->) ::
     a
     -> a
