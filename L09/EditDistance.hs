@@ -58,9 +58,18 @@ applyDiff ::
   [a]
   -> [Edit a]
   -> [a]
-applyDiff =
-  undefined
-
+applyDiff _ [] =
+  []
+applyDiff [] _ =
+  []
+applyDiff (x:xs) (Copy:es) =
+  x:applyDiff xs es
+applyDiff (_:xs) (Subst c:es) =
+  c:applyDiff xs es
+applyDiff (_:xs) (Delete:es) =
+  applyDiff xs es
+applyDiff xs     (Insert c:es) =
+  c:applyDiff xs es
 
 -- do not export
 
