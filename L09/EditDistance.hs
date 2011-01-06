@@ -1,7 +1,7 @@
-module L09.EditDistance
+module L09.EditDistance {-
 (
-  editDistance, table
-) where
+  editDistance
+) -} where
 
 import Data.Array
 import Prelude hiding (any, minimum)
@@ -17,23 +17,46 @@ editDistance x y =
       ((x0, y0), (x1, y1)) = bounds t
   in t ! (x1 - x0, y1 - y0)
 
-data Lcs a =
+data Edit a =
   Delete
   | Insert a
   | Subst a
   | Copy
-  deriving Eq
+  deriving (Eq, Show)
 
 diff ::
+  Eq a =>
   [a]
   -> [a]
-  -> [Lcs a]
-diff =
-  undefined
+  -> [Edit a]
+diff a b =
+  let diff _ _ 0 0 = []
+      diff c d p q = let n = t ! (p, q)
+                         n' = n - 1
+                         o = t ! (p - 1, q - 1)
+                         (g, h, i, j, k) = if n' == o
+                                             then
+                                               (Subst (head d), drop 1, drop 1, 1, 1)
+                                             else
+                                               if n' == t ! (p - 1, q)
+                                                 then
+                                                   (Delete, drop 1, id, 1, 0)
+                                                 else
+                                                   if n' == t ! (p, q - 1)
+                                                     then
+                                                       (Insert (head d), id, drop 1, 0, 1)
+                                                     else
+                                                       (Copy, drop 1, drop 1, 1, 1)
+                     in g : diff (h c) (i d) (p - j) (q - k)
+      t = table a b
+      a' = reverse a
+      b' = reverse b
+      ((x0, y0), (x1, y1)) = bounds t
+  in reverse $ diff a' b' (x1 - x0) (y1 - y0)
 
 applyDiff ::
   [a]
-  -> [Lcs a]
+  -> [Edit a]
   -> [a]
 applyDiff =
   undefined
@@ -53,8 +76,8 @@ table xs ys  =
       x      = k m xs
       y      = k n ys
 
-      t      = bounds `array` [(z, distance z) | z <- range bounds]
-      bounds = ((0,0),(m,n))
+      t      = b `array` [(z, distance z) | z <- range b]
+      b      = ((0,0),(m,n))
 
       distance (0,j) = j
       distance (i,0) = i
