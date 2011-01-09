@@ -1,3 +1,5 @@
+import collection.immutable.{Map => M}
+
 sealed trait Position
 case object N extends Position
 case object NE extends Position
@@ -18,6 +20,10 @@ sealed trait Player {
   def isPlayer2 = !isPlayer1
 
   def alternate = if(isPlayer1) Player2 else Player1
+
+  def toSymbol = if(isPlayer1) 'X' else 'O'
+
+  override def toString = if(isPlayer1) "Player 1" else "Player 2"
 }
 
 case object Player1 extends Player
@@ -30,6 +36,11 @@ sealed trait GameResult {
     case Player1Wins => Some(Player1)
     case Player2Wins => Some(Player2)
     case Draw        => None
+  }
+
+  override def toString = winner match {
+    case Some(p) => p.toString + " wins"
+    case None    => "draw"
   }
 }
 case object Player1Wins extends GameResult
@@ -54,7 +65,7 @@ sealed trait Board {
   }
 
   def whoseTurn = moves match {
-    case Nil => Player1
+    case Nil         => Player1
     case (_, p) :: _ => p.alternate
   }
 
@@ -101,11 +112,36 @@ sealed trait Board {
                       else MoveResult.keepPlaying(bb)
     }
   }
+
+  override def toString = {
+    def pos[K](m: M[K, Player], empty: => String, k: K): String =
+      m get k match {
+        case None    => empty
+        case Some(p) => p.toSymbol.toString
+      }
+
+    def showPositionMap(m: M[Position, Player]): String = {
+      val z = ".===.===.===."
+      def k = m get (_: Position) getOrElse "?"
+
+      List(
+            z
+          , List("| ", k(NW), " | ", k(N), " | ", k(NE), " |").mkString
+          , z
+          , List("| ", k( W), " | ", k(C), " | ", k( E), " |").mkString
+          , z
+          , List("| ", k(SW), " | ", k(S), " | ", k(SE), " |").mkString
+          , z
+          ) mkString "\n"
+    }
+
+    showPositionMap(map) + "\n" + List("[ ", whoseTurn.toString, " to move ]").mkString
+  }
 }
 private final case class MapBoard(moves: List[(Position, Player)], m: collection.immutable.Map[Position, Player]) extends Board
 
 object Board {
-  private def board(moves: List[(Position, Player)], m: collection.immutable.Map[Position, Player]): Board =
+  private def board(moves: List[(Position, Player)], m: M[Position, Player]): Board =
     MapBoard(moves, m)
 
   def empty = board(Nil, Map.empty)
@@ -121,6 +157,8 @@ sealed trait FinishedBoard {
     this match {
       case FinishedBoardB(_, r) => r
     }
+
+  override def toString = board.toString + "\n" + List("[[ ", result.toString, " ]]").mkString
 }
 
 private final case class FinishedBoardB(b: Board, r: GameResult) extends FinishedBoard
@@ -148,4 +186,11 @@ object MoveResult {
   def positionAlreadyOccupied: MoveResult = PositionAlreadyOccupied
   def keepPlaying(b: Board): MoveResult = KeepPlaying(b)
   def gameOver(b: FinishedBoard): MoveResult = GameOver(b)
+}
+
+object Main {
+  import Board._
+  def main(args: Array[String]) {
+    println(empty)
+  }
 }
