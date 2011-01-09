@@ -17,6 +17,11 @@ sealed trait Player {
 case object Player1 extends Player
 case object Player2 extends Player
 
-sealed trait Board 
-private final case class MapBoard(m: Map[Position, Player])
+sealed trait Board {
+  private def withMap[X](f: Map[Position, Player] => X): X =
+    this match {
+      case MapBoard(m) => f(m)
+    }
+}
+private final case class MapBoard(m: Map[Position, Player]) extends Board
 
