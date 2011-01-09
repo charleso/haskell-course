@@ -18,10 +18,13 @@ case object Player1 extends Player
 case object Player2 extends Player
 
 sealed trait Board {
-  private def withMap[X](f: (List[(Position, Player)], Map[Position, Player]) => X): X =
+  private def withMovesMap[X](f: (List[(Position, Player)], Map[Position, Player]) => X): X =
     this match {
       case MapBoard(moves, m) => f(moves, m)
     }
+
+  private def withMoves[X](f: List[(Position, Player)] => X): X =
+    withMovesMap((moves, _) => f(moves))
 }
 private final case class MapBoard(moves: List[(Position, Player)], m: Map[Position, Player]) extends Board
 
