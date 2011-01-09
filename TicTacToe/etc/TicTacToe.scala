@@ -17,11 +17,32 @@ sealed trait Player {
   def isPlayer1 = this == Player1
   def isPlayer2 = !isPlayer1
 
-  def switch = if(isPlayer1) Player2 else Player1
+  def alternate = if(isPlayer1) Player2 else Player1
 }
 
 case object Player1 extends Player
 case object Player2 extends Player
+
+sealed trait GameResult {
+  def isWin = this == Player1Wins || this == Player2Wins
+  def isDraw = !isWin
+  def winner = this match {
+    case Player1Wins => Some(Player1)
+    case Player2Wins => Some(Player2)
+    case Draw        => None
+  }
+}
+case object Player1Wins extends GameResult
+case object Player2Wins extends GameResult
+case object Draw extends GameResult
+
+object GameResult {
+  def win(p: Player) =
+    p match {
+      case Player1 => Player1Wins
+      case Player2 => Player2Wins
+    }
+}
 
 sealed trait Board {
   private def moves = this match {
@@ -34,15 +55,15 @@ sealed trait Board {
 
   def whoseTurn = moves match {
     case Nil => Player1
-    case (_, p) :: _ => p.switch
+    case (_, p) :: _ => p.alternate
   }
 
-  def whoseNotTurn = whoseTurn.switch
+  def whoseNotTurn = whoseTurn.alternate
 
   def -->(p: Position): MoveResult = {
     val j = map get p
     val mm = map + ((p, whoseTurn))
-    //val bb = Board(
+    val bb = Board.board((p, whoseTurn) :: moves, mm)
     val wins = List(
                      (NW, W , SW)
                    , (N , C , S )
@@ -53,6 +74,7 @@ sealed trait Board {
                    , (NW, C , SE)
                    , (SW, C , NE)
                    )
+
     def allEq[A](x: List[A]): Boolean = x match {
       case d :: e :: t => d == e && allEq(t)
       case _ => true
@@ -72,45 +94,13 @@ sealed trait Board {
 
     val isDraw = Position.positions forall (map contains _)
 
-    error("todo")
+    j match {
+      case None    => MoveResult.positionAlreadyOccupied
+      case Some(z) => if(isWin) MoveResult.gameOver(FinishedBoard.finishedBoard(bb, GameResult.win(whoseTurn)))
+                      else if(isDraw) MoveResult.gameOver(FinishedBoard.finishedBoard(bb, Draw))
+                      else MoveResult.keepPlaying(bb)
+    }
   }
-
-/*
-- | Make a move at the given position on the given board.
-(-->) ::
-  Position -- ^ The position to move to.
-  -> Board -- ^ The board to make the move on.
-  -> MoveResult
-p --> b@(Board q m) =
-  let w       = whoseTurn b
-      (j, m') = M.insertLookupWithKey (\_ x _ -> x) p w m
-      wins =
-        [
-          (NW, W , SW)
-        , (N , C , S )
-        , (NE, E , SE)
-        , (NW, N , NE)
-        , (W , C , E )
-        , (SW, S , SE)
-        , (NW, C , SE)
-        , (SW, C , NE)
-        ]
-      allEq (d:e:t) = d == e && allEq (e:t)
-      allEq _       = True
-      isWin         = any (\(a, b, c) -> any allEq $ mapM (`M.lookup` m') [a, b, c]) wins
-      isDraw        = all (`M.member` m') [minBound ..]
-      b'            = Board ((p, w):q) m'
-  in maybe (if isWin
-            then
-              GameFinished (b' `FinishedBoard` win w)
-            else
-              if isDraw
-              then
-                GameFinished (b' `FinishedBoard` draw)
-              else
-                KeepPlaying b') (const PositionAlreadyOccupied) j
-
-*/
 }
 private final case class MapBoard(moves: List[(Position, Player)], m: collection.immutable.Map[Position, Player]) extends Board
 
@@ -124,11 +114,21 @@ object Board {
 sealed trait FinishedBoard {
   private def board =
     this match {
-      case FinishedBoardB(b) => b
+      case FinishedBoardB(b, _) => b
+    }
+
+  def result =
+    this match {
+      case FinishedBoardB(_, r) => r
     }
 }
 
-private final case class FinishedBoardB(b: Board) extends FinishedBoard
+private final case class FinishedBoardB(b: Board, r: GameResult) extends FinishedBoard
+
+object FinishedBoard {
+  def finishedBoard(b: Board, r: GameResult): FinishedBoard =
+    FinishedBoardB(b, r)
+}
 
 sealed trait MoveResult {
   def fold[X](positionAlreadyOccupied: => X,
