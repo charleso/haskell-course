@@ -4,3 +4,4 @@ syntax: glob
 *.o
 *.orig
 *.hi
+dist
