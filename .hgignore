@@ -1,4 +1,6 @@
 syntax: glob
-
-dist
-*.lkshs
+*.swp
+*.*~
+*.o
+*.orig
+*.hi
