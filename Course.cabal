@@ -1,5 +1,5 @@
 Name:               HaskellCourse
-Version:            0.0.2
+Version:            0.0.3
 Author:             Tony Morris <tmorris@tmorris.net>
 Maintainer:         Tony Morris
 Synopsis:           Source code for a functional programming course
@@ -15,9 +15,9 @@ Library
   Build-Depends:    base >= 4,
                     split,
                     containers,
+                    array,
                     directory,
                     filepath,
-                    parallel,
                     HUnit,
                     QuickCheck,
                     test-framework,
@@ -28,8 +28,10 @@ Library
                     -fno-warn-orphans
                     -fno-warn-type-defaults
                     -fno-warn-name-shadowing
+                    -fno-warn-unused-do-bind
 
   Exposed-Modules:  Answer.Replace
+                    Course
                     L01.Optional
                     L01.Validation
                     L02.List
@@ -43,5 +45,5 @@ Library
                     L06.MoreParser
                     L06.JsonParser
                     L07.Anagrams
-                    L08.ParAnagrams
-
+                    L08.FastAnagrams
+                    L09.EditDistance

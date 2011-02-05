@@ -66,7 +66,8 @@ prop_append ::
   -> List Int
   -> Bool
 prop_append x y z =
-    append x (append y z) == append (append x y) z
+  (x `append` y) `append` z == ---
+  x `append` (y `append` z)    ---  error "todo"
 
 -- Exercise 2
 -- Folding (right) with cons and nil on a list (x) produces that same list x.
@@ -74,7 +75,7 @@ prop_foldRight ::
   List Int
   -> Bool
 prop_foldRight x =
-    foldRight (:|) Nil x == x
+  foldRight (:|) Nil x == x ---  error "todo"
 
 -- Exercise 3
 -- Folding on a list (x) with subtraction on the sum of x produces 0.
@@ -82,7 +83,7 @@ prop_sum ::
   List Int
   -> Bool
 prop_sum x =
-    foldRight (+) 0 x - (sum x) == 0
+  foldLeft (-) (sum x) x == 0 ---  error "todo"
 
 -- Exercise 4
 -- Replace each element in a list (x) with 1, then sum that list and you will have the length.
@@ -90,7 +91,7 @@ prop_length ::
   List Int
   -> Bool
 prop_length x =
-    sum (map (\_ -> 1) x) == length x
+  sum (map (const 1) x) == length x ---  error "todo"
 
 -- Exercise 5
 -- Filtering a list (x) with a predicate (f) produces a list of elements where
@@ -100,7 +101,7 @@ prop_filter ::
   -> List Int
   -> Bool
 prop_filter f x =
-    all f (filter f x)
+  all f (filter f x) ---  in error "todo"
 
 -- Exercise 6
 -- Mapping a function (g) on a list (x), then mapping another function (f) on that result,
@@ -111,16 +112,16 @@ prop_map_composition ::
   -> List Char
   -> Bool
 prop_map_composition f g x =
-    map f (map g x) == map (f . g) x
+  map f (map g x) == map (f . g) x ---  in error "todo"
 
 -- Exercise 7
--- Mapping length on a list (x) then taking the sum produces the same result as
+-- Mapping length on a list (x) then taking the same produces the same result as
 -- flattening the list and taking the length.
 prop_flatten ::
   List (List Int)
   -> Bool
 prop_flatten x =
-    sum (map length x) == length (flatten x)
+  sum (map length x) == length (flatten x) ---  error "todo"
 
 -- Exercise 8
 -- Using (>>>=>) expressed in terms of flatMap, show that
@@ -133,7 +134,9 @@ prop_flatMap_associative ::
   -> Bool
 prop_flatMap_associative x y z a =
   let p >>>=> q = \k -> q `flatMap` p k
-  in ((x >>>=> y) >>>=> z) a == (x >>>=> (y >>>=> z)) a
+      d = (x >>>=> y) >>>=> z ---
+      e = x >>>=> (y >>>=> z) ---
+  in d a == e a               ---  in error "todo"
 
 -- Exercise 9
 -- All elements in maximum of a list (x) are less then or equal to x.
@@ -141,8 +144,7 @@ prop_maximum ::
   List Int
   -> Bool
 prop_maximum x =
-    let mx = maximum x
-    in all (<= mx) x
+  all (\a -> maximum x >= a) x ---  error "todo"
 
 -- Exercise 10
 -- The maximum of a list (x) contains x.
@@ -160,5 +162,4 @@ prop_reverse ::
   List Int
   -> Bool
 prop_reverse x =
-    reverse (reverse x) == x
-
+  (reverse . reverse) x == x ---  error "todo"

@@ -32,7 +32,8 @@ tictactoe' b =
         c <- getChar
         if c `elem` "vV"
           then
-            surround $ printWithPositions b
+            do surround $ printWithPositions b
+               tictactoe' b
           else
             if c `elem` ['1'..'9']
               then
