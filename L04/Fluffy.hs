@@ -12,22 +12,23 @@ class Fluffy f where
 -- Exercise 1
 -- Relative Difficulty: 1
 instance Fluffy List where
-  furry _ Nil    = Nil              ---
-  furry f (h:|t) = f h :| furry f t ---  furry = error "todo"
+--  furry f Nil = Nil
+--  furry f (x :| xs) = (f x) :| (furry f xs)
+   furry = L02.List.map
 
 -- Exercise 2
 -- Relative Difficulty: 1
 instance Fluffy Optional where
-  furry _ Empty = Empty         ---
-  furry f (Full a) = Full (f a) ---  furry = error "todo"
-
+--   furry f Empty = Empty
+--   furry f (Full a) = Full (f a)
+    furry = L01.Optional.mapOptional
 
 -- Exercise 3
 -- Relative Difficulty: 2
 instance Fluffy Parser where
-  furry f (P k) = P (\i -> case k i of Error e      -> Error e         ---
-                                       Value (r, a) -> Value (r, f a)) ---  furry = error "todo"
-
+--bindParser :: Parser a -> (a -> Parser b) -> Parser b
+--furry :: (a -> b) -> Parser a -> Parser b
+  furry f = (flip bindParser (valueParser . f))
 
 -----------------------
 -- SUPPORT LIBRARIES --
