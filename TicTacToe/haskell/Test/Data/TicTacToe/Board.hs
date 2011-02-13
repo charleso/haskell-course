@@ -21,7 +21,6 @@ instance Arbitrary Board where
        return $ Prelude.foldr (\p b -> keepPlayingOr b id (p --> b)) (p --> empty) q
 
 
-
 main ::
   IO ()
 main =
