@@ -49,7 +49,7 @@ prop_move_whoseTurn ::
   -> Position
   -> Bool
 prop_move_whoseTurn b p =
-  (\b' -> whoseTurn b /= whoseTurn b') `all` boardResult (p --> b)
+  (\b' -> whoseTurn b /= whoseTurn b') `all` keepPlaying (p --> b)
 
 prop_move_takeBack ::
   Board

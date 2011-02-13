@@ -18,8 +18,7 @@ module Data.TicTacToe.Board
 , MoveResult
 , foldMoveResult
 , keepPlayingOr
-, boardResult
-, boardResultOr
+, keepPlaying
 -- * Taking a move back from a board
 , TakeBack(..)
 , TakenBack
@@ -105,30 +104,23 @@ foldMoveResult _ kp _ (KeepPlaying b) =
 foldMoveResult _ _ gf (GameFinished b) =
   gf b
 
+-- | Return the value after function application to the board to keep playing.
 keepPlayingOr ::
-  a
-  -> (Board -> a)
+  a -- ^ The value to return if there is no board to keep playing with.
+  -> (Board -> a) -- ^ A function to apply to the board to keep playing with.
   -> MoveResult
   -> a
 keepPlayingOr def kp =
   foldMoveResult def kp (const def)
 
 -- | Return the possible board from a move result. A board is returned if the result is to continue play.
-boardResult ::
+keepPlaying ::
   MoveResult
   -> Maybe Board
-boardResult (KeepPlaying b) =
+keepPlaying (KeepPlaying b) =
   Just b
-boardResult _               =
+keepPlaying _               =
   Nothing
-
--- | Return the board from a move result or if the default if there isn't one.
-boardResultOr ::
-  Board -- ^ The default.
-  -> MoveResult -- ^ The move result to get the board from.
-  -> Board
-boardResultOr b =
-  fromMaybe b . boardResult
 
 instance Show MoveResult where
   show PositionAlreadyOccupied = "*Position already occupied*"
