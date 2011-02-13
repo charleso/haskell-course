@@ -1,36 +1,30 @@
+{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies #-}
+
 -- | A tic-tac-toe board is one of nine positions, each position occupied by either player 1, player 2 or neither and with invariants specific to the rules of tic-tac-toe.
 --
 -- For example, the number of positions occupied by player 1 is equal to, or one more, than the positions occupied by player 2.
 module Data.TicTacToe.Board
 (
 -- * Board data types
-  Board
+  EmptyBoard
+, Board
 , FinishedBoard
 -- * Start new game
 , empty
 -- * Game completed
 , getResult
--- * Which player to move
-, whoseTurn
-, whoseNotTurn
 -- * Make a move on a board
+, Move(..)
 , MoveResult
 , foldMoveResult
+, keepPlayingOr
 , boardResult
 , boardResultOr
-, (-->)
--- * Make many moves on a board
-, MovesAttempt
-, attemptResult
-, attemptPositions
-, noRemainAttempt
-, movesAttempt
-, (--->)
-, (===>)
-, play
-, play'
-, (-?->)
-, playAny
+-- * Taking a move back from a board
+, TakeBack(..)
+, TakenBack
+, foldTakenBack
+, takenBackBoard
 -- * Operations common to boards in-play and completed
 , BoardLike(..)
 -- * Debugging
@@ -46,6 +40,49 @@ import qualified Data.Set as S
 import Data.Foldable
 import Data.List(intercalate)
 import Data.Maybe
+
+data EmptyBoard =
+  EmptyBoard
+
+class Move from to | from -> to where
+  (-->) ::
+    Position
+    -> from
+    -> to
+
+instance Move EmptyBoard Board where
+  p --> _ =
+    [(p, player1)] `Board` M.singleton p player1
+
+instance Move Board MoveResult where
+  p --> b@(Board q m) =
+    let w       = whoseTurn b
+        (j, m') = M.insertLookupWithKey (\_ x _ -> x) p w m
+        wins =
+          [
+            (NW, W , SW)
+          , (N , C , S )
+          , (NE, E , SE)
+          , (NW, N , NE)
+          , (W , C , E )
+          , (SW, S , SE)
+          , (NW, C , SE)
+          , (SW, C , NE)
+          ]
+        allEq (d:e:t) = d == e && allEq (e:t)
+        allEq _       = True
+        isWin         = any (\(a, b, c) -> any allEq $ mapM (`M.lookup` m') [a, b, c]) wins
+        isDraw        = all (`M.member` m') [minBound ..]
+        b'            = Board ((p, w):q) m'
+    in maybe (if isWin
+              then
+                GameFinished (b' `FinishedBoard` win w)
+              else
+                if isDraw
+                then
+                  GameFinished (b' `FinishedBoard` draw)
+                else
+                  KeepPlaying b') (const PositionAlreadyOccupied) j
 
 -- | The result of making a move on a tic-tac-toe board.
 data MoveResult =
@@ -68,6 +105,14 @@ foldMoveResult _ kp _ (KeepPlaying b) =
 foldMoveResult _ _ gf (GameFinished b) =
   gf b
 
+keepPlayingOr ::
+  a
+  -> (Board -> a)
+  -> MoveResult
+  -> a
+keepPlayingOr def kp =
+  foldMoveResult def kp (const def)
+
 -- | Return the possible board from a move result. A board is returned if the result is to continue play.
 boardResult ::
   MoveResult
@@ -89,6 +134,47 @@ instance Show MoveResult where
   show PositionAlreadyOccupied = "*Position already occupied*"
   show (KeepPlaying b)         = concat ["{", show b, "}"]
   show (GameFinished b)        = concat ["{{", show b, "}}"]
+
+class TakeBack to from | to -> from where
+  takeBack ::
+    to
+    -> from
+
+instance TakeBack FinishedBoard Board where
+  takeBack (FinishedBoard (Board ((p, _):t) m) _) =
+    Board t (p `M.delete` m)
+  takeBack (FinishedBoard (Board [] _) _) =
+    error "Broken invariant: board-in-play with empty move list. This is a program bug."
+
+data TakenBack =
+  TakeBackIsEmpty
+  | TakeBackIsBoard Board
+  deriving Eq
+
+foldTakenBack ::
+  a
+  -> (Board -> a)
+  -> TakenBack
+  -> a
+
+foldTakenBack e _ TakeBackIsEmpty =
+  e
+foldTakenBack _ k (TakeBackIsBoard b) =
+  k b
+
+takenBackBoard ::
+  TakenBack
+  -> Maybe Board
+takenBackBoard =
+  foldTakenBack Nothing Just
+
+instance TakeBack Board TakenBack where
+  takeBack (Board (_:[]) _) =
+    TakeBackIsEmpty
+  takeBack (Board ((p, _):t) m) =
+    TakeBackIsBoard (Board t (p `M.delete` m))
+  takeBack (Board [] _) =
+    error "Broken invariant: board-in-play with empty move list. This is a program bug."
 
 -- | A tic-tac-toe board.
 data Board =
@@ -118,159 +204,9 @@ instance Show FinishedBoard where
 
 -- | Start an empty tic-tac-toe board.
 empty ::
-  Board
+  EmptyBoard
 empty =
-  Board [] M.empty
-
--- | Returns whose turn it is on a tic-tac-toe board.
-whoseTurn ::
-  Board
-  -> Player
-whoseTurn (Board [] _) =
-  player1
-whoseTurn (Board ((_, q):_) _) =
-  alternate q
-
--- | Returns whose turn it is not on a tic-tac-toe board.
-whoseNotTurn ::
-  Board
-  -> Player
-whoseNotTurn =
-  alternate . whoseTurn
-
--- | Make a move at the given position on the given board.
-(-->) ::
-  Position -- ^ The position to move to.
-  -> Board -- ^ The board to make the move on.
-  -> MoveResult
-p --> b@(Board q m) =
-  let w       = whoseTurn b
-      (j, m') = M.insertLookupWithKey (\_ x _ -> x) p w m
-      wins =
-        [
-          (NW, W , SW)
-        , (N , C , S )
-        , (NE, E , SE)
-        , (NW, N , NE)
-        , (W , C , E )
-        , (SW, S , SE)
-        , (NW, C , SE)
-        , (SW, C , NE)
-        ]
-      allEq (d:e:t) = d == e && allEq (e:t)
-      allEq _       = True
-      isWin         = any (\(a, b, c) -> any allEq $ mapM (`M.lookup` m') [a, b, c]) wins
-      isDraw        = all (`M.member` m') [minBound ..]
-      b'            = Board ((p, w):q) m'
-  in maybe (if isWin
-            then
-              GameFinished (b' `FinishedBoard` win w)
-            else
-              if isDraw
-              then
-                GameFinished (b' `FinishedBoard` draw)
-              else
-                KeepPlaying b') (const PositionAlreadyOccupied) j
-
--- | The result of attempting to make several moves on a board.
---
--- Encapsulates the last successful move result and any remaining positions that could not be attempted.
-data MovesAttempt =
-  MovesAttempt [Position] MoveResult
-  deriving Eq
-
--- | Get the move result from the move attempts.
-attemptResult ::
-  MovesAttempt
-  -> MoveResult
-attemptResult (MovesAttempt _ r) =
-  r
-
--- | Get the remaining positions from the move attempts.
-attemptPositions ::
-  MovesAttempt
-  -> [Position]
-attemptPositions (MovesAttempt k _) =
-  k
-
--- | Construct a moves attempt with no remaining positions and the given move result.
-noRemainAttempt ::
-  MoveResult
-  -> MovesAttempt
-noRemainAttempt =
-  movesAttempt []
-
--- | Construct a moves attempt with the given remaining positions and move result.
-movesAttempt ::
-  [Position]
-  -> MoveResult
-  -> MovesAttempt
-movesAttempt =
-  MovesAttempt
-
--- | Attempt to make several moves on a board.
---
--- If a move is encountered that does not transition to a new board state (e.g. game is finished, or the position is occupied),
--- then that result is returned along with the remaining moves.
-(--->) ::
-  [Position] -- ^ The moves to make.
-  -> Board
-  -> MovesAttempt
-[]    ---> b =
-  noRemainAttempt (KeepPlaying b)
-(h:t) ---> b =
-  case h --> b
-  of PositionAlreadyOccupied -> movesAttempt (h:t) PositionAlreadyOccupied
-     KeepPlaying b'          -> t ---> b'
-     GameFinished b'         -> movesAttempt t (GameFinished b')
-
--- | Attempt to make several moves on a board.
---
--- If a move is encountered that does not transition to a new board state (e.g. game is finished, or the position is occupied),
--- then that result is returned.
-(===>) ::
-  [Position] -- ^ The moves to make.
-  -> Board
-  -> MoveResult
-p ===> b =
-  attemptResult (p ---> b)
-
--- | Attempt to make several moves on an empty board.
---
--- If a move is encountered that does not transition to a new board state (e.g. game is finished, or the position is occupied),
--- then that result is returned along with the remaining moves.
-play ::
-  [Position] -- ^ The moves to make.
-  -> MovesAttempt
-play p =
-  p ---> empty
-
--- | Attempt to make several moves on an empty board.
---
--- If a move is encountered that does not transition to a new board state (e.g. game is finished, or the position is occupied),
--- then that result is returned.
-play' ::
-  [Position] -- ^ The moves to make.
-  -> MoveResult
-play' p =
-  p ===> empty
-
--- | Make several moves on a board, discarding those that do not result in a new board state (e.g. game is finished, or the position is occupied)
-(-?->) ::
-  Board
-  -> [Position] -- ^ The moves to make.
-  -> Board
-(-?->) =
-  foldr (\p b -> case p --> b
-                 of KeepPlaying b' -> b'
-                    _              -> b)
-
--- | Make several moves on a new board, discarding those that do not result in a new board state (e.g. game is finished, or the position is occupied)
-playAny ::
-  [Position] -- ^ The moves to make.
-  -> Board
-playAny =
-  (-?->) empty
+  EmptyBoard
 
 -- | Prints out a board using ASCII notation and substituting the returned string for each position.
 printEachPosition ::
@@ -293,10 +229,19 @@ printEachPosition k =
 --
 -- This class specifically does not specify moving on a board, since this is illegal on a completed board.
 class BoardLike b where
-  -- | Takes a move back, unless the board is empty.
-  moveBack ::
+  -- | Returns whose turn it is on a tic-tac-toe board.
+  whoseTurn ::
     b
-    -> Maybe Board
+    -> Player
+  whoseTurn =
+    alternate . whoseNotTurn
+
+  -- | Returns whose turn it is not on a tic-tac-toe board.
+  whoseNotTurn ::
+    b
+    -> Player
+  whoseNotTurn =
+    alternate . whoseTurn
 
   -- | Returns whether or not the board is empty.
   isEmpty ::
@@ -361,14 +306,40 @@ class BoardLike b where
     b
     -> IO ()
 
-instance BoardLike Board where
-  moveBack (Board [] _) =
-    Nothing
-  moveBack (Board ((p, _):t) m) =
-    Just (Board t (p `M.delete` m))
+instance BoardLike EmptyBoard where
+  whoseTurn _ =
+    player1
 
-  isEmpty (Board _ m) =
-    M.null m
+  isEmpty _ =
+    True
+
+  occupiedPositions _ =
+    S.empty
+
+  moves _ =
+    0
+
+  isSubboardOf _ _ =
+    True
+
+  isProperSubboardOf _ _ =
+    False
+
+  playerAt _ _ =
+    Nothing
+
+  printBoard _ =
+    printEachPosition (pos M.empty " ")
+
+instance BoardLike Board where
+  whoseTurn (Board [] _) =
+    player1
+
+  whoseTurn (Board ((_, q):_) _) =
+    alternate q
+
+  isEmpty _ =
+    False
 
   occupiedPositions (Board _ m) =
     M.keysSet m
@@ -389,11 +360,6 @@ instance BoardLike Board where
     printEachPosition (pos m " ")
 
 instance BoardLike FinishedBoard where
-  moveBack (FinishedBoard (Board [] _) _) =
-    Nothing
-  moveBack (FinishedBoard (Board ((p, _):t) m) _) =
-    Just (Board t (p `M.delete` m))
-
   isEmpty (FinishedBoard b _) =
     isEmpty b
 

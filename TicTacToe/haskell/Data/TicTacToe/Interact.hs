@@ -15,15 +15,19 @@ import Control.Monad
 tictactoe ::
   IO ()
 tictactoe =
-  tictactoe' empty
+  gameLoop (\b' -> do surround $ printWithoutPositions b'
+                      tictactoe' b') empty
 
-tictactoe' ::
-  Board
+gameLoop ::
+  (BoardLike b, Move b to) =>
+  (to -> IO ())
+  -> b
   -> IO ()
-tictactoe' b =
+gameLoop k b =
   let p = whoseTurn b
   in do putStrLns
-          [ show p ++ " to move [" ++ [toSymbol p] ++ "]"
+          [
+            show p ++ " to move [" ++ [toSymbol p] ++ "]"
           , "  [1-9] to Move"
           , "  q to Quit"
           , "  v to view board positions"
@@ -33,19 +37,11 @@ tictactoe' b =
         if c `elem` "vV"
           then
             do surround $ printWithPositions b
-               tictactoe' b
+               gameLoop k b
           else
             if c `elem` ['1'..'9']
               then
-                foldMoveResult (do surround $ putStrLn "That position is already taken. Try again."
-                                   printWithoutPositions b
-                                   line
-                                   tictactoe' b)
-                               (\b' -> do surround $ printWithoutPositions b'
-                                          tictactoe' b')
-                               (\b' -> do surround $ printWithoutPositions b'
-                                          putStrLn (playerGameResult "Player 1 Wins!" "Player 2 Wins!" "Draw" (getResult b')))
-                               (toPosition (digitToInt c) --> b)
+                k (toPosition (digitToInt c) --> b)
               else
                 if c `elem` "qQ"
                   then
@@ -53,7 +49,22 @@ tictactoe' b =
                        putStrLn "Bye!"
                   else
                     do surround $ putStrLn "Invalid selection. Please try again."
-                       tictactoe' b
+                       gameLoop k b
+
+tictactoe' ::
+  Board
+  -> IO ()
+tictactoe' b =
+  gameLoop (foldMoveResult
+              (do surround $ putStrLn "That position is already taken. Try again."
+                  printWithoutPositions b
+                  line
+                  tictactoe' b)
+              (\b' -> do surround $ printWithoutPositions b'
+                         tictactoe' b')
+              (\b' -> do surround $ printWithoutPositions b'
+                         putStrLn (playerGameResult "Player 1 Wins!" "Player 2 Wins!" "Draw" (getResult b'))))
+            b
 
 surround ::
   IO ()

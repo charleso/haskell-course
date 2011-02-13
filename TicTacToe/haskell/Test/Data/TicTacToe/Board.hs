@@ -16,7 +16,11 @@ import Test.Framework.Providers.QuickCheck2 (testProperty)
 
 instance Arbitrary Board where
   arbitrary =
-    playAny `fmap` resize 12 arbitrary
+    do p <- arbitrary
+       q <- resize 12 arbitrary
+       return $ Prelude.foldr (\p b -> keepPlayingOr b id (p --> b)) (p --> empty) q
+
+
 
 main ::
   IO ()
@@ -31,7 +35,7 @@ boardTests =
       [
         testProperty "whoseTurn"       prop_whoseTurn
       , testProperty "move_whoseTurn"  prop_move_whoseTurn
-      , testProperty "move_moveBack"   prop_move_moveBack
+      , testProperty "move_moveBack"   prop_move_takeBack
       ]
   ]
 
@@ -48,10 +52,9 @@ prop_move_whoseTurn ::
 prop_move_whoseTurn b p =
   (\b' -> whoseTurn b /= whoseTurn b') `all` boardResult (p --> b)
 
-prop_move_moveBack ::
+prop_move_takeBack ::
   Board
   -> Position
   -> Bool
-prop_move_moveBack b p =
-  (\b' -> (== b) `all` moveBack b') `all` boardResult (p --> b)
-
+prop_move_takeBack b p =
+  foldMoveResult True (foldTakenBack False (==b) . takeBack) (\fb -> takeBack fb == b) (p --> b)
