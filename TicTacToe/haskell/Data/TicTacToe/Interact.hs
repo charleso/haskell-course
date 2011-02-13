@@ -37,16 +37,15 @@ tictactoe' b =
           else
             if c `elem` ['1'..'9']
               then
-                case toPosition (digitToInt c) --> b
-                of PositionAlreadyOccupied -> do surround $ putStrLn "That position is already taken. Try again."
-                                                 printWithoutPositions b
-                                                 line
-                                                 tictactoe' b
-                   KeepPlaying b'          -> do surround $ printWithoutPositions b'
-                                                 tictactoe' b'
-                   GameFinished b'         -> do surround $ printWithoutPositions b'
-                                                 putStrLn (playerGameResult "Player 1 Wins!" "Player 2 Wins!" "Draw" (getResult b'))
-
+                foldMoveResult (do surround $ putStrLn "That position is already taken. Try again."
+                                   printWithoutPositions b
+                                   line
+                                   tictactoe' b)
+                               (\b' -> do surround $ printWithoutPositions b'
+                                          tictactoe' b')
+                               (\b' -> do surround $ printWithoutPositions b'
+                                          putStrLn (playerGameResult "Player 1 Wins!" "Player 2 Wins!" "Draw" (getResult b')))
+                               (toPosition (digitToInt c) --> b)
               else
                 if c `elem` "qQ"
                   then

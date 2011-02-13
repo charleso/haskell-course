@@ -14,7 +14,8 @@ module Data.TicTacToe.Board
 , whoseTurn
 , whoseNotTurn
 -- * Make a move on a board
-, MoveResult(..)
+, MoveResult
+, foldMoveResult
 , boardResult
 , boardResultOr
 , (-->)
@@ -52,6 +53,20 @@ data MoveResult =
   | KeepPlaying Board -- ^ The move was valid and the board is in a new state.
   | GameFinished FinishedBoard -- ^ The move was valid and the game is complete.
   deriving Eq
+
+-- | Deconstruct a move result.
+foldMoveResult ::
+  a -- ^ The move was to a position that is already occupied by a player.
+  -> (Board -> a) -- ^ The move was valid and the board is in a new state.
+  -> (FinishedBoard -> a) -- ^ The move was valid and the game is complete.
+  -> MoveResult
+  -> a
+foldMoveResult occ _ _ PositionAlreadyOccupied =
+  occ
+foldMoveResult _ kp _ (KeepPlaying b) =
+  kp b
+foldMoveResult _ _ gf (GameFinished b) =
+  gf b
 
 -- | Return the possible board from a move result. A board is returned if the result is to continue play.
 boardResult ::
