@@ -15,6 +15,7 @@ module Data.TicTacToe.Board
 , getResult
 -- * Make a move on a board
 , Move(..)
+, (-?->)
 , MoveResult
 , foldMoveResult
 , keepPlayingOr
@@ -49,6 +50,8 @@ class Move from to | from -> to where
     -> from
     -> to
 
+infixr 5 -->
+
 instance Move EmptyBoard Board where
   p --> _ =
     [(p, player1)] `Board` M.singleton p player1
@@ -82,6 +85,15 @@ instance Move Board MoveResult where
                   GameFinished (b' `FinishedBoard` draw)
                 else
                   KeepPlaying b') (const PositionAlreadyOccupied) j
+
+(-?->) ::
+  Position
+  -> MoveResult
+  -> MoveResult
+p -?-> r =
+  keepPlayingOr r (\b -> p --> b) r
+
+infixr 5 -?->
 
 -- | The result of making a move on a tic-tac-toe board.
 data MoveResult =
