@@ -162,10 +162,7 @@ sealed trait Board extends BoardLike {
 
   def playerAt(p: Position) = map get p
 
-  def whoseTurn = moves match {
-    case Nil         => Player1
-    case (_, p) :: _ => p.alternate
-  }  
+  def whoseTurn = moves.head._2.alternate
 
   def -->(p: Position): MoveResult = {
     val j = map get p
