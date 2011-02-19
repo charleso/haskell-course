@@ -1,7 +1,6 @@
 package tictactoe;
 
-import fj.Ord;
-import fj.P2;
+import fj.*;
 import fj.data.List;
 import fj.data.Option;
 import fj.data.TreeMap;
@@ -11,6 +10,7 @@ import static fj.data.List.list;
 import static fj.data.List.nil;
 import static fj.data.Option.none;
 import static tictactoe.Player.Player1;
+import static tictactoe.Position.*;
 
 public final class Board extends BoardLike {
   private final List<P2<Position, Player>> moves;
@@ -44,6 +44,26 @@ public final class Board extends BoardLike {
   }
 
   public MoveResult moveTo(final Position p) {
+    final Option<Player> j = m.get(p);
+    final TreeMap<Position, Player> mm = m.set(p, whoseTurn());
+    final Board bb = new Board(moves.cons(P.p(p, whoseTurn())), mm);
+    final List<P3<Position, Position, Position>> wins =
+        list(
+              P.p(NW, W , SW)
+            , P.p(N , C , S )
+            , P.p(NE, E , SE)
+            , P.p(NW, N , NE)
+            , P.p(W , C , E )
+            , P.p(SW, S , SE)
+            , P.p(NW, C , SE)
+            , P.p(SW, C , NE)
+            );
+    final class AllEq {
+      public boolean allEq(List<Position> x) {
+        return x.isEmpty() || x.tail().isEmpty() || x.head() == x.tail().head() && allEq(x.tail());
+      }
+    }
+
     return null; // todo
   }
 
