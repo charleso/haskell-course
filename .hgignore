@@ -5,4 +5,7 @@ syntax: glob
 *.orig
 *.hi
 *.lkshs
+*/.idea/ant.xml
+*/.idea/workspace.xml
 dist
+out
