@@ -146,6 +146,13 @@ public final class Board extends BoardLike {
       this.r = r;
     }
 
+    public Board takeBack() {
+      return b.takeBack().fold(
+                                Bottom.<Board>error_("Broken invariant: board in-play with empty move list. This is a program bug")
+                              , Function.<Board>identity()
+                              );
+    }
+
     public Player whoseTurn() {
       return b.whoseTurn();
     }
