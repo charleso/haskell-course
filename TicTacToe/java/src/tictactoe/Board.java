@@ -71,7 +71,7 @@ public final class Board extends BoardLike {
         );
     final boolean isWin = wins.exists(new F<P3<Position, Position, Position>, Boolean>() {
       public Boolean f(final P3<Position, Position, Position> abc) {
-        return list(abc._1(), abc._2(), abc._3()).mapMOption(m.get()).exists(new F<List<Player>, Boolean>() {
+        return list(abc._1(), abc._2(), abc._3()).mapMOption(mm.get()).exists(new F<List<Player>, Boolean>() {
           public Boolean f(final List<Player> ps) {
             return ps.allEqual(Equal.<Player>anyEqual());
           }
