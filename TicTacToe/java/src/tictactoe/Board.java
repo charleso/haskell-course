@@ -10,7 +10,9 @@ import static fj.data.List.list;
 import static fj.data.List.nil;
 import static fj.data.Option.none;
 import static tictactoe.GameResult.Draw;
+import static tictactoe.GameResult.win;
 import static tictactoe.Player.Player1;
+import static tictactoe.Player.toSymbol;
 import static tictactoe.Position.*;
 
 public final class Board extends BoardLike {
@@ -84,6 +86,15 @@ public final class Board extends BoardLike {
             isDraw ?
                 MoveResult.gameOver(new FinishedBoard(bb, Draw)) :
                 MoveResult.keepPlaying(bb);
+  }
+
+  @Override
+  public String toString() {
+    return toString(new F2<Option<Player>, Position, Character>() {
+      public Character f(final Option<Player> p, final Position _) {
+        return p.option(P.p(' '), toSymbol);
+      }
+    }) + "\n[ " + whoseTurn().toString() + " to move ]";
   }
 
   public static final class EmptyBoard extends BoardLike {
