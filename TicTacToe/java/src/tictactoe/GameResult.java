@@ -1,5 +1,6 @@
 package tictactoe;
 
+import fj.F;
 import fj.data.Option;
 
 import static fj.data.Option.some;
@@ -23,5 +24,15 @@ public enum GameResult {
              this == Player2Wins ?
                some(Player2) :
                Option.<Player>none();
+  }
+
+  @Override
+  public String toString() {
+    return winner().option("draw", new F<Player, String>() {
+      @Override
+      public String f(final Player p) {
+        return p.toString() + " wins";
+      }
+    });
   }
 }
