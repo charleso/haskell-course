@@ -55,21 +55,27 @@ public final class Main {
       }
     }, new F<Character, Unit>() {
       public Unit f(final Character c) {
-        return Position.fromChar(c).option(new P1<Unit>() {
-          public Unit _1() {
-            if(c == 'q' || c == 'Q')
-              out.println("Bye!");
-            else {
-              out.println("Invalid selection. Please try again.");
-              gameLoop(inheritance, move, b);
+        if(c == 'v' || c == 'V') {
+          printBoard(inheritance, b, Position.toChar);
+          gameLoop(inheritance, move, b);
+          return unit();
+        } else {
+          return Position.fromChar(c).option(new P1<Unit>() {
+            public Unit _1() {
+              if(c == 'q' || c == 'Q')
+                out.println("Bye!");
+              else {
+                out.println("Invalid selection. Please try again.");
+                gameLoop(inheritance, move, b);
+              }
+              return unit();
             }
-            return unit();
-          }
-        }, new F<Position, Unit>() {
-          public Unit f(final Position d) {
-            return move.f(d, b);
-          }
-        });
+          }, new F<Position, Unit>() {
+            public Unit f(final Position d) {
+              return move.f(d, b);
+            }
+          });
+        }
       }
     });
 

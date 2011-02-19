@@ -1,5 +1,6 @@
 package tictactoe;
 
+import fj.F;
 import fj.data.List;
 import fj.data.Option;
 
@@ -40,4 +41,10 @@ public enum Position {
   public static Option<Position> fromChar(final char c) {
     return fromInt(c - 48);
   }
+
+  public final static F<Position, Character> toChar = new F<Position, Character>() {
+    public Character f(final Position p) {
+      return p.toChar();
+    }
+  };
 }
