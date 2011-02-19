@@ -8,19 +8,19 @@ import static fj.data.Option.some;
 public enum Position {
   NW, N, NE, W, C, E, SW, S, SE;
 
-  int toInt() {
+  public int toInt() {
     return ordinal() + 1;
   }
 
-  char toChar() {
+  public char toChar() {
     return (char)(toInt() + '0');
   }
 
-  static List<Position> positions() {
+  public static List<Position> positions() {
     return list(NW, N, NE, W, C, E, SW, S, SE);
   }
 
-  static Option<Position> fromInt(final int n) {
+  public static Option<Position> fromInt(final int n) {
     switch(n) {
       case 1: return some(NW);
       case 2: return some(N );
@@ -33,5 +33,9 @@ public enum Position {
       case 9: return some(SE);
       default: return none();
     }
+  }
+
+  public static Option<Position> fromChar(final char c) {
+    return fromInt(c - 48);
   }
 }
