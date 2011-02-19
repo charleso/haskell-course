@@ -35,4 +35,8 @@ public enum GameResult {
       }
     });
   }
+
+  public static GameResult win(final Player p) {
+    return p == Player1 ? Player1Wins : Player2Wins;
+  }
 }
