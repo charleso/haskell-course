@@ -1,3 +1,5 @@
+package tictactoe;
+
 import fj.data.List;
 import fj.data.Option;
 
