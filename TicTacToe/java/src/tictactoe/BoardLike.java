@@ -11,9 +11,9 @@ import static fj.data.List.list;
 import static tictactoe.Position.*;
 
 public abstract class BoardLike {
-  public abstract boolean whoseTurn();
-  public final boolean whoseNotTurn() {
-    return !whoseTurn();
+  public abstract Player whoseTurn();
+  public final Player whoseNotTurn() {
+    return whoseTurn().alternate();
   }
   public abstract boolean isEmpty();
   public abstract List<Position> occupiedPositions();
