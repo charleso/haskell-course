@@ -9,6 +9,7 @@ import static fj.P.p;
 import static fj.data.List.list;
 import static fj.data.List.nil;
 import static fj.data.Option.none;
+import static tictactoe.GameResult.Draw;
 import static tictactoe.Player.Player1;
 import static tictactoe.Position.*;
 
@@ -43,33 +44,52 @@ public final class Board extends BoardLike {
     return m.get(p);
   }
 
+  @SuppressWarnings("unchecked")
   public MoveResult moveTo(final Position p) {
+    final Player wt = whoseTurn();
     final Option<Player> j = m.get(p);
-    final TreeMap<Position, Player> mm = m.set(p, whoseTurn());
-    final Board bb = new Board(moves.cons(P.p(p, whoseTurn())), mm);
+    final TreeMap<Position, Player> mm = m.set(p, wt);
+    final Board bb = new Board(moves.cons(P.p(p, wt)), mm);
     final List<P3<Position, Position, Position>> wins =
         list(
-              P.p(NW, W , SW)
-            , P.p(N , C , S )
-            , P.p(NE, E , SE)
-            , P.p(NW, N , NE)
-            , P.p(W , C , E )
-            , P.p(SW, S , SE)
-            , P.p(NW, C , SE)
-            , P.p(SW, C , NE)
-            );
-    final class AllEq {
-      public boolean allEq(List<Position> x) {
-        return x.isEmpty() || x.tail().isEmpty() || x.head() == x.tail().head() && allEq(x.tail());
+            P.p(NW, W, SW)
+            , P.p(N, C, S)
+            , P.p(NE, E, SE)
+            , P.p(NW, N, NE)
+            , P.p(W, C, E)
+            , P.p(SW, S, SE)
+            , P.p(NW, C, SE)
+            , P.p(SW, C, NE)
+        );
+    final boolean isWin = wins.exists(new F<P3<Position, Position, Position>, Boolean>() {
+      public Boolean f(final P3<Position, Position, Position> abc) {
+        return list(abc._1(), abc._2(), abc._3()).mapMOption(m.get()).exists(new F<List<Player>, Boolean>() {
+          public Boolean f(final List<Player> ps) {
+            return ps.allEqual(Equal.<Player>anyEqual());
+          }
+        });
       }
-    }
+    });
 
-    return null; // todo
+    final boolean isDraw = Position.positions().forall(new F<Position, Boolean>() {
+      public Boolean f(final Position p) {
+        return m.contains(p);
+      }
+    });
+
+    return j.isSome() ?
+        MoveResult.positionAlreadyOccupied() :
+        isWin ?
+            MoveResult.gameOver(new FinishedBoard(bb, GameResult.win(wt))) :
+            isDraw ?
+                MoveResult.gameOver(new FinishedBoard(bb, Draw)) :
+                MoveResult.keepPlaying(bb);
   }
 
   public static final class EmptyBoard extends BoardLike {
     private EmptyBoard() {}
 
+    @SuppressWarnings("unchecked")
     public Board moveTo(final Position p) {
       return new Board(list(p(p, Player1)), TreeMap.<Position, Player>empty(positionOrder).set(p, Player1));
     }
