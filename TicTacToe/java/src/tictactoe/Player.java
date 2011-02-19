@@ -15,7 +15,7 @@ public enum Player {
 
   @Override
   public String toString() {
-    return this == Player1 ? "tictactoe.Player 1" : "tictactoe.Player 2";
+    return this == Player1 ? "Player 1" : "Player 2";
   }
 
   public static final F<Player, Character> toSymbol = new F<Player, Character>() {

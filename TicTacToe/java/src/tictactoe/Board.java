@@ -173,6 +173,10 @@ public final class Board extends BoardLike {
       return b.playerAt(p);
     }
 
+    public GameResult result() {
+      return r;
+    }
+
     @Override
     public String toString() {
       return b.toString() + "\n[[" + r.toString() + " ]]";

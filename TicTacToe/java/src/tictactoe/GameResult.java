@@ -26,6 +26,14 @@ public enum GameResult {
                Option.<Player>none();
   }
 
+  public <X> X strictFold(final X player1Wins, final X player2Wins, final X draw) {
+    return this == Player1Wins ?
+             player1Wins :
+             this == Player2Wins ?
+               player2Wins :
+               draw;
+  }
+
   @Override
   public String toString() {
     return winner().option("draw", new F<Player, String>() {

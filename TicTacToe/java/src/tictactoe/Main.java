@@ -1,10 +1,7 @@
 package tictactoe;
 
 import fj.*;
-import fj.data.List;
 import fj.data.Option;
-
-import java.io.Console;
 
 import static fj.Unit.unit;
 import static fj.data.Option.some;
@@ -48,7 +45,7 @@ public final class Main {
     out.println("  [1-9] to Move");
     out.println("  q to Quit");
     out.println("  v to view board positions");
-    out.println("  > ");
+    out.print("  > ");
 
     readChar().option(new P1<Unit>() {
       public Unit _1() {
@@ -78,7 +75,83 @@ public final class Main {
 
   }
 
-  public static void main(final String... args) {
+  private static final F<Board, BoardLike> boardInheritance = new F<Board, BoardLike>() {
+    public BoardLike f(final Board board) {
+      return board;
+    }
+  };
 
+  private static final F<Board.FinishedBoard, BoardLike> finishedBoardInheritance = new F<Board.FinishedBoard, BoardLike>() {
+    public BoardLike f(final Board.FinishedBoard board) {
+      return board;
+    }
+  };
+
+  private static final F<Board.EmptyBoard, BoardLike> emptyBoardInheritance = new F<Board.EmptyBoard, BoardLike>() {
+    public BoardLike f(final Board.EmptyBoard board) {
+      return board;
+    }
+  };
+
+  private static void tictactoeBoard(final Board b) {
+    gameLoop(boardInheritance, new F2<Position, Board, Unit>() {
+      public Unit f(final Position p, final Board bb) {
+        return bb.moveTo(p).fold(
+                                  new P1<Unit>() {
+                                    public Unit _1() {
+                                      out.println("That position is already taken. Try again.");
+                                      printBoardSpaces(boardInheritance, bb);
+                                      out.println();
+                                      tictactoeBoard(bb);
+                                      return unit();
+                                    }
+                                  }
+                                , new F<Board, Unit>() {
+                                    public Unit f(final Board bbb) {
+                                      surround(new P1<Unit>() {
+                                        public Unit _1() {
+                                          printBoardSpaces(boardInheritance, bbb);
+                                          return unit();
+                                        }
+                                      });
+                                      tictactoeBoard(bb);
+                                      return unit();
+                                    }
+                                  }
+                                , new F<Board.FinishedBoard, Unit>() {
+                                    public Unit f(final Board.FinishedBoard bbb) {
+                                      surround(new P1<Unit>() {
+                                        public Unit _1() {
+                                          printBoardSpaces(finishedBoardInheritance, bbb);
+                                          out.println(bbb.result().strictFold("Player 1 Wins!", "Player 2 Wins!", "Draw"));
+                                          return unit();
+                                        }
+                                      });
+                                      return unit();
+                                    }
+                                  }
+                                );
+      }
+    }, b);
+  }
+
+  public static void main(final String... args) {
+    gameLoop(
+              emptyBoardInheritance
+            , new F2<Position, Board.EmptyBoard, Unit>() {
+                public Unit f(final Position p, final Board.EmptyBoard b) {
+                  final Board bb = b.moveTo(p);
+                  surround(new P1<Unit>() {
+                    public Unit _1() {
+                      printBoardSpaces(boardInheritance, bb);
+                      return unit();
+                    }
+                  });
+                  tictactoeBoard(bb);
+                  return unit();
+                }
+              }
+            , Board.EmptyBoard.empty()
+            );
   }
 }
