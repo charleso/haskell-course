@@ -203,8 +203,8 @@ sealed trait Board extends BoardLike {
 
     j match {
       case Some(_) => MoveResult.positionAlreadyOccupied
-      case None    => if(isWin) MoveResult.gameOver(FinishedBoard.finishedBoard(bb, GameResult.win(whoseTurn)))
-                      else if(isDraw) MoveResult.gameOver(FinishedBoard.finishedBoard(bb, Draw))
+      case None    => if(isWin) MoveResult.gameOver(FinishedBoardB(bb, GameResult.win(whoseTurn)))
+                      else if(isDraw) MoveResult.gameOver(FinishedBoardB(bb, Draw))
                       else MoveResult.keepPlaying(bb)
     }
   }
@@ -252,11 +252,6 @@ sealed trait FinishedBoard extends BoardLike {
 }
 
 private final case class FinishedBoardB(b: Board, r: GameResult) extends FinishedBoard
-
-object FinishedBoard {
-  def finishedBoard(b: Board, r: GameResult): FinishedBoard =
-    FinishedBoardB(b, r)
-}
 
 sealed trait MoveResult {
   def fold[X](positionAlreadyOccupied: => X,
