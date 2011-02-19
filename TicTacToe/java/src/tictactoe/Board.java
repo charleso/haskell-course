@@ -137,7 +137,7 @@ public final class Board extends BoardLike {
     }
   }
 
-  public static final class FinishedBoard {
+  public static final class FinishedBoard extends BoardLike {
     private final Board b;
     private final GameResult r;
 
@@ -146,5 +146,29 @@ public final class Board extends BoardLike {
       this.r = r;
     }
 
+    public Player whoseTurn() {
+      return b.whoseTurn();
+    }
+
+    public boolean isEmpty() {
+      return false;
+    }
+
+    public List<Position> occupiedPositions() {
+      return b.occupiedPositions();
+    }
+
+    public int nmoves() {
+      return b.nmoves();
+    }
+
+    public Option<Player> playerAt(final Position p) {
+      return b.playerAt(p);
+    }
+
+    @Override
+    public String toString() {
+      return b.toString() + "\n[[" + r.toString() + " ]]";
+    }
   }
 }
