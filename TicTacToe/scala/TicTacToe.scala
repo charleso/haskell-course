@@ -83,12 +83,6 @@ object GameResult {
     }
 }
 
-object MoveResult {
-  def positionAlreadyOccupied: MoveResult = PositionAlreadyOccupied
-  def keepPlaying(b: Board): MoveResult = KeepPlaying(b)
-  def gameOver(b: FinishedBoard): MoveResult = GameOver(b)
-}
-
 sealed trait EmptyBoard extends BoardLike {
   def -->(p: Position): Board = MapBoard(List((p, Player1)), Map((p, Player1)))
 
@@ -286,6 +280,12 @@ sealed trait MoveResult {
 private case object PositionAlreadyOccupied extends MoveResult
 private case class KeepPlaying(b: Board) extends MoveResult
 private case class GameOver(b: FinishedBoard) extends MoveResult
+
+object MoveResult {
+  def positionAlreadyOccupied: MoveResult = PositionAlreadyOccupied
+  def keepPlaying(b: Board): MoveResult = KeepPlaying(b)
+  def gameOver(b: FinishedBoard): MoveResult = GameOver(b)
+}
 
 object Main {
   def main(args: Array[String]) {
