@@ -43,6 +43,10 @@ public final class Board extends BoardLike {
     return m.get(p);
   }
 
+  public MoveResult moveTo(final Position p) {
+    return null; // todo
+  }
+
   public static final class EmptyBoard extends BoardLike {
     private EmptyBoard() {}
 
