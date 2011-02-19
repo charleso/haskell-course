@@ -27,7 +27,7 @@ public final class Board extends BoardLike {
   }
 
   public Player whoseTurn() {
-    return moves.isEmpty() ? Player1 : moves.head()._2().alternate();
+    return moves.head()._2().alternate();
   }
 
   public boolean isEmpty() {
@@ -60,7 +60,7 @@ public final class Board extends BoardLike {
     final Board bb = new Board(moves.cons(P.p(p, wt)), mm);
     final List<P3<Position, Position, Position>> wins =
         list(
-            P.p(NW, W, SW)
+              P.p(NW, W, SW)
             , P.p(N, C, S)
             , P.p(NE, E, SE)
             , P.p(NW, N, NE)
