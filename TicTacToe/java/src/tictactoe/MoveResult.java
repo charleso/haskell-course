@@ -9,6 +9,8 @@ import fj.data.Option;
 import static fj.P.p;
 
 public abstract class MoveResult {
+  private MoveResult() {}
+
   public abstract <X> X fold(P1<X> positionAlreadyOccupied, F<Board, X> keepPlaying, F<Board.FinishedBoard, X> gameOver);
 
   public Option<Board> keepPlaying() {
