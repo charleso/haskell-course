@@ -297,6 +297,12 @@ object Main {
       case None    => empty(pos)
     })))
 
+    // Scala's readChar is trivially broken.
+    def readChar: Option[Char] = {
+      val line = java.lang.System.console.readLine 
+      if(line.isEmpty) None else Some(line(0))
+    }
+
     def gameLoop[B](
                     inheritance: B => BoardLike
                   , move: (Position, B) => Unit
@@ -310,18 +316,25 @@ object Main {
           , "  v to view board positions"
           ) foreach println
       print("  > ")
-      val c = Console.readChar
-      if("vV" contains c) {
-        printBoard(inheritance, b, _.toChar)
-        gameLoop(inheritance, move, b)
-      } else Position.fromChar(c) match {
-        case None    => if("qQ" contains c) println("Bye!")
-                        else {
-                          println("Invalid selection. Please try again.")
-                          gameLoop(inheritance, move, b)
-                        }
-        case Some(d) => move(d, b)
-      }  
+      
+      readChar match {
+        case None => {
+          println("Please make a selection.")
+          gameLoop(inheritance, move, b)
+        }
+        case Some(c) =>       
+          if("vV" contains c) {
+            printBoard(inheritance, b, _.toChar)
+            gameLoop(inheritance, move, b)
+          } else Position.fromChar(c) match {
+            case None    => if("qQ" contains c) println("Bye!")
+                            else {
+                              println("Invalid selection. Please try again.")
+                              gameLoop(inheritance, move, b)
+                            }
+            case Some(d) => move(d, b)
+          }  
+      }
     }
 
     def tictactoeBoard(b: Board) {
