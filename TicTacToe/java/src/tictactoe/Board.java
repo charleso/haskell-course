@@ -46,6 +46,12 @@ public final class Board extends BoardLike {
     return m.get(p);
   }
 
+  public TakenBack takeBack() {
+    return moves.isEmpty() ?
+        TakenBack.isEmpty() :
+        TakenBack.isBoard(new Board(moves.tail(), m.delete(moves.head()._1())));
+  }
+
   @SuppressWarnings("unchecked")
   public MoveResult moveTo(final Position p) {
     final Player wt = whoseTurn();
