@@ -54,7 +54,6 @@ sealed trait Player {
 
   override def toString = if(isPlayer1) "Player 1" else "Player 2"
 }
-
 case object Player1 extends Player
 case object Player2 extends Player
 
@@ -84,14 +83,67 @@ object GameResult {
     }
 }
 
+object MoveResult {
+  def positionAlreadyOccupied: MoveResult = PositionAlreadyOccupied
+  def keepPlaying(b: Board): MoveResult = KeepPlaying(b)
+  def gameOver(b: FinishedBoard): MoveResult = GameOver(b)
+}
+
+sealed trait EmptyBoard extends BoardLike {
+  def -->(p: Position): Board = MapBoard(List((p, Player1)), Map((p, Player1)))
+
+  def whoseTurn = Player1
+  def isEmpty = true
+  def nmoves = 0
+  def occupiedPositions = Set.empty
+
+  def playerAt(p: Position) = None
+
+}
+private case object EmptyBoardB extends EmptyBoard
+
+object EmptyBoard {
+  def empty: EmptyBoard = EmptyBoardB
+}
+
 trait BoardLike {
-  def moveBack: Option[Board]
+  def whoseTurn: Player
+  def whoseNotTurn: Player = whoseTurn.alternate
   def isEmpty: Boolean
+  def occupiedPositions: collection.Set[Position]
+  def nmoves: Int
   def playerAt(p: Position): Option[Player]
   def playerAtOr(p: Position, pl: => Player) = playerAt(p) getOrElse pl
   def isOccupied(p: Position): Boolean = playerAt(p).isDefined
   def isNotOccupied(p: Position) = !isOccupied(p)
-  def toString(f: (Option[Player], Position) => Char): String
+  def toString(f: (Option[Player], Position) => Char) = {    
+    val z = ".===.===.===."
+    def k(p: Position) = f(playerAt(p), p).toString
+
+    List(
+          z
+        , List("| ", k(NW), " | ", k(N), " | ", k(NE), " |").mkString
+        , z
+        , List("| ", k( W), " | ", k(C), " | ", k( E), " |").mkString
+        , z
+        , List("| ", k(SW), " | ", k(S), " | ", k(SE), " |").mkString
+        , z
+        ) mkString "\n"   
+  }
+}
+
+sealed trait TakenBack {
+  def fold[X](isEmpty: => X, isBoard: Board => X): X
+}
+
+object TakenBack {
+  def isEmpty: TakenBack = new TakenBack {
+    def fold[X](isEmpty: => X, isBoard: Board => X) = isEmpty
+  }
+
+  def isBoard(b: Board): TakenBack = new TakenBack {
+    def fold[X](isEmpty: => X, isBoard: Board => X) = isBoard(b)
+  }
 }
 
 sealed trait Board extends BoardLike {
@@ -103,21 +155,23 @@ sealed trait Board extends BoardLike {
     case MapBoard(_, x) => x
   }
 
-  def moveBack = moves match {
-    case Nil         => None
-    case (p, _) :: t => Some(Board.board(t, map - p))
+  def takeBack = moves match {
+    case Nil         => TakenBack.isEmpty
+    case (p, _) :: t => TakenBack.isBoard(Board.board(t, map - p))
   }
 
-  def isEmpty = map.isEmpty
+  def isEmpty = false
+
+  def occupiedPositions = map.keySet
+
+  def nmoves = map.size
 
   def playerAt(p: Position) = map get p
 
   def whoseTurn = moves match {
     case Nil         => Player1
     case (_, p) :: _ => p.alternate
-  }
-
-  def whoseNotTurn = whoseTurn.alternate
+  }  
 
   def -->(p: Position): MoveResult = {
     val j = map get p
@@ -139,7 +193,7 @@ sealed trait Board extends BoardLike {
       case _ => true
     }
 
-    // Dammit scala and your missing libraries.
+    // Dammit Scala and your missing libraries.
     // This is not Java where inadequacy is the norm. Stop copying the losers!
     def mapMOption[A, B](f: A => Option[B], as: List[A]): Option[List[B]] =
       as.map(f).foldRight[Option[List[B]]](Some(Nil))((o, z) =>
@@ -159,25 +213,6 @@ sealed trait Board extends BoardLike {
                       else if(isDraw) MoveResult.gameOver(FinishedBoard.finishedBoard(bb, Draw))
                       else MoveResult.keepPlaying(bb)
     }
-  }
-
-  def toString(f: (Option[Player], Position) => Char) = {
-    def showPositionMap(m: M[Position, Player]): String = {
-      val z = ".===.===.===."
-      def k(p: Position) = f(m get p, p).toString
-
-      List(
-            z
-          , List("| ", k(NW), " | ", k(N), " | ", k(NE), " |").mkString
-          , z
-          , List("| ", k( W), " | ", k(C), " | ", k( E), " |").mkString
-          , z
-          , List("| ", k(SW), " | ", k(S), " | ", k(SE), " |").mkString
-          , z
-          ) mkString "\n"
-    }
-
-    showPositionMap(map)
   }
 
   override def toString = toString((p, _) => p match {
@@ -205,14 +240,20 @@ sealed trait FinishedBoard extends BoardLike {
       case FinishedBoardB(_, r) => r
     }
 
-  def moveBack = board.moveBack
+  def takeBack = board.takeBack.fold(
+    error("Broken invariant: board in-play with empty move list. This is a program bug")
+  , b => b)
+
+  def whoseTurn = board.whoseTurn
 
   def isEmpty = board.isEmpty
 
+  def nmoves = board.nmoves
+
+  def occupiedPositions = board.occupiedPositions
+
   def playerAt(p: Position) = board playerAt p
 
-  def toString(f: (Option[Player], Position) => Char) = board toString f
-    
   override def toString = board.toString + "\n" + List("[[ ", result.toString, " ]]").mkString
 }
 
@@ -232,34 +273,22 @@ sealed trait MoveResult {
       case KeepPlaying(b) => keepPlaying(b)
       case GameOver(b) => gameOver(b)
     }
+
+  def keepPlaying: Option[Board] = fold(None, Some(_), _ => None)
+
+  def keepPlayingOr[A](els: => A, board: Board => A): A = keepPlaying match {
+    case None    => els
+    case Some(b) => board(b)
+  }
+
+  def -?->(p: Position): MoveResult = keepPlayingOr(this, _ --> p)
 }
 private case object PositionAlreadyOccupied extends MoveResult
 private case class KeepPlaying(b: Board) extends MoveResult
 private case class GameOver(b: FinishedBoard) extends MoveResult
 
-object MoveResult {
-  def positionAlreadyOccupied: MoveResult = PositionAlreadyOccupied
-  def keepPlaying(b: Board): MoveResult = KeepPlaying(b)
-  def gameOver(b: FinishedBoard): MoveResult = GameOver(b)
-}
-
 object Main {
-  import Board._
-
-  def tictactoe(b: Board) {
-    val p = b.whoseTurn
-    List(
-          List( p.toString
-              , " to move ["
-              , p.toSymbol.toString
-              , "]"
-              ) mkString
-        , "  [1-9] to Move"
-        , "  q to Quit"
-        , "  v to view board positions"
-        ) foreach println
-    print("  > ")
-
+  def main(args: Array[String]) {
     def surround(e: => Unit) {
       println
       println
@@ -267,49 +296,69 @@ object Main {
       println
     }
 
-    def printBoard(b: BoardLike, empty: Position => Char) =
-      surround(println(b toString ((pl, pos) => pl match {
+    def printBoard[B](inheritance: B => BoardLike, b: B, empty: Position => Char = _ => ' ') =
+      surround(println(inheritance(b) toString ((pl, pos) => pl match {
       case Some(z) => z.toSymbol
       case None    => empty(pos)
     })))
 
-    val c = Console.readChar
-
-    if("vV" contains c) {
-      printBoard(b, _.toChar)
-      tictactoe(b)
-    } else Position.fromChar(c) match {
-      case None    => if("qQ" contains c) println("Bye!")
-                      else {
-                        println("Invalid selection. Please try again.")
-                        tictactoe(b)
-                      }
-      case Some(d) => b --> d fold (
-                                     {
-                                       println
-                                       println
-                                       println("That position is already taken. Try again.")
-                                       printBoard(b, _ => ' ')
-                                       tictactoe(b)
-                                     }
-                                   , bb => {
-                                       printBoard(bb, _ => ' ')
-                                       tictactoe(bb)
-                                     }
-                                   , bb => {                            
-                                       printBoard(bb, _ => ' ')
-                                       println("GAME OVER")
-                                       println(bb.result match {
-                                         case Player1Wins => "Player 1 Wins!"
-                                         case Player2Wins => "Player 2 Wins!"
-                                         case Draw        => "Draw"
-                                       })
-                                     }
-                                   )
+    def gameLoop[B](
+                    inheritance: B => BoardLike
+                  , move: (Position, B) => Unit
+                  , b: B) {
+          
+      val p = inheritance(b).whoseTurn
+      List( 
+            p + " to move [" + p.toSymbol + "]"
+          , "  [1-9] to Move"
+          , "  q to Quit"
+          , "  v to view board positions"
+          ) foreach println
+      print("  > ")
+      val c = Console.readChar
+      if("vV" contains c) {
+        printBoard(inheritance, b, _.toChar)
+        gameLoop(inheritance, move, b)
+      } else Position.fromChar(c) match {
+        case None    => if("qQ" contains c) println("Bye!")
+                        else {
+                          println("Invalid selection. Please try again.")
+                          gameLoop(inheritance, move, b)
+                        }
+        case Some(d) => move(d, b)
+      }  
     }
-  }
 
-  def main(args: Array[String]) {
-    tictactoe(empty)
+    def tictactoeBoard(b: Board) {
+      gameLoop[Board]( 
+                      v => v
+                    , (p, bb) => bb --> p fold (
+                                                  {
+                                                    println("That position is already taken. Try again.")
+                                                    printBoard[Board](v => v, bb)
+                                                    println
+                                                    tictactoeBoard(bb)
+                                                  }
+                                                , bbb => {
+                                                    surround(printBoard[Board](v => v, bbb))
+                                                    tictactoeBoard(bbb)
+                                                  }
+                                                , bbb => {
+                                                    surround(printBoard[FinishedBoard](v => v, bbb))
+                                                    println(bbb.result match {
+                                                      case Player1Wins => "Player 1 Wins!"
+                                                      case Player2Wins => "Player 2 Wins!"
+                                                      case Draw        => "Draw"
+                                                    })
+                                                  }
+                                                )
+                    , b)
+    }
+
+    gameLoop[EmptyBoard](v => v, (p, b) => {
+                                             val bb = b --> p
+                                             surround(printBoard[Board](v => v, bb))
+                                             tictactoeBoard(bb)
+                                           }, EmptyBoard.empty)
   }
 }
