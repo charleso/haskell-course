@@ -13,15 +13,13 @@ class Misty m where
   -- Relative Difficulty: 3
   -- (use banana and unicorn)
   furry' :: (a -> b) -> m a -> m b
-  furry' f = banana (unicorn . f)
+  furry' = error "todo"
 
 -- Exercise 5
 -- Relative Difficulty: 2
 instance Misty List where
---  banana _ Nil = Nil
---  banana f (x:|xs)  = append (f x) (banana f xs)
-  banana f = foldRight (append . f) Nil
-  unicorn = flip (:|) Nil
+  banana = error "todo"
+  unicorn = error "todo"
 
 -- Exercise 6
 -- Relative Difficulty: 2
