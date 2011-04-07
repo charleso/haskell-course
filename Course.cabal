@@ -1,7 +1,10 @@
 Name:               HaskellCourse
 Version:            0.0.3
+License:            BSD3
+License-File:       LICENSE
 Author:             Tony Morris <tmorris@tmorris.net>
 Maintainer:         Tony Morris
+Homepage:           https://bitbucket.org/dibblego/haskell-course
 Synopsis:           Source code for a functional programming course
 Category:           Education
 Description:        Source code for a course in functional programming using Haskell
@@ -12,7 +15,7 @@ Flag small_base
   Description:      Choose the new, split-up base package.
 
 Library
-  Build-Depends:    base >= 4,
+  Build-Depends:    base < 5 && >= 4,
                     split,
                     containers,
                     array,
