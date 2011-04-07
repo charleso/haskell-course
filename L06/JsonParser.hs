@@ -13,10 +13,10 @@ import L06.MoreParser
 jsonString ::
   Parser String
 jsonString =
-  let e = oneof "\"\\/bfnrt" ||| hex           ---
-      c = (is '\\' >> e)                       ---
-          ||| satisfyAll [(/= '"'), (/= '\\')] ---
-  in betweenCharTok '"' '"' (list c)           ---  error "todo"
+  let e = oneof "\"\\/bfnrt" ||| hex
+      c = (is '\\' >> e)
+          ||| satisfyAll [(/= '"'), (/= '\\')]
+  in betweenCharTok '"' '"' (list c)
 
 -- Exercise 2
 -- Parse a JSON rational.
@@ -24,9 +24,9 @@ jsonString =
 jsonNumber ::
   Parser Rational
 jsonNumber =
-  P (\i -> case readSigned readFloat i of                         ---
-             [] -> Error ("Expected Rational but got " ++ show i) ---
-             ((n, z):_) -> Value (z, n))                          ---  error "todo"
+  P (\i -> case readSigned readFloat i of
+             [] -> Error ("Expected Rational but got " ++ show i)
+             ((n, z):_) -> Value (z, n))
 
 -- Exercise 3
 -- Parse a JSON true literal.
@@ -34,7 +34,7 @@ jsonNumber =
 jsonTrue ::
   Parser String
 jsonTrue =
-  stringTok "true" ---  error "todo"
+  stringTok "true"
 
 -- Exercise 4
 -- Parse a JSON false literal.
@@ -42,7 +42,7 @@ jsonTrue =
 jsonFalse ::
   Parser String
 jsonFalse =
-  stringTok "false" ---  error "todo"
+  stringTok "false"
 
 -- Exercise 5
 -- Parse a JSON null literal.
@@ -50,7 +50,7 @@ jsonFalse =
 jsonNull ::
   Parser String
 jsonNull =
-  stringTok "null" ---  error "todo"
+  stringTok "null"
 
 -- Exercise 6
 -- Parse a JSON array.
@@ -58,7 +58,7 @@ jsonNull =
 jsonArray ::
   Parser [JsonValue]
 jsonArray =
-  betweenSepbyComma '[' ']' jsonValue ---  error "todo"
+  betweenSepbyComma '[' ']' jsonValue
 
 -- Exercise 7
 -- Parse a JSON object.
@@ -66,8 +66,8 @@ jsonArray =
 jsonObject ::
   Parser Assoc
 jsonObject =
-  let field = (,) <$> (jsonString <* charTok ':') <*> jsonValue ---
-  in betweenSepbyComma '{' '}' field                            ---  error "todo"
+  let field = (,) <$> (jsonString <* charTok ':') <*> jsonValue
+  in betweenSepbyComma '{' '}' field
 
 -- Exercise 8
 -- Parse a JSON value.
@@ -75,14 +75,14 @@ jsonObject =
 jsonValue ::
   Parser JsonValue
 jsonValue =
-      spaces *>                           ---
-      (JsonNull <$ jsonNull               ---
-   ||| JsonTrue <$ jsonTrue               ---
-   ||| JsonFalse <$ jsonFalse             ---
-   ||| JsonArray <$> jsonArray            ---
-   ||| JsonString <$> jsonString          ---
-   ||| JsonObject <$> jsonObject          ---
-   ||| JsonRational False <$> jsonNumber) ---  error "todo"
+      spaces *>
+      (JsonNull <$ jsonNull
+   ||| JsonTrue <$ jsonTrue
+   ||| JsonFalse <$ jsonFalse
+   ||| JsonArray <$> jsonArray
+   ||| JsonString <$> jsonString
+   ||| JsonObject <$> jsonObject
+   ||| JsonRational False <$> jsonNumber)
 
 -- Exercise 9
 -- Read a file into a JSON value.
@@ -91,8 +91,8 @@ readJsonValue ::
   FilePath
   -> IO JsonValue
 readJsonValue p =
-  do c <- readFile p         ---
-     case jsonValue <.> c of ---
-       Error m -> error m    ---
-       Value a -> return a   ---  error "todo"
+  do c <- readFile p
+     case jsonValue <.> c of
+       Error m -> error m
+       Value a -> return a
 
