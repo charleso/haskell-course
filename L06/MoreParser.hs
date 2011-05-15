@@ -41,6 +41,8 @@ instance Monad Parser where
   (>>=) =
     bindParser
 
+instance Alternative Parser
+
 -- Exercise 4
 -- Read documentation, ask questions.
 {-
@@ -63,7 +65,7 @@ We will gently start using these libraries. Identify the pattern of computation 
 spaces ::
   Parser String
 spaces =
-  error "todo"
+  many (pure ' ')
 
 -- Exercise 6
 -- Write a function that applies the given parser, then parses 0 or more spaces,
@@ -73,7 +75,10 @@ tok ::
   Parser a
   -> Parser a
 tok p =
-  error "todo"
+  do
+    orig <- p
+    spaces
+    return orig
 
 -- Exercise 7
 -- Write a function that parses the given char followed by 0 or more spaces.
@@ -82,7 +87,7 @@ charTok ::
   Char
   -> Parser Char
 charTok =
-  error "todo"
+  tok . is
 
 -- Exercise 8
 -- Write a parser that parses a comma ',' followed by 0 or more spaces.
@@ -90,7 +95,7 @@ charTok =
 commaTok ::
   Parser Char
 commaTok =
-  error "todo"
+  charTok ','
 
 -- Exercise 9
 -- Write a parser that parses either a double-quote or a single-quote.
@@ -98,7 +103,7 @@ commaTok =
 quote ::
   Parser Char
 quote =
-  error "todo"
+  is '\'' ||| is '"'
 
 -- Exercise 10
 -- Write a function that parses the given string (fails otherwise).
@@ -107,7 +112,7 @@ string ::
   String
   -> Parser String
 string =
-  error "todo"
+  mapM is
 
 -- Exercise 11
 -- Write a function that parsers the given string, followed by 0 or more spaces.
@@ -116,7 +121,7 @@ stringTok ::
   String
   -> Parser String
 stringTok =
-  error "todo"
+  tok . string
 
 -- Exercise 12
 -- Write a function that tries the given parser, otherwise succeeds by producing the given value.
@@ -126,7 +131,7 @@ option ::
   -> Parser a
   -> Parser a
 option a p =
-  error "todo"
+  p ||| return a
 
 -- Exercise 13
 -- Write a parser that parses 1 or more digits.
@@ -134,7 +139,7 @@ option a p =
 digits1 ::
   Parser String
 digits1 =
-  error "todo"
+  many1 digit
 
 -- Exercise 14
 -- Write a function that parses one of the characters in the given string.
@@ -142,8 +147,8 @@ digits1 =
 oneof ::
   String
   -> Parser Char
-oneof s =
-  error "todo"
+oneof =
+  satisfy . flip elem
 
 -- Exercise 15
 -- Write a function that parses any character, but fails if it is in the given string.
@@ -151,8 +156,8 @@ oneof s =
 noneof ::
   String
   -> Parser Char
-noneof s =
-  error "todo"
+noneof =
+  satisfy . flip notElem
 
 -- Exercise 16
 -- Write a function that applies the first parser, runs the second parser keeping the result,
@@ -164,7 +169,11 @@ between ::
   -> Parser a
   -> Parser a
 between o c a =
-  error "todo"
+  do
+    o
+    a' <- a
+    c
+    return a'
 
 -- Exercise 17
 -- Write a function that applies the given parser in between the two given characters.
@@ -175,7 +184,7 @@ betweenCharTok ::
   -> Parser a
   -> Parser a
 betweenCharTok a b =
-  error "todo"
+  between (charTok a) (charTok b)
 
 -- Exercise 18
 -- Write a function that parses the character 'u' followed by 4 hex digits and return the character value.
@@ -183,7 +192,10 @@ betweenCharTok a b =
 hex ::
   Parser Char
 hex =
-  error "todo"
+  do
+    is 'u'
+    chars <- replicateM 4 (satisfy isHexDigit)
+    return (chr $ fst $ head $ readHex chars)
 
 -- Exercise 19
 -- Write a function that produces a non-empty list of values coming off the given parser (which must succeed at least once),
@@ -193,8 +205,11 @@ sepby1 ::
   Parser a
   -> Parser s
   -> Parser [a]
-sepby1 p s =
-  error "todo"
+sepby1 p s = -- TODO Not 100% correct
+  do
+    p' <- list p
+    s
+    return p'
 
 -- Exercise 20
 -- Write a function that produces a list of values coming off the given parser,
@@ -205,14 +220,16 @@ sepby ::
   -> Parser s
   -> Parser [a]
 sepby p s =
-  error "todo"
+  sepby1 p s ||| return []
 
 -- Exercise 21
 -- Write a parser that asserts that there is no remaining input.
 eof ::
   Parser ()
 eof =
-  error "todo"
+  P {
+    parse = \_ -> Error "No more input allow"
+}
 
 -- Exercise 22
 -- Write a parser that produces a characer that satisfies all of the given predicates.
@@ -221,7 +238,7 @@ satisfyAll ::
   [Char -> Bool]
   -> Parser Char
 satisfyAll ps =
-  error "todo"
+  satisfy (and . sequence ps)
 
 -- Exercise 23
 -- Write a parser that produces a characer that satisfies any of the given predicates.
@@ -230,7 +247,7 @@ satisfyAny ::
   [Char -> Bool]
   -> Parser Char
 satisfyAny ps =
-  error "todo"
+  satisfy (or . sequence ps)
 
 -- Exercise 24
 -- Write a parser that parses between the two given characters, separated by a comma character ','.
@@ -241,4 +258,4 @@ betweenSepbyComma ::
   -> Parser a
   -> Parser [a]
 betweenSepbyComma a b g =
-  error "todo"
+  sepby (betweenCharTok a b g) (charTok ',')
