@@ -21,24 +21,25 @@ import Control.Monad
 -- ~~~ Use bindParser and valueParser ~~~
 instance Functor Parser where
   fmap f p =
-    error "todo"
+    bindParser p (valueParser . f)
 
 -- Exercise 2
 -- Write an Applicative functor instance for a Parser.
 -- ~~~ Use bindParser and valueParser ~~~
 instance Applicative Parser where
   pure =
-    error "todo"
+    valueParser
   f <*> a =
-    error "todo"
+    -- bindParser f (\f' -> fmap f' a)
+    bindParser f (flip fmap a)
 
 -- Exercise 3
 -- Write a Monad instance for a Parser.
 instance Monad Parser where
   return =
-    error "todo"
+    valueParser
   (>>=) =
-    error "todo"
+    bindParser
 
 -- Exercise 4
 -- Read documentation, ask questions.
