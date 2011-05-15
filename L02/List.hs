@@ -55,8 +55,7 @@ reduceLeft f (h :| t) = foldLeft f h t
 -- Elegance: 0.5 marks
 -- Total: 3
 headOr :: List a -> a -> a
-headOr Nil y = y
-headOr (h :| _) _ = h
+headOr error "todo"
 
 -- Exercise 2
 -- Relative Difficulty: 2
@@ -65,9 +64,7 @@ headOr (h :| _) _ = h
 -- Elegance: 0.5 marks
 -- Total: 4
 sum :: List Int -> Int
--- sum Nil = 0
--- sum (h :| t) = h + sum t
-sum = foldLeft (+) 0
+sum = error "todo"
 
 
 -- Exercise 3
