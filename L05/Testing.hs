@@ -66,8 +66,7 @@ prop_append ::
   -> List Int
   -> Bool
 prop_append x y z =
-  (x `append` y) `append` z == ---
-  x `append` (y `append` z)    ---  error "todo"
+  error "todo"
 
 -- Exercise 2
 -- Folding (right) with cons and nil on a list (x) produces that same list x.
@@ -75,7 +74,7 @@ prop_foldRight ::
   List Int
   -> Bool
 prop_foldRight x =
-  foldRight (:|) Nil x == x ---  error "todo"
+  error "todo"
 
 -- Exercise 3
 -- Folding on a list (x) with subtraction on the sum of x produces 0.
@@ -83,7 +82,7 @@ prop_sum ::
   List Int
   -> Bool
 prop_sum x =
-  foldLeft (-) (sum x) x == 0 ---  error "todo"
+  error "todo"
 
 -- Exercise 4
 -- Replace each element in a list (x) with 1, then sum that list and you will have the length.
@@ -91,7 +90,7 @@ prop_length ::
   List Int
   -> Bool
 prop_length x =
-  sum (map (const 1) x) == length x ---  error "todo"
+  error "todo"
 
 -- Exercise 5
 -- Filtering a list (x) with a predicate (f) produces a list of elements where
@@ -101,7 +100,7 @@ prop_filter ::
   -> List Int
   -> Bool
 prop_filter f x =
-  all f (filter f x) ---  in error "todo"
+  error "todo"
 
 -- Exercise 6
 -- Mapping a function (g) on a list (x), then mapping another function (f) on that result,
@@ -112,7 +111,7 @@ prop_map_composition ::
   -> List Char
   -> Bool
 prop_map_composition f g x =
-  map f (map g x) == map (f . g) x ---  in error "todo"
+  error "todo"
 
 -- Exercise 7
 -- Mapping length on a list (x) then taking the same produces the same result as
@@ -121,7 +120,7 @@ prop_flatten ::
   List (List Int)
   -> Bool
 prop_flatten x =
-  sum (map length x) == length (flatten x) ---  error "todo"
+  error "todo"
 
 -- Exercise 8
 -- Using (>>>=>) expressed in terms of flatMap, show that
@@ -133,10 +132,7 @@ prop_flatMap_associative ::
   -> Int
   -> Bool
 prop_flatMap_associative x y z a =
-  let p >>>=> q = \k -> q `flatMap` p k
-      d = (x >>>=> y) >>>=> z ---
-      e = x >>>=> (y >>>=> z) ---
-  in d a == e a               ---  in error "todo"
+  error "todo"
 
 -- Exercise 9
 -- All elements in maximum of a list (x) are less then or equal to x.
@@ -144,7 +140,7 @@ prop_maximum ::
   List Int
   -> Bool
 prop_maximum x =
-  all (\a -> maximum x >= a) x ---  error "todo"
+  error "todo"
 
 -- Exercise 10
 -- The maximum of a list (x) contains x.
@@ -153,8 +149,7 @@ prop_maximum_contains ::
   List Int
   -> Property
 prop_maximum_contains x =
-  (not . isEmpty $ x) ==>
-  x `contains` maximum x
+  error "todo"
 
 -- Exercise 11
 -- Reversing a list (x) then reversing again results in x.
@@ -162,4 +157,4 @@ prop_reverse ::
   List Int
   -> Bool
 prop_reverse x =
-  (reverse . reverse) x == x ---  error "todo"
+  error "todo"
