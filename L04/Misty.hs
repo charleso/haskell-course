@@ -5,7 +5,6 @@ import L01.Validation
 import L02.List
 import L03.Parser
 
-
 class Misty m where
   banana :: (a -> m b) -> m a -> m b
   unicorn :: a -> m a
@@ -13,19 +12,19 @@ class Misty m where
   -- Relative Difficulty: 3
   -- (use banana and unicorn)
   furry' :: (a -> b) -> m a -> m b
-  furry' = error "todo"
+  furry' f =  banana (unicorn . f)
 
 -- Exercise 5
 -- Relative Difficulty: 2
 instance Misty List where
   banana = error "todo"
-  unicorn = error "todo"
+  unicorn = flip (:|) Nil
 
 -- Exercise 6
 -- Relative Difficulty: 2
 instance Misty Optional where
-  banana = error "todo"
-  unicorn = error "todo"
+  banana = flip bindOptional
+  unicorn = Full
 
 -- Exercise 7
 -- Relative Difficulty: 3
@@ -36,17 +35,27 @@ instance Misty Parser where
 -- Exercise 8
 -- Relative Difficulty: 2
 jellybean :: Misty m => m (m a) -> m a
-jellybean = error "todo"
+jellybean = banana id
 
 -- Exercise 9
 -- Relative Difficulty: 3
 sausage :: Misty m => [m a] -> m [a]
-sausage = error "todo"
+--sausage = foldr (\x -> \xs -> lift2 (++) (furry' (\a -> a : []) x) xs) (unicorn [])
+--sausage = foldr (\x -> lift2 (++) (furry' (\a -> a : []) x)) (unicorn [])
+--sausage = foldr (lift2 (:)) (unicorn [])
+sausage = foldr (\a b -> banana (flip furry' b . (:)) a ) (unicorn [])
+--sausage = error "todo"
+
+
+--sausage' = moppy (\a -> XXX) 
 
 -- Exercise 10
 -- Relative Difficulty: 3
 moppy :: Misty m => (a -> m b) -> [a] -> m [b]
-moppy = error "todo"
+--moppy = error "todo"
+moppy f a = sausage (unicorn undefined)
+
+-- TODO Write sausage in terms of moppys
 
 -- Exercise 11
 -- Relative Difficulty: 4
@@ -61,19 +70,37 @@ filtering = error "todo"
 -- Exercise 13
 -- Relative Difficulty: 10
 apple :: Misty m => m (a -> b) -> m a -> m b
-apple = error "todo"
-
+--apple = lemon2 ($)
+apple = lemon2 id
+ 
 -- Exercise 14
 -- Relative Difficulty: 6
 -- (bonus: use apple + furry')
 lemon2 :: Misty m => (a -> b -> c) -> m a -> m b -> m c
-lemon2 = error "todo"
+
+--lift2 f a b = banana (\a' -> banana (\b' -> unicorn (f a' b')) b) a 
+--lift2 f a b = banana (\a' -> banana (unicorn . f a') b) a 
+--lift2 f a b = banana (\a' -> furry' (f a') b) a 
+--lift2 f a b = banana (\a' -> flip furry' b (f a')) a 
+lemon2 f a b = banana (flip furry' b . f) a 
+
+-- TODO apple + life(m-1) = lift (M)
+
+{-
+
+lift0 = unit/unicorn/return
+lift1 = fmap/furry
+lift2 = ....
+
+liftN = apple + lifeN-1
+-}
 
 -- Exercise 15
 -- Relative Difficulty: 6
 -- (bonus: use apple + lemon2)
 lemon3 :: Misty m => (a -> b -> c -> d) -> m a -> m b -> m c -> m d
-lemon3 = error "todo"
+--lemon3 :: Misty m => (a -> b -> c -> d) -> m a -> m b -> m c -> m d
+lemon3 f a b c =  apple undefined (lemon2 (\a' -> \b' -> f a' b' undefined) a b)
 
 -- Exercise 16
 -- Relative Difficulty: 6
