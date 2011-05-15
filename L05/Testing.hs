@@ -6,7 +6,7 @@ import Prelude hiding (sum, length, map, all, filter, maximum, reverse)
 import Test.QuickCheck
 import Test.Framework
 import Test.Framework.Providers.QuickCheck2 (testProperty)
-import L02.List
+import L02.List hiding (main)
 
 
 -- How to produce arbitrary instances of List
@@ -66,7 +66,7 @@ prop_append ::
   -> List Int
   -> Bool
 prop_append x y z =
-  error "todo"
+  append (append x y) z == append x (append y z)
 
 -- Exercise 2
 -- Folding (right) with cons and nil on a list (x) produces that same list x.
@@ -74,7 +74,7 @@ prop_foldRight ::
   List Int
   -> Bool
 prop_foldRight x =
-  error "todo"
+  foldRight (:|) Nil x == x
 
 -- Exercise 3
 -- Folding on a list (x) with subtraction on the sum of x produces 0.
@@ -82,7 +82,7 @@ prop_sum ::
   List Int
   -> Bool
 prop_sum x =
-  error "todo"
+  foldLeft (-) (sum x) x == 0
 
 -- Exercise 4
 -- Replace each element in a list (x) with 1, then sum that list and you will have the length.
@@ -90,7 +90,7 @@ prop_length ::
   List Int
   -> Bool
 prop_length x =
-  error "todo"
+  sum (map (const 1) x) == length x
 
 -- Exercise 5
 -- Filtering a list (x) with a predicate (f) produces a list of elements where
@@ -100,7 +100,7 @@ prop_filter ::
   -> List Int
   -> Bool
 prop_filter f x =
-  error "todo"
+  all f (filter f x)
 
 -- Exercise 6
 -- Mapping a function (g) on a list (x), then mapping another function (f) on that result,
@@ -111,7 +111,7 @@ prop_map_composition ::
   -> List Char
   -> Bool
 prop_map_composition f g x =
-  error "todo"
+  map f (map g x) == map (f . g) x
 
 -- Exercise 7
 -- Mapping length on a list (x) then taking the same produces the same result as
@@ -120,7 +120,7 @@ prop_flatten ::
   List (List Int)
   -> Bool
 prop_flatten x =
-  error "todo"
+  sum (map length x) == length (flatten x)
 
 -- Exercise 8
 -- Using (>>>=>) expressed in terms of flatMap, show that
@@ -132,7 +132,10 @@ prop_flatMap_associative ::
   -> Int
   -> Bool
 prop_flatMap_associative x y z a =
-  error "todo"
+    let p >>>=> q = \k -> q `flatMap` p k
+        d = x >>>=> (y >>>=> z)
+        e = (x >>>=> y) >>>=> z
+    in d a == e a
 
 -- Exercise 9
 -- All elements in maximum of a list (x) are less then or equal to x.
@@ -140,7 +143,7 @@ prop_maximum ::
   List Int
   -> Bool
 prop_maximum x =
-  error "todo"
+  all (maximum x >=) x
 
 -- Exercise 10
 -- The maximum of a list (x) contains x.
@@ -149,7 +152,8 @@ prop_maximum_contains ::
   List Int
   -> Property
 prop_maximum_contains x =
-  error "todo"
+   (not (isEmpty x)) ==>
+   contains x (maximum x)
 
 -- Exercise 11
 -- Reversing a list (x) then reversing again results in x.
@@ -157,4 +161,4 @@ prop_reverse ::
   List Int
   -> Bool
 prop_reverse x =
-  error "todo"
+  reverse (reverse x) == x
