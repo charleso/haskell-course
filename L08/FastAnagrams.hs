@@ -10,17 +10,24 @@ import qualified Data.Set as S
 fastAnagrams ::
   String
   -> FilePath
-  -> IO [String]
+  -> IO [NoCaseString]
 fastAnagrams name f =
-  (flip (filter . flip S.member) (permutations name) . S.fromList . lines) `fmap` readFile f
+    (flip (filter . flip S.member) (noCase (permutations name)) . S.fromList . noCase . lines) `fmap` readFile f
+    where noCase = map NoCaseString
 
 newtype NoCaseString =
   NoCaseString {
     ncString :: String
   }
 
+toLower' :: NoCaseString -> [Char]
+toLower' = (map toLower . ncString) 
+
+instance Ord NoCaseString where
+    compare = compare `on` toLower'
+
 instance Eq NoCaseString where
-  (==) = (==) `on` map toLower . ncString
+  (==) = (==) `on` toLower'
 
 instance Show NoCaseString where
   show = show . ncString
