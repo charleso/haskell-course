@@ -62,7 +62,7 @@ trait TakeBack extends Board {
    * It is a compile-time type error to call this function on an empty board.
    */
   def takeBack(p:Position):InProgressBoard = {
-    new InProgressBoard(null)
+    new InProgressBoard(moves.tail)
   }
 
 }
