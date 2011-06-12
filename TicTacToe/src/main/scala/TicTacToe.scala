@@ -2,7 +2,7 @@
 class Position(val x:Int, val y:Int) extends Tuple2(x, y)
 
 class A {
-  type Moves = Seq[(Position, Player)]
+  type Moves = List[(Position, Player)]
 }
 
 object Moves {
@@ -31,9 +31,15 @@ class InProgressBoard(override val moves: A#Moves) extends Board(moves) with Tak
    * This function can only be called on a board that is in-play.
    * Calling move on a game board that is finished is a *compile-time type error*.
    */
-  def move(p:Position)(implicit pl: Player):Board = {
-    //getPlayer(b, new Position(1, 1))
-    this
+  def move(p: Position)(implicit pl: Player): Board = {
+    val newMoves = (p, pl) :: moves
+// (0, 0), (1, 0), (2, 0)
+    // (0, 1), (1, 1), (2, 1)
+    // (0, 2), (1, 2), (2, 2)
+    def gameOver() = {
+      false // TODO
+    }
+    if (gameOver()) new FinishedBoard(newMoves) else new InProgressBoard(newMoves)
   }
 
 }
@@ -45,11 +51,7 @@ class FinishedBoard(override val moves: A#Moves) extends Board(moves) with TakeB
    * This function can only be called on a board that is finished.
    * Calling move on a game board that is in-play is a *compile-time type error*.
    */
-  def whoWon():Player = null
-    // (0, 0), (1, 0), (2, 0)
-    // (0, 1), (1, 1), (2, 1)
-    // (0, 2), (1, 2), (2, 2)
-
+  def whoWon():Player = moves.head._2
 
 }
 
