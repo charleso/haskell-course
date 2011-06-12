@@ -1,14 +1,20 @@
-class Position
+class Position(x:Int, y:Int)
 
-abstract class Board
+// class Move(pos: Position, player: Player)
 
-class EmptyBoard extends Board
+class Board //(moves:Array[Move])
+
+class EmptyBoard extends InProgressBoard
 
 class InProgressBoard extends Board
 
 class FinishedBoard extends Board
 
-class Player
+sealed trait Player {
+
+  class Nought extends Player
+  class Cross extends Player
+}
 
 object TicTacToe {
 
@@ -17,7 +23,7 @@ object TicTacToe {
    * This function can only be called on a board that is in-play.
    * Calling move on a game board that is finished is a *compile-time type error*.
    */
-  def move(p:Position)(b:Board):Board = b
+  def move(p:Position)(b:InProgressBoard):Board = b
 
   /**
    * takes a tic-tac-toe board and returns the player that won the game (or a draw if neither).
