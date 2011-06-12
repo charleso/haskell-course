@@ -12,18 +12,23 @@ class FinishedBoard extends Board
 
 sealed trait Player {
 
-  class Nought extends Player
-  class Cross extends Player
 }
+class Nought extends Player
+class Cross extends Player
+
 
 object TicTacToe {
+
+  class Blah[A <: Player, B <: Player]
+  implicit val n = new Blah[Nought, Cross]
+  implicit val c = new Blah[Cross, Nought]
 
   /**
    * takes a tic-tac-toe board and position and moves to that position (if not occupied) returning a new board.
    * This function can only be called on a board that is in-play.
    * Calling move on a game board that is finished is a *compile-time type error*.
    */
-  def move(p:Position)(b:InProgressBoard):Board = b
+  def move(p:Position)(b:InProgressBoard)(implicit pl: Player):Board = b
 
   /**
    * takes a tic-tac-toe board and returns the player that won the game (or a draw if neither).
