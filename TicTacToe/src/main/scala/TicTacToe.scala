@@ -84,8 +84,10 @@ trait TakeBack extends Board {
    * takeBack: takes either a finished board or a board in-play that has had at least one move and returns a board in-play.
    * It is a compile-time type error to call this function on an empty board.
    */
-  def takeBack(p:Position):InProgressBoard = {
-    new InProgressBoard(moves.tail)
+  def takeBack(p:Position):Either[EmptyBoard, InProgressBoard] = {
+    val newMoves = moves.tail
+    if (newMoves.isEmpty) Left(new EmptyBoard)
+    else Right(new InProgressBoard(newMoves))
   }
 
 }

@@ -28,6 +28,6 @@ object TicTacToeTest extends Properties("TicTacToe") {
    * (not (positionIsOccupied p b)). takeBack(move(p, b)) == b
    */
   property("moveAndTakeBack") = Prop.forAll((b: Movable, p: Position, pl: Player) =>
-    b.positionIsOccupied(p) || (b.move(p)(pl).merge.takeBack(p)) == b
+    b.positionIsOccupied(p) || (b.move(p)(pl).merge.takeBack(p).merge) == b
   )
 }
