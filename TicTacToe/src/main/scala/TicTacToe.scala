@@ -40,17 +40,14 @@ case class InProgressBoard(override val moves: A#Moves) extends Board(moves) wit
     def gameOver() = {
       val ourMoves = newMoves.filter(_._2 == pl).map(_._1)
       // TODO Generates all permutations
-      val perms = for {
-        a <- ourMoves
-        b <- ourMoves
-        c <- ourMoves
+      (for {
+        a <- ourMoves; b <- ourMoves; c <- ourMoves
         if (a != b && a != c && b != c)
       } yield {
         def same(p:(Position => Int)) = p(a) == p(b) && p(a) == p(c)
         same(_.x) || same(_.y) ||
         (a.x == a.y && b.x == b.y && c.x == c.y)
-      }
-      perms.contains(true)
+      }) contains true
     }
     if (gameOver() || newMoves.length == 9) Left(new FinishedBoard(newMoves))
     else Right(new InProgressBoard(newMoves))
