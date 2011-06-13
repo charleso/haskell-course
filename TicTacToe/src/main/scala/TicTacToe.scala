@@ -1,3 +1,5 @@
+import scala.Either.RightProjection
+
 class Position(val x:Int, val y:Int) extends Tuple2(x, y)
 object Position {
   implicit def t2p(t:(Int, Int)) = new Position(t._1, t._2)
@@ -53,6 +55,8 @@ case class InProgressBoard(override val moves: A#Moves) extends Board(moves) wit
     else Right(new InProgressBoard(newMoves))
   }
 
+  def moveR(p: Position)(implicit pl: Player): RightProjection[FinishedBoard, InProgressBoard] = move(p).right
+
 }
 
 case class FinishedBoard(override val moves: A#Moves) extends Board(moves) with TakeBack {
@@ -87,13 +91,25 @@ case object Cross extends Player
 object TicTacToe {
 
   def main(args: Array[String]) {
+    val p = new EmptyBoard()
+       .moveR((0, 0))(Nought).flatMap {
+      _.moveR((1, 1))(Cross).flatMap {
+      _.move((1, 1))(Cross)
+    }}
+    
+    println(p)
+
     val x = for {
-      a <- new EmptyBoard().move((0, 0))(Nought).right
-      b <- a.move((1,1))(Cross).right
-      c <- b.move((1,1))(Nought).right
-      d <- c.move((1,1))(Cross).right
-      e <- d.move((2,2))(Nought).right
-    } yield e
+      a <- new EmptyBoard().moveR((0, 0))(Nought)
+      b <- a.moveR((1,1))(Cross)
+      c <- b.moveR((1,1))(Nought)
+      d <- c.moveR((1,1))(Cross)
+      e <- d.moveR((2,2))(Nought)
+      f <- e.moveR((2,2))(Cross)
+      g <- f.moveR((2,2))(Cross)
+      h <- g.moveR((2,2))(Cross)
+      i <- h.moveR((2,2))(Cross)
+    } yield i
     println(x)
     x.left.foreach((b:FinishedBoard) => println(b.whoWon()))
   }
