@@ -15,5 +15,5 @@ class TicTacToeTest extends Properties("TicTacToe") {
    * (not (positionIsOccupied p b)). takeBack(move(p, b)) == b
    */
   property("something") = Prop.forAll((b: InProgressBoard, p: Position) =>
-    b.positionIsOccupied(p) || (b.move(p).takeBack(p)) != b)
+    b.positionIsOccupied(p) || (b.move(p, new Cross).takeBack(p)) != b)
 }

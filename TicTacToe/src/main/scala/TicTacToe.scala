@@ -1,5 +1,9 @@
 class Position(val x:Int, val y:Int) extends Tuple2(x, y)
+object Position {
+  implicit def t2p(t:(Int, Int)) = new Position(t._1, t._2)
+}
 
+// TODO Can I just have 'Moves' without the class?
 class A {
   type Moves = List[(Position, Player)]
 }
@@ -15,7 +19,7 @@ sealed abstract class Board(val moves: A#Moves) {
    * This function works on any type of board.
    */
   // TODO Why do I need types here?!?
-  def playerAt(p:Position):Option[Player] = moves.find(_._1 == p).flatMap((x:Tuple2[Position, Player]) => Some(x._2))
+  def playerAt(p:Position):Option[Player] = moves.find(_._1 == p).flatMap((x:(_, Player)) => Some(x._2))
 
   def positionIsOccupied(p:Position):Boolean = playerAt(p).isDefined
 
@@ -24,35 +28,35 @@ sealed abstract class Board(val moves: A#Moves) {
 class EmptyBoard extends InProgressBoard(Moves())
 
 
-class InProgressBoard(override val moves: A#Moves) extends Board(moves) with TakeBack {
+case class InProgressBoard(override val moves: A#Moves) extends Board(moves) with TakeBack {
 
   /**
    * takes a tic-tac-toe board and position and moves to that position (if not occupied) returning a new board.
    * This function can only be called on a board that is in-play.
    * Calling move on a game board that is finished is a *compile-time type error*.
    */
-  def move(p: Position)(implicit pl: Player): Board = {
+  def move(p: Position)(implicit pl: Player): Either[FinishedBoard, InProgressBoard] = {
     val newMoves = (p, pl) :: moves
     def gameOver() = {
       val ourMoves = newMoves.filter(_._2 == pl).map(_._1)
       // TODO Generates all permutations
-      val perms = for (
-        a <- ourMoves;
-        b <- ourMoves;
+      val perms = for {
+        a <- ourMoves
+        b <- ourMoves
         c <- ourMoves
-      ) yield {
+      } yield {
         def same(p:(Position => Int)) = p(a) == p(b) && p(a) == p(c)
         same(_.x) || same(_.y) ||
         (a.x == a.x && b.x == b.x && c.x == c.x)
       }
       perms.contains(true)
     }
-    if (gameOver()) new FinishedBoard(newMoves) else new InProgressBoard(newMoves)
+    if (gameOver()) Left(new FinishedBoard(newMoves)) else Right(new InProgressBoard(newMoves))
   }
 
 }
 
-class FinishedBoard(override val moves: A#Moves) extends Board(moves) with TakeBack {
+case class FinishedBoard(override val moves: A#Moves) extends Board(moves) with TakeBack {
 
   /**
    * takes a tic-tac-toe board and returns the player that won the game (or a draw if neither).
@@ -86,4 +90,14 @@ object TicTacToe {
   implicit val n = new Blah[Nought, Cross]
   implicit val c = new Blah[Cross, Nought]
 
+  def main(args: Array[String]) {
+    val x = for {
+      a <- new EmptyBoard().move((0, 0))(new Nought).right
+      b <- a.move((1,1))(new Cross).right
+//      c <- b.move((1,1))(new Nought).right
+//      d <- c.move((1,1))(new Cross).right
+//      e <- d.move((1,2))(new Nought).right
+    } yield b
+    println(x)
+  }
 }
