@@ -67,7 +67,7 @@ case class FinishedBoard(override val moves: A#Moves) extends Board(moves) with 
    * This function can only be called on a board that is finished.
    * Calling move on a game board that is in-play is a *compile-time type error*.
    */
-  def whoWon:Option[Player] = Some(moves.head._2)
+  def whoWon:Option[Player] = moves.headOption.map(_._2)
 
 }
 
