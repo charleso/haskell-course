@@ -52,7 +52,8 @@ case class InProgressBoard(override val moves: A#Moves) extends Board(moves) wit
       }
       perms.contains(true)
     }
-    if (gameOver()) Left(new FinishedBoard(newMoves)) else Right(new InProgressBoard(newMoves))
+    if (gameOver() || newMoves.length == 9) Left(new FinishedBoard(newMoves))
+    else Right(new InProgressBoard(newMoves))
   }
 
 }
@@ -64,9 +65,10 @@ case class FinishedBoard(override val moves: A#Moves) extends Board(moves) with 
    * This function can only be called on a board that is finished.
    * Calling move on a game board that is in-play is a *compile-time type error*.
    */
-  def whoWon():Player = moves.head._2
+  def whoWon():Option[Player] = if (moves.length < 9) Some(moves.head._2) else None
 
 }
+
 
 trait TakeBack extends Board {
 
