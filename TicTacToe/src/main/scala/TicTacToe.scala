@@ -51,7 +51,8 @@ case class InProgressBoard(override val moves: A#Moves) extends Board(moves) wit
         (a.x == a.y && b.x == b.y && c.x == c.y)
       }) contains true
     }
-    if (gameOver() || newMoves.length == 9) Left(new FinishedBoard(newMoves))
+    if (gameOver()) Left(new FinishedBoard(newMoves))
+    if (newMoves.length == 9) Left(new DrawnBoard(newMoves))
     else Right(new InProgressBoard(newMoves))
   }
 
@@ -66,10 +67,15 @@ case class FinishedBoard(override val moves: A#Moves) extends Board(moves) with 
    * This function can only be called on a board that is finished.
    * Calling move on a game board that is in-play is a *compile-time type error*.
    */
-  def whoWon():Option[Player] = if (moves.length < 9) Some(moves.head._2) else None
+  def whoWon:Option[Player] = Some(moves.head._2)
 
 }
 
+case class DrawnBoard(override val moves: A#Moves) extends FinishedBoard(moves) {
+
+  override def whoWon = None
+
+}
 
 trait TakeBack extends Board {
 
@@ -111,6 +117,6 @@ object TicTacToe {
       i <- h.moveR((2,2))(Cross)
     } yield i
     println(x)
-    x.left.foreach((b:FinishedBoard) => println(b.whoWon()))
+    x.left.foreach((b:FinishedBoard) => println(b.whoWon))
   }
 }
