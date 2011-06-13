@@ -44,11 +44,11 @@ case class InProgressBoard(override val moves: A#Moves) extends Board(moves) wit
         a <- ourMoves
         b <- ourMoves
         c <- ourMoves
-        if (a != b && b != c)
+        if (a != b && a != c && b != c)
       } yield {
         def same(p:(Position => Int)) = p(a) == p(b) && p(a) == p(c)
         same(_.x) || same(_.y) ||
-        (a.x == a.x && b.x == b.x && c.x == c.x)
+        (a.x == a.y && b.x == b.y && c.x == c.y)
       }
       perms.contains(true)
     }
