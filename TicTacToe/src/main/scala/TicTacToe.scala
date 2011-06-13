@@ -1,4 +1,3 @@
-
 class Position(val x:Int, val y:Int) extends Tuple2(x, y)
 
 class A {
@@ -15,6 +14,7 @@ sealed abstract class Board(val moves: A#Moves) {
    * takes a tic-tac-toe board and position and returns the (possible) player at a given position.
    * This function works on any type of board.
    */
+  // TODO Why do I need types here?!?
   def playerAt(p:Position):Option[Player] = moves.find(_._1 == p).flatMap((x:Tuple2[Position, Player]) => Some(x._2))
 
   def positionIsOccupied(p:Position):Boolean = playerAt(p).isDefined
@@ -33,11 +33,19 @@ class InProgressBoard(override val moves: A#Moves) extends Board(moves) with Tak
    */
   def move(p: Position)(implicit pl: Player): Board = {
     val newMoves = (p, pl) :: moves
-// (0, 0), (1, 0), (2, 0)
-    // (0, 1), (1, 1), (2, 1)
-    // (0, 2), (1, 2), (2, 2)
     def gameOver() = {
-      false // TODO
+      val ourMoves = newMoves.filter(_._2 == pl).map(_._1)
+      // TODO Generates all permutations
+      val perms = for (
+        a <- ourMoves;
+        b <- ourMoves;
+        c <- ourMoves
+      ) yield {
+        def same(p:(Position => Int)) = p(a) == p(b) && p(a) == p(c)
+        same(_.x) || same(_.y) ||
+        (a.x == a.x && b.x == b.x && c.x == c.x)
+      }
+      perms.contains(true)
     }
     if (gameOver()) new FinishedBoard(newMoves) else new InProgressBoard(newMoves)
   }
