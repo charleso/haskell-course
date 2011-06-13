@@ -44,6 +44,7 @@ case class InProgressBoard(override val moves: A#Moves) extends Board(moves) wit
         a <- ourMoves
         b <- ourMoves
         c <- ourMoves
+        if (a != b && b != c)
       } yield {
         def same(p:(Position => Int)) = p(a) == p(b) && p(a) == p(c)
         same(_.x) || same(_.y) ||
@@ -79,25 +80,22 @@ trait TakeBack extends Board {
 
 }
 
+// TODO Is Enumeration better?
 sealed trait Player
-class Nought extends Player
-class Cross extends Player
-
+case object Nought extends Player
+case object Cross extends Player
 
 object TicTacToe {
 
-  class Blah[A <: Player, B <: Player]
-  implicit val n = new Blah[Nought, Cross]
-  implicit val c = new Blah[Cross, Nought]
-
   def main(args: Array[String]) {
     val x = for {
-      a <- new EmptyBoard().move((0, 0))(new Nought).right
-      b <- a.move((1,1))(new Cross).right
-//      c <- b.move((1,1))(new Nought).right
-//      d <- c.move((1,1))(new Cross).right
-//      e <- d.move((1,2))(new Nought).right
-    } yield b
+      a <- new EmptyBoard().move((0, 0))(Nought).right
+      b <- a.move((1,1))(Cross).right
+      c <- b.move((1,1))(Nought).right
+      d <- c.move((1,1))(Cross).right
+      e <- d.move((2,2))(Nought).right
+    } yield e
     println(x)
+    x.left.foreach((b:FinishedBoard) => println(b.whoWon()))
   }
 }
