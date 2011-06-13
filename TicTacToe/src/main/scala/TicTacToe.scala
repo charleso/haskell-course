@@ -90,9 +90,9 @@ trait TakeBack extends Board {
 }
 
 // TODO Is Enumeration better?
-sealed trait Player
-case object Nought extends Player
-case object Cross extends Player
+sealed abstract class Player(override val toString:String)
+case object Nought extends Player("O")
+case object Cross extends Player("X")
 
 object TicTacToe {
 
