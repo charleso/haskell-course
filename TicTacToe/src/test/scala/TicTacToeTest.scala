@@ -6,10 +6,10 @@ object TicTacToeTest extends Properties("TicTacToe") {
 
   implicit def arbitraryPlayer[A]: Arbitrary[Player] = Arbitrary(Gen.oneOf(Cross, Nought))
 
-  implicit def arbitraryBoard[A]: Arbitrary[InProgressBoard] =
+  implicit def arbitraryBoard[A]: Arbitrary[Movable] =
     Arbitrary(Gen.choose(0, 7).map((x: Int) => {
       // TODO A var - I cheated! What is a better way?
-      var b: InProgressBoard = new EmptyBoard()
+      var b: Movable = new EmptyBoard()
       for {
         i <- 0 to x
         player <- arbitrary[Player].sample
@@ -27,7 +27,7 @@ object TicTacToeTest extends Properties("TicTacToe") {
    * forall Board b. forall Position p. such that
    * (not (positionIsOccupied p b)). takeBack(move(p, b)) == b
    */
-  property("moveAndTakeBack") = Prop.forAll((b: InProgressBoard, p: Position, pl: Player) =>
+  property("moveAndTakeBack") = Prop.forAll((b: Movable, p: Position, pl: Player) =>
     b.positionIsOccupied(p) || (b.move(p)(pl).merge.takeBack(p)) == b
   )
 }

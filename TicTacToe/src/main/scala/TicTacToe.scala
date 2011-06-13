@@ -27,10 +27,11 @@ sealed abstract class Board(val moves: A#Moves) {
 
 }
 
-class EmptyBoard extends InProgressBoard(Moves())
+class EmptyBoard extends Board(Moves()) with Movable
 
+case class InProgressBoard(override val moves: A#Moves) extends Board(moves) with TakeBack with Movable
 
-case class InProgressBoard(override val moves: A#Moves) extends Board(moves) with TakeBack {
+trait Movable extends Board {
 
   /**
    * takes a tic-tac-toe board and position and moves to that position (if not occupied) returning a new board.
