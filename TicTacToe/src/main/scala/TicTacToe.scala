@@ -25,26 +25,6 @@ sealed abstract class Board(val moves: A#Moves) {
 
   def positionIsOccupied(p:Position):Boolean = playerAt(p).isDefined
 
-  // TODO This should be a fold over the list
-  def draw = {
-    var sorted = moves.sortBy((p:(Position, _)) => p._1.x + (p._1.y * 3))
-    val b = new StringBuilder
-    for {
-      y <- 0 until 3
-      x <- 0 until 3
-    } {
-      if (x == 0 && y != 0) {
-        b.append("\n");
-      }
-      if (sorted.headOption.forall((p:(Position, Player)) => p._1.x == x && p._1.y == y)) {
-        b.append(sorted.head._2)
-        sorted = sorted.tail
-      } else {
-        b.append(" ")
-      }
-    }
-    b
-  }
 }
 
 class EmptyBoard extends InProgressBoard(Moves())
