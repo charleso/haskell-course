@@ -5,7 +5,7 @@ object Position {
   implicit def t2p(t:(Pos, Pos)) = new Position(t._1, t._2)
 }
 
-class Turn(val position: Position, val player: Player) extends Tuple2(position, player)
+class Turn(val position: Position, val player: Player)
 
 object Moves {
   type Moves = List[Turn]
@@ -19,7 +19,7 @@ sealed abstract class Board(val moves: Moves) {
    * takes a tic-tac-toe board and position and returns the (possible) player at a given position.
    * This function works on any type of board.
    */
-  def playerAt(p:Position):Option[Player] = moves.find(_._1 == p).map(_._2)
+  def playerAt(p:Position):Option[Player] = moves.find(_.position == p).map(_.player)
 
   def positionIsOccupied(p:Position):Boolean = playerAt(p).isDefined
 
@@ -39,7 +39,7 @@ trait Movable extends Board {
   def move(p: Position)(implicit pl: Player): Either[FinishedBoard, InProgressBoard] = {
     val newMoves = new Turn(p, pl) :: moves
     def gameOver() = {
-      val ourMoves = newMoves.filter(_._2 == pl).map(_._1)
+      val ourMoves = newMoves.filter(_.player == pl).map(_.position)
       // TODO Generates all permutations
       (for {
         a <- ourMoves; b <- ourMoves; c <- ourMoves
@@ -71,7 +71,7 @@ sealed trait FinishedBoard extends TakeBack {
 
 case class WonBoard(override val moves: Moves) extends Board(moves) with FinishedBoard {
 
-  def whoWon: Option[Player] = moves.headOption.map(_._2)
+  def whoWon: Option[Player] = moves.headOption.map(_.player)
 }
 
 case class DrawnBoard(override val moves: Moves) extends Board(moves) with FinishedBoard {
