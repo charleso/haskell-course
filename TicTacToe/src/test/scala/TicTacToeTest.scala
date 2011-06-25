@@ -21,7 +21,7 @@ object TicTacToeTest extends Properties("TicTacToe") {
     }))
 
   implicit def arbitraryPosition[A]: Arbitrary[Position] =
-    Arbitrary(Gen.choose(0, 8).map((x: Int) => (x % 3, x / 3)))
+    Arbitrary(Gen.choose(0, 8).map((x: Int) => (Pos(x % 3), Pos(x / 3))))
 
   /**
    * forall Board b. forall Position p. such that

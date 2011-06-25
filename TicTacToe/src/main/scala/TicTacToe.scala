@@ -96,6 +96,14 @@ sealed abstract class Pos(val i:Int)
 object $0 extends Pos(0);
 object $1 extends Pos(1);
 object $2 extends Pos(2);
+object Pos {
+  def apply(i: Int) = i match {
+    case 0 => $0
+    case 1 => $1
+    case 2 => $2
+    case _ => throw new Exception("Invalid pos: " + i)
+  }
+}
 
 // TODO Is Enumeration better?
 sealed abstract class Player(override val toString:String)
