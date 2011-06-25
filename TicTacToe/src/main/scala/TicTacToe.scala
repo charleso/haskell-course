@@ -20,8 +20,7 @@ sealed abstract class Board(val moves: A#Moves) {
    * takes a tic-tac-toe board and position and returns the (possible) player at a given position.
    * This function works on any type of board.
    */
-  // TODO Why do I need types here?!?
-  def playerAt(p:Position):Option[Player] = moves.find(_._1 == p).map((x:(_, Player)) => x._2)
+  def playerAt(p:Position):Option[Player] = moves.find(_._1 == p).map(_._2)
 
   def positionIsOccupied(p:Position):Boolean = playerAt(p).isDefined
 
