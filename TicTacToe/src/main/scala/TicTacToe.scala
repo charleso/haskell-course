@@ -1,8 +1,8 @@
 import scala.Either.RightProjection
 
-class Position(val x:Int, val y:Int) extends Tuple2(x, y)
+class Position(val x:Pos, val y:Pos) extends Tuple2(x.i, y.i)
 object Position {
-  implicit def t2p(t:(Int, Int)) = new Position(t._1, t._2)
+  implicit def t2p(t:(Pos, Pos)) = new Position(t._1, t._2)
 }
 
 // TODO Can I just have 'Moves' without the class?
@@ -47,7 +47,7 @@ trait Movable extends Board {
         a <- ourMoves; b <- ourMoves; c <- ourMoves
         if (a != b && a != c && b != c)
       } yield {
-        def same(p:(Position => Int)) = p(a) == p(b) && p(a) == p(c)
+        def same(p:(Position => Pos)) = p(a) == p(b) && p(a) == p(c)
         same(_.x) || same(_.y) ||
         (a.x == a.y && b.x == b.y && c.x == c.y)
       }) contains true
@@ -92,6 +92,11 @@ trait TakeBack extends Board {
 
 }
 
+sealed abstract class Pos(val i:Int)
+object $0 extends Pos(0);
+object $1 extends Pos(1);
+object $2 extends Pos(2);
+
 // TODO Is Enumeration better?
 sealed abstract class Player(override val toString:String)
 case object Nought extends Player("O")
@@ -101,23 +106,23 @@ object TicTacToe {
 
   def main(args: Array[String]) {
     val p = new EmptyBoard()
-       .moveR((0, 0))(Nought).flatMap {
-      _.moveR((1, 1))(Cross).flatMap {
-      _.move((1, 1))(Cross)
+       .moveR(($0, $0))(Nought).flatMap {
+      _.moveR(($1, $1))(Cross).flatMap {
+      _.move(($1, $1))(Cross)
     }}
     
     println(p)
 
     val x = for {
-      a <- new EmptyBoard().moveR((0, 0))(Nought)
-      b <- a.moveR((1,1))(Cross)
-      c <- b.moveR((1,1))(Nought)
-      d <- c.moveR((1,1))(Cross)
-      e <- d.moveR((2,2))(Nought)
-      f <- e.moveR((2,2))(Cross)
-      g <- f.moveR((2,2))(Cross)
-      h <- g.moveR((2,2))(Cross)
-      i <- h.moveR((2,2))(Cross)
+      a <- new EmptyBoard().moveR(($0, $0))(Nought)
+      b <- a.moveR(($1,$1))(Cross)
+      c <- b.moveR(($1,$1))(Nought)
+      d <- c.moveR(($1,$1))(Cross)
+      e <- d.moveR(($2,$2))(Nought)
+      f <- e.moveR(($2,$2))(Cross)
+      g <- f.moveR(($2,$2))(Cross)
+      h <- g.moveR(($2,$2))(Cross)
+      i <- h.moveR(($2,$2))(Cross)
     } yield i
     println(x)
     x.left.foreach((b:FinishedBoard) => println(b.whoWon))
