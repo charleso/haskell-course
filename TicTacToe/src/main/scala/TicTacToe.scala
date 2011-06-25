@@ -49,7 +49,7 @@ trait Movable extends Board {
       }) contains true
     }
     if (gameOver()) Left(new WonBoard(newMoves))
-    if (newMoves.length == 9) Left(new DrawnBoard(newMoves))
+    else if (newMoves.length == 9) Left(new DrawnBoard(newMoves))
     else Right(new InProgressBoard(newMoves))
   }
 
