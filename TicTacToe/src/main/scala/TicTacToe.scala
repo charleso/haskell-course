@@ -107,7 +107,6 @@ object Pos {
   }
 }
 
-// TODO Is Enumeration better?
 sealed abstract class Player(override val toString:String)
 case object Nought extends Player("O")
 case object Cross extends Player("X")
