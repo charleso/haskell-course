@@ -5,16 +5,13 @@ object Position {
   implicit def t2p(t:(Pos, Pos)) = new Position(t._1, t._2)
 }
 
-// TODO Can I just have 'Moves' without the class?
-class A {
-  type Moves = List[(Position, Player)]
-}
-
 object Moves {
-  def apply(): A#Moves = Nil
+  type Moves = List[(Position, Player)]
+  def apply(): Moves = Nil
 }
+import Moves._
 
-sealed abstract class Board(val moves: A#Moves) {
+sealed abstract class Board(val moves: Moves) {
 
   /**
    * takes a tic-tac-toe board and position and returns the (possible) player at a given position.
@@ -28,7 +25,7 @@ sealed abstract class Board(val moves: A#Moves) {
 
 class EmptyBoard extends Board(Moves()) with Movable
 
-case class InProgressBoard(override val moves: A#Moves) extends Board(moves) with TakeBack with Movable
+case class InProgressBoard(override val moves: Moves) extends Board(moves) with TakeBack with Movable
 
 trait Movable extends Board {
 
@@ -70,12 +67,12 @@ sealed trait FinishedBoard extends TakeBack {
   def whoWon: Option[Player]
 }
 
-case class WonBoard(override val moves: A#Moves) extends Board(moves) with FinishedBoard {
+case class WonBoard(override val moves: Moves) extends Board(moves) with FinishedBoard {
 
   def whoWon: Option[Player] = moves.headOption.map(_._2)
 }
 
-case class DrawnBoard(override val moves: A#Moves) extends Board(moves) with FinishedBoard {
+case class DrawnBoard(override val moves: Moves) extends Board(moves) with FinishedBoard {
 
   override def whoWon = None
 }
