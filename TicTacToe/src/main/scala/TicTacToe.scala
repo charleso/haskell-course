@@ -5,8 +5,10 @@ object Position {
   implicit def t2p(t:(Pos, Pos)) = new Position(t._1, t._2)
 }
 
+class Turn(val position: Position, val player: Player) extends Tuple2(position, player)
+
 object Moves {
-  type Moves = List[(Position, Player)]
+  type Moves = List[Turn]
   def apply(): Moves = Nil
 }
 import Moves._
@@ -35,7 +37,7 @@ trait Movable extends Board {
    * Calling move on a game board that is finished is a *compile-time type error*.
    */
   def move(p: Position)(implicit pl: Player): Either[FinishedBoard, InProgressBoard] = {
-    val newMoves = (p, pl) :: moves
+    val newMoves = new Turn(p, pl) :: moves
     def gameOver() = {
       val ourMoves = newMoves.filter(_._2 == pl).map(_._1)
       // TODO Generates all permutations
