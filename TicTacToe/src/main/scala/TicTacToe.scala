@@ -1,6 +1,6 @@
 import scala.Either.RightProjection
 
-class Position(val x:Pos, val y:Pos) extends Tuple2(x.i, y.i)
+class Position(val x:Pos, val y:Pos)
 object Position {
   implicit def t2p(t:(Pos, Pos)) = new Position(t._1, t._2)
 }
