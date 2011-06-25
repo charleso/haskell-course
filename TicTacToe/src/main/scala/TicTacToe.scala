@@ -109,30 +109,3 @@ object Pos {
 sealed abstract class Player(override val toString:String)
 case object Nought extends Player("O")
 case object Cross extends Player("X")
-
-object TicTacToe {
-
-  def main(args: Array[String]) {
-    val p = new EmptyBoard()
-       .moveR(($0, $0))(Nought).flatMap {
-      _.moveR(($1, $1))(Cross).flatMap {
-      _.move(($1, $1))(Cross)
-    }}
-    
-    println(p)
-
-    val x = for {
-      a <- new EmptyBoard().moveR(($0, $0))(Nought)
-      b <- a.moveR(($1,$1))(Cross)
-      c <- b.moveR(($1,$1))(Nought)
-      d <- c.moveR(($1,$1))(Cross)
-      e <- d.moveR(($2,$2))(Nought)
-      f <- e.moveR(($2,$2))(Cross)
-      g <- f.moveR(($2,$2))(Cross)
-      h <- g.moveR(($2,$2))(Cross)
-      i <- h.moveR(($2,$2))(Cross)
-    } yield i
-    println(x)
-    x.left.foreach((b:FinishedBoard) => println(b.whoWon))
-  }
-}
