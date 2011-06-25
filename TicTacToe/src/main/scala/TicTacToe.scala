@@ -52,7 +52,7 @@ trait Movable extends Board {
         (a.x == a.y && b.x == b.y && c.x == c.y)
       }) contains true
     }
-    if (gameOver()) Left(new FinishedBoard(newMoves))
+    if (gameOver()) Left(new WonBoard(newMoves))
     if (newMoves.length == 9) Left(new DrawnBoard(newMoves))
     else Right(new InProgressBoard(newMoves))
   }
@@ -61,21 +61,24 @@ trait Movable extends Board {
 
 }
 
-case class FinishedBoard(override val moves: A#Moves) extends Board(moves) with TakeBack {
+sealed trait FinishedBoard extends TakeBack {
 
   /**
    * takes a tic-tac-toe board and returns the player that won the game (or a draw if neither).
    * This function can only be called on a board that is finished.
    * Calling move on a game board that is in-play is a *compile-time type error*.
    */
-  def whoWon:Option[Player] = moves.headOption.map(_._2)
-
+  def whoWon: Option[Player]
 }
 
-case class DrawnBoard(override val moves: A#Moves) extends FinishedBoard(moves) {
+case class WonBoard(override val moves: A#Moves) extends Board(moves) with FinishedBoard {
+
+  def whoWon: Option[Player] = moves.headOption.map(_._2)
+}
+
+case class DrawnBoard(override val moves: A#Moves) extends Board(moves) with FinishedBoard {
 
   override def whoWon = None
-
 }
 
 trait TakeBack extends Board {
