@@ -48,5 +48,8 @@ data Cake =
 
 -- define this
 bakeMeACake :: Coup -> Fridge -> Pantry -> Bakery -> Maybe Cake
-bakeMeACake coup fridge pantry bakery =
-  undefined
+bakeMeACake coup fridge pantry bakery = (do
+    egg <- (inspectCoup coup >>= layEgg) <|> fridgeEgg fridge
+    chocolate <- fridgeChocolate fridge <|> pantryChocolate pantry
+    flourOrCocoa <- (pantryFlour pantry >>= Just . Left) <|> (pantryCocoa pantry >>= Just . Right)
+    return $ either (MudCake egg chocolate) (FlourlessCake egg chocolate) flourOrCocoa) <|> bakeryCake bakery
