@@ -1,7 +1,7 @@
 
 import Debug.Trace
-import Control.Parallel (par, pseq)
-import Control.Parallel.Strategies
+-- import Control.Parallel (par, pseq)
+-- import Control.Parallel.Strategies
 
 tests = [test_p1, test_p1', test_p2, test_p3, test_p3', test_p4, test_p5, test_p6, test_p7, test_p10]
 
@@ -169,8 +169,13 @@ Find the sum of all the primes below two million.
 -}
 
 p10 = p10' 2000000
-p10' = sum . tail . prime 
+p10' = sum . tail . prime
+    where prime n = prime' $ [1..n]
+          prime' = filter (\x -> not . any (\y -> trace (show x) x `mod` y == 0) $ [2..(f' x)])
+          f' = round . sqrt . fromIntegral
 test_p10 = p10' 10 == 17
+
+p10_brute = p10 == 142913828922
 
 {-
 In the 20 x 20 grid below, four numbers along a diagonal line have been marked in red.
