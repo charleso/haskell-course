@@ -3,6 +3,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 
+/*
 object TicTacToeTest extends Properties("TicTacToe") {
 
   implicit def arbitraryPlayer[A]: Arbitrary[Player] = Arbitrary(Gen.oneOf(Cross, Nought))
@@ -32,36 +33,37 @@ object TicTacToeTest extends Properties("TicTacToe") {
     b.positionIsOccupied(p) || (b.move(p)(pl).merge.takeBack(p).merge) == b
   )
 }
+*/
 
 class TicTacToeTest extends FlatSpec with ShouldMatchers {
   "TicTacToe" should "Win" in {
     (for {
-      a <- new EmptyBoard().moveR(($0, $0))(Nought)
-      b <- a.moveR(($1, $1))(Cross)
-      c <- b.moveR(($1, $1))(Nought)
-      d <- c.moveR(($1, $1))(Cross)
-      e <- d.moveR(($2, $2))(Nought)
-    } yield e).left.map(_.whoWon) should equal(Left(Some(Nought)))
+      a <- new EmptyBoard[Cross]().moveR(($0, $0))
+      b <- a.moveR(($1, $1))
+      c <- b.moveR(($1, $1))
+      d <- c.moveR(($1, $1))
+      e <- d.moveR(($2, $2))
+    } yield e).left.map(_.whoWon) should equal(Left(Some(new Nought)))
   }
 
   "TicTacToe" should "Draw" in {
     (for {
-      a <- new EmptyBoard().moveR(($0, $0))(Nought)
-      b <- a.moveR(($0, $1))(Cross)
-      c <- b.moveR(($0, $2))(Nought)
-      d <- c.moveR(($1, $2))(Cross)
-      e <- d.moveR(($2, $2))(Nought)
-      f <- e.moveR(($1, $1))(Cross)
-      g <- f.moveR(($1, $0))(Nought)
-      h <- g.moveR(($2, $0))(Cross)
-      i <- h.moveR(($2, $1))(Nought)
+      a <- new EmptyBoard[Cross]().moveR(($0, $0))
+      b <- a.moveR(($0, $1))
+      c <- b.moveR(($0, $2))
+      d <- c.moveR(($1, $2))
+      e <- d.moveR(($2, $2))
+      f <- e.moveR(($1, $1))
+      g <- f.moveR(($1, $0))
+      h <- g.moveR(($2, $0))
+      i <- h.moveR(($2, $1))
     } yield i).left.map(_.whoWon) should equal(Left(None))
   }
 
   "TicTacToe" should "In Progress" in {
     (for {
-      a <- new EmptyBoard().moveR(($0, $0))(Nought)
-      b <- a.moveR(($0, $1))(Cross)
+      a <- new EmptyBoard[Cross]().moveR(($0, $0))
+      b <- a.moveR(($0, $1))
     } yield b).isRight should equal(true)
   }
 }
