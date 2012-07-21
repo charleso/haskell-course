@@ -34,14 +34,10 @@ p18 = p18' [
     04, 62, 98, 27, 23, 09, 70, 98, 73, 93, 38, 53, 60, 04, 23
     ]
 
-p18' = head . (foldl maxt []) . reverse . split
+p18' = head . (foldl1 maxt) . reverse . split
 
 maxt [] y = y 
-maxt x y = map selectPath options
-          where sumt (a, b) = a + b
-                options = zip (zip x y) (zip (tail x) y)
-                selectPath (a, b) = max (sumt a) (sumt b)
-
+maxt x y = zipWith (+) y (zipWith max x (tail x))
 
 split :: [a] -> [[a]]
 split = split' 1
