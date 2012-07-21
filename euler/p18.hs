@@ -14,6 +14,8 @@ Find the maximum total from top to bottom of the triangle below:
 NOTE: As there are only 16384 routes, it is possible to solve this problem by trying every route. However, Problem 67, is the same challenge with a triangle containing one-hundred rows; it cannot be solved by brute force, and requires a clever method! ;o)
 -}
 
+import Data.List
+
 test = p18' [3, 7, 4, 2, 4, 6, 8, 5, 9, 3]
 
 p18 = p18' [
@@ -43,5 +45,6 @@ split :: [a] -> [[a]]
 split = split' 1
     where split' n a = let (h, t) = splitAt n a
                        in h : if null t then [] else split' (n + 1) t
-        
-  
+
+split' = unfoldr (\(n, b) -> let (x, y) = splitAt n b in if null x then Nothing else Just (x, (n + 1, y))) . (,) 1
+ 
